@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // إعداد قاعدة البيانات
-mongoose.connect('mongodb://localhost:27017/orphans_care', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://admin_orphans:Mon243253efdf@orphans-care.0i5s7pm.mongodb.net/orphans_care?retryWrites=true&w=majority')
     .then(() => console.log('تم الاتصال بقاعدة البيانات بنجاح'))
     .catch(err => console.error('فشل الاتصال بقاعدة البيانات:', err));
 
