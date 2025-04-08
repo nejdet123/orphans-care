@@ -1,0 +1,13 @@
+{
+  "name": "simplified-orphans-care",
+  "version": "1.0.0",
+  "description": "A simple application for orphans care management",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ejs": "^3.1.10"
+  }
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خطأ في الخادم</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 50px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .error-title {
+            color: #e74c3c;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        .error-action {
+            margin-top: 30px;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1 class="error-title">عذراً، حدث خطأ في الخادم</h1>
+        <div class="error-message">
+            <p>نواجه مشكلة مؤقتة في الاتصال بقاعدة البيانات. يرجى المحاولة مرة أخرى لاحقاً.</p>
+            <p>إذا استمرت المشكلة، يرجى التواصل مع مسؤول الموقع.</p>
+        </div>
+        <div class="error-details">
+            <% if (error && error.message) { %>
+                <p>تفاصيل الخطأ: <%= error.message %></p>
+            <% } %>
+        </div>
+        <div class="error-action">
+            <a href="/" class="btn-primary">العودة للصفحة الرئيسية</a>
+        </div>
+    </div>
+</body>
+</html>

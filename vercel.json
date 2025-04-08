@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "simplified_app.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/simplified_app.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
