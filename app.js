@@ -142,3 +142,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`تم تشغيل الخادم على المنفذ ${PORT}`);
 });
+const expressLayouts = require('express-ejs-layouts');
+app.use(expressLayouts);
+app.set('layout', 'layout'); // اسم الملف داخل views بدون .ejs
+
