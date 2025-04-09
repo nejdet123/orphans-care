@@ -983,3 +983,4 @@ function showErrorMessage() {
         container.innerHTML = '<div class="alert alert-danger">حدث خطأ أثناء استرجاع البيانات</div>';
     });
 }
+fetchSurveyData();
