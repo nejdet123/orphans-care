@@ -17,6 +17,7 @@ async function fetchSurveyData() {
         }
         
         const data = await response.json();
+        console.log("🧪 البيانات المستلمة:", data);
         if (data && data.length > 0) {
             // تحديث الإحصائيات العامة
             updateGeneralStatistics(data);
