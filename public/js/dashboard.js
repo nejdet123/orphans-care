@@ -10,33 +10,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // استدعاء بيانات الاستبيان
 async function fetchSurveyData() {
-    try {
-        const response = await fetch('/api/survey-data');
-        if (!response.ok) {
-            throw new Error('فشل في استرجاع البيانات');
-        }
-        
-        const data = await response.json();
-        console.log("🧪 البيانات المستلمة:", data);
-        if (data && data.length > 0) {
-            // تحديث الإحصائيات العامة
-            updateGeneralStatistics(data);
-            
-            // تحديث الرسوم البيانية
-            createCharts(data);
-            
-            // تحديث الجداول
-            updateTables(data);
-            
-            // تحديث قائمة المنظمات
-            updateOrganizationsList(data);
-        } else {
-            showNoDataMessage();
-        }
-    } catch (error) {
-        console.error('خطأ في استرجاع بيانات الاستبيان:', error);
-        showErrorMessage();
+  console.log("📥 بدء تحميل بيانات الاستبيان..."); // 👈 أضف هذا
+
+  try {
+    const response = await fetch('/api/survey-data');
+    if (!response.ok) {
+      throw new Error('فشل في استرجاع البيانات');
     }
+
+    const data = await response.json();
+    console.log("🧪 البيانات المستلمة:", data); // 👈 وأضف هذا
+
+    if (data && data.length > 0) {
+      updateGeneralStatistics(data);
+      createCharts(data);
+      updateTables(data);
+      updateOrganizationsList(data);
+    } else {
+      showNoDataMessage();
+    }
+  } catch (error) {
+    console.error('❌ خطأ في استرجاع بيانات الاستبيان:', error);
+    showErrorMessage();
+  }
 }
 
 // تحديث الإحصائيات العامة
