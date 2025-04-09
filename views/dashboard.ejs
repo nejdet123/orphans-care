@@ -1,1563 +1,68 @@
+<% layout('layout') %>
+
 <section class="dashboard-page">
-    <div class="container">
-        <h1 class="text-center my-4">لوحة التحكم</h1>
-        <p class="text-center mb-5">تحليل وعرض نتائج استبيان تقييم الاحتياجات التدريبية</p>
-        
-        <div class="dashboard-container">
-            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab" aria-controls="summary" aria-selected="true">ملخص النتائج</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="psychological-tab" data-bs-toggle="tab" data-bs-target="#psychological" type="button" role="tab" aria-controls="psychological" aria-selected="false">المجال النفسي والاجتماعي</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="educational-tab" data-bs-toggle="tab" data-bs-target="#educational" type="button" role="tab" aria-controls="educational" aria-selected="false">المجال التربوي والتعليمي</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="medical-tab" data-bs-toggle="tab" data-bs-target="#medical" type="button" role="tab" aria-controls="medical" aria-selected="false">المجال الصحي والطبي</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="religious-tab" data-bs-toggle="tab" data-bs-target="#religious" type="button" role="tab" aria-controls="religious" aria-selected="false">المجال الديني والروحي</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="recreational-tab" data-bs-toggle="tab" data-bs-target="#recreational" type="button" role="tab" aria-controls="recreational" aria-selected="false">المجال الترفيهي والرياضي</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="suggestions-tab" data-bs-toggle="tab" data-bs-target="#suggestions" type="button" role="tab" aria-controls="suggestions" aria-selected="false">الاقتراحات والملاحظات</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="organizations-tab" data-bs-toggle="tab" data-bs-target="#organizations" type="button" role="tab" aria-controls="organizations" aria-selected="false">تقارير المنظمات</button>
-                </li>
-            </ul>
-            
-            <div class="tab-content" id="dashboardTabsContent">
-                <!-- ملخص النتائج -->
-                <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
-                    <div class="dashboard-card">
-                        <h3>ملخص نتائج الاستبيان</h3>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <canvas id="participantsChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">توزيع المشاركين حسب المسمى الوظيفي</h4>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <canvas id="domainsChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">متوسط الاحتياج التدريبي حسب المجالات</h4>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <canvas id="experienceChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">توزيع المشاركين حسب سنوات الخبرة</h4>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <canvas id="countriesChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">توزيع المشاركين حسب الدول</h4>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>إحصائيات عامة</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>البيان</th>
-                                                <th>العدد/النسبة</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="statisticsTable">
-                                            <tr>
-                                                <td>إجمالي عدد المشاركين</td>
-                                                <td id="totalParticipants">0</td>
-                                            </tr>
-                                            <tr>
-                                                <td>عدد المنظمات المشاركة</td>
-                                                <td id="totalOrganizations">0</td>
-                                            </tr>
-                                            <tr>
-                                                <td>نسبة المشاركين الذين سبق لهم الحصول على تدريب</td>
-                                                <td id="previousTrainingPercentage">0%</td>
-                                            </tr>
-                                            <tr>
-                                                <td>المجال ذو الاحتياج التدريبي الأعلى</td>
-                                                <td id="highestNeedDomain">-</td>
-                                            </tr>
-                                            <tr>
-                                                <td>المجال ذو الاحتياج التدريبي الأدنى</td>
-                                                <td id="lowestNeedDomain">-</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- المجال النفسي والاجتماعي -->
-                <div class="tab-pane fade" id="psychological" role="tabpanel" aria-labelledby="psychological-tab">
-                    <div class="dashboard-card">
-                        <h3>المجال النفسي والاجتماعي</h3>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="chart-container">
-                                    <canvas id="psychologicalChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">متوسط الاحتياج التدريبي للمهارات النفسية والاجتماعية</h4>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header bg-primary text-white">
-                                        <h5 class="mb-0">أعلى المهارات احتياجاً</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <ol id="topPsychologicalSkills">
-                                            <li>مهارات التعامل مع الصدمات النفسية لدى الأيتام</li>
-                                            <li>مهارات الإرشاد النفسي للأيتام</li>
-                                            <li>استراتيجيات دمج الأيتام في المجتمع</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>تفاصيل الاحتياجات التدريبية حسب المسمى الوظيفي</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>المهارة/الموضوع</th>
-                                                <th>مدير</th>
-                                                <th>أخصائي نفسي</th>
-                                                <th>أخصائي اجتماعي</th>
-                                                <th>معلم</th>
-                                                <th>مقدم رعاية</th>
-                                                <th>المتوسط العام</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="psychologicalTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- المجال التربوي والتعليمي -->
-                <div class="tab-pane fade" id="educational" role="tabpanel" aria-labelledby="educational-tab">
-                    <div class="dashboard-card">
-                        <h3>المجال التربوي والتعليمي</h3>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="chart-container">
-                                    <canvas id="educationalChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">متوسط الاحتياج التدريبي للمهارات التربوية والتعليمية</h4>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header bg-success text-white">
-                                        <h5 class="mb-0">أعلى المهارات احتياجاً</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <ol id="topEducationalSkills">
-                                            <li>استراتيجيات التعامل مع صعوبات التعلم</li>
-                                            <li>مهارات اكتشاف وتنمية المواهب لدى الأيتام</li>
-                                            <li>أساليب التحفيز وتعزيز الدافعية للتعلم</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>تفاصيل الاحتياجات التدريبية حسب المسمى الوظيفي</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>المهارة/الموضوع</th>
-                                                <th>مدير</th>
-                                                <th>أخصائي نفسي</th>
-                                                <th>أخصائي اجتماعي</th>
-                                                <th>معلم</th>
-                                                <th>مقدم رعاية</th>
-                                                <th>المتوسط العام</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="educationalTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- المجال الصحي والطبي -->
-                <div class="tab-pane fade" id="medical" role="tabpanel" aria-labelledby="medical-tab">
-                    <div class="dashboard-card">
-                        <h3>المجال الصحي والطبي</h3>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="chart-container">
-                                    <canvas id="medicalChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">متوسط الاحتياج التدريبي للمهارات الصحية والطبية</h4>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header bg-info text-white">
-                                        <h5 class="mb-0">أعلى المهارات احتياجاً</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <ol id="topMedicalSkills">
-                                            <li>أساسيات الإسعافات الأولية</li>
-                                            <li>مهارات التعامل مع الأمراض الشائعة</li>
-                                            <li>مهارات الرعاية الصحية الأساسية للأيتام</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>تفاصيل الاحتياجات التدريبية حسب المسمى الوظيفي</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>المهارة/الموضوع</th>
-                                                <th>مدير</th>
-                                                <th>أخصائي نفسي</th>
-                                                <th>أخصائي اجتماعي</th>
-                                                <th>معلم</th>
-                                                <th>مقدم رعاية</th>
-                                                <th>المتوسط العام</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="medicalTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- المجال الديني والروحي -->
-                <div class="tab-pane fade" id="religious" role="tabpanel" aria-labelledby="religious-tab">
-                    <div class="dashboard-card">
-                        <h3>المجال الديني والروحي</h3>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="chart-container">
-                                    <canvas id="religiousChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">متوسط الاحتياج التدريبي للمهارات الدينية والروحية</h4>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header bg-warning text-dark">
-                                        <h5 class="mb-0">أعلى المهارات احتياجاً</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <ol id="topReligiousSkills">
-                                            <li>أساليب غرس القيم الدينية لدى الأيتام</li>
-                                            <li>مهارات تعليم العبادات بطريقة محببة</li>
-                                            <li>مهارات ربط الأحكام الشرعية بالحياة اليومية</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>تفاصيل الاحتياجات التدريبية حسب المسمى الوظيفي</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>المهارة/الموضوع</th>
-                                                <th>مدير</th>
-                                                <th>أخصائي نفسي</th>
-                                                <th>أخصائي اجتماعي</th>
-                                                <th>معلم</th>
-                                                <th>مقدم رعاية</th>
-                                                <th>المتوسط العام</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="religiousTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- المجال الترفيهي والرياضي -->
-                <div class="tab-pane fade" id="recreational" role="tabpanel" aria-labelledby="recreational-tab">
-                    <div class="dashboard-card">
-                        <h3>المجال الترفيهي والرياضي</h3>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="chart-container">
-                                    <canvas id="recreationalChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">متوسط الاحتياج التدريبي للمهارات الترفيهية والرياضية</h4>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header bg-danger text-white">
-                                        <h5 class="mb-0">أعلى المهارات احتياجاً</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <ol id="topRecreationalSkills">
-                                            <li>مهارات تصميم الأنشطة الترفيهية</li>
-                                            <li>أساليب تنظيم الرحلات والمعسكرات</li>
-                                            <li>مهارات تنظيم المسابقات والفعاليات</li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>تفاصيل الاحتياجات التدريبية حسب المسمى الوظيفي</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>المهارة/الموضوع</th>
-                                                <th>مدير</th>
-                                                <th>أخصائي نفسي</th>
-                                                <th>أخصائي اجتماعي</th>
-                                                <th>معلم</th>
-                                                <th>مقدم رعاية</th>
-                                                <th>المتوسط العام</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="recreationalTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- الاقتراحات والملاحظات -->
-                <div class="tab-pane fade" id="suggestions" role="tabpanel" aria-labelledby="suggestions-tab">
-                    <div class="dashboard-card">
-                        <h3>الاقتراحات والملاحظات</h3>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h4>المجالات التدريبية الأخرى المقترحة</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>المجال المقترح</th>
-                                                <th>التكرار</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="otherAreasTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <h4>اقتراحات تطوير البرامج التدريبية</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>الاقتراح</th>
-                                                <th>التكرار</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="suggestionsTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>تفاصيل الاقتراحات والملاحظات</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>المنظمة</th>
-                                                <th>المسمى الوظيفي</th>
-                                                <th>المجالات التدريبية المقترحة</th>
-                                                <th>اقتراحات التطوير</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="detailedSuggestionsTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- تقارير المنظمات -->
-                <div class="tab-pane fade" id="organizations" role="tabpanel" aria-labelledby="organizations-tab">
-                    <div class="dashboard-card">
-                        <h3>تقارير المنظمات</h3>
-                        
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="organizationFilter" class="form-label">اختر المنظمة:</label>
-                                    <select class="form-select" id="organizationFilter">
-                                        <option value="all">جميع المنظمات</option>
-                                        <!-- سيتم ملء هذه القائمة ديناميكياً -->
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="organizationCodeFilter" class="form-label">كود المنظمة:</label>
-                                    <input type="text" class="form-control" id="organizationCodeFilter" placeholder="أدخل كود المنظمة">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <canvas id="organizationDomainsChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">متوسط الاحتياج التدريبي حسب المجالات</h4>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="chart-container">
-                                    <canvas id="organizationJobsChart"></canvas>
-                                </div>
-                                <h4 class="text-center mt-3">توزيع المشاركين حسب المسمى الوظيفي</h4>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>تفاصيل الاحتياجات التدريبية للمنظمة</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>المجال</th>
-                                                <th>المهارة/الموضوع</th>
-                                                <th>متوسط الاحتياج</th>
-                                                <th>الترتيب</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="organizationDetailsTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-5">
-                            <div class="col-12">
-                                <h4>المشاركون من المنظمة</h4>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>الاسم</th>
-                                                <th>المسمى الوظيفي</th>
-                                                <th>سنوات الخبرة</th>
-                                                <th>الفئة العمرية للأيتام</th>
-                                                <th>نوع الرعاية المقدمة</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="organizationParticipantsTable">
-                                            <!-- سيتم ملء هذا الجدول ديناميكياً -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <h1 class="text-center my-4">لوحة التحكم</h1>
+    <p class="text-center">تحليل وعرض نتائج استبيان تقييم الاحتياجات التدريبية</p>
+
+    <!-- تبويبات المجالات -->
+    <ul class="nav nav-pills justify-content-center my-4" id="domainTabs">
+      <li class="nav-item"><a class="nav-link active" href="#">ملخص النتائج</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">المجال النفسي والاجتماعي</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">المجال التربوي والتعليمي</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">المجال الصحي والطبي</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">المجال الديني والروحي</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">المجال الترفيهي والرياضي</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">تقارير المنظمات</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">الاقتراحات والملاحظات</a></li>
+    </ul>
+
+    <!-- ملخص النتائج -->
+    <div class="text-center my-4">
+      <h3>ملخص نتائج الاستبيان</h3>
     </div>
+
+    <!-- الجداول والرسوم البيانية -->
+    <div class="row">
+      <div class="col-md-6 chart-container mb-4">
+        <canvas id="domainsChart"></canvas>
+        <p class="text-center">متوسط الاحتياج التدريبي حسب المجالات</p>
+      </div>
+      <div class="col-md-6 chart-container mb-4">
+        <canvas id="participantsChart"></canvas>
+        <p class="text-center">توزيع المشاركين حسب المسمى الوظيفي</p>
+      </div>
+    </div>
+
+    <!-- جدول المشاركين من المنظمات -->
+    <div class="row mt-5">
+      <div class="col-12">
+        <h4>المشاركون من المنظمات</h4>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-dark">
+              <tr>
+                <th>الاسم</th>
+                <th>المسمى الوظيفي</th>
+                <th>سنوات الخبرة</th>
+                <th>الفئة العمرية المستهدفة</th>
+                <th>نوع الرعاية المقدمة</th>
+              </tr>
+            </thead>
+            <tbody id="organizationParticipantsTable">
+              <!-- سيتم ملء هذا الجدول ديناميكيًا -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ... باقي الكود ... -->
+<!-- مكتبة Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- بدل من استدعاء ملف خارجي dashboard.js -->
-<!-- الصق كل كود JavaScript داخل هذا الوسم مباشرة -->
+
+<!-- JavaScript الخاص بلوحة التحكم مباشرة داخل الصفحة -->
 <script>
-
-// ملف JavaScript للوحة التحكم - نسخة v2 كاملة
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("📥 بدء تحميل بيانات الاستبيان...");
-    fetchSurveyData();
-
-    const orgFilter = document.getElementById('organizationFilter');
-    const codeFilter = document.getElementById('organizationCodeFilter');
-
-    if (orgFilter) {
-        orgFilter.addEventListener('change', filterOrganizationData);
-    }
-
-    if (codeFilter) {
-        codeFilter.addEventListener('input', filterOrganizationByCode);
-    }
-});
-
-async function fetchSurveyData() {
-    try {
-        const response = await fetch('/api/survey-data');
-        if (!response.ok) {
-            throw new Error('فشل في استرجاع البيانات');
-        }
-
-        const data = await response.json();
-        console.log("✅ البيانات المستلمة:", data);
-
-        if (data && data.length > 0) {
-            updateGeneralStatistics(data);
-            createCharts(data);
-            updateTables(data);
-            updateOrganizationsList(data);
-        } else {
-            showNoDataMessage();
-        }
-    } catch (error) {
-        console.error('❌ خطأ في استرجاع بيانات الاستبيان:', error);
-        showErrorMessage();
-    }
-}
-
-// 👇 سيتم تضمين جميع الدوال من النسخة الكاملة السابقة التي أرسلها المستخدم
-
-// ملف JavaScript للوحة التحكم
-document.addEventListener('DOMContentLoaded', function() {
-    // استدعاء بيانات الاستبيان من الخادم
-    fetchSurveyData();
-    
-    // إضافة مستمعي الأحداث للفلاتر
-    document.getElementById('organizationFilter').addEventListener('change', filterOrganizationData);
-    document.getElementById('organizationCodeFilter').addEventListener('input', filterOrganizationByCode);
-});
-
-// استدعاء بيانات الاستبيان
-async function fetchSurveyData() {
-    try {
-        const response = await fetch('/api/survey-data');
-        if (!response.ok) {
-            throw new Error('فشل في استرجاع البيانات');
-        }
-        
-        const data = await response.json();
-        if (data && data.length > 0) {
-            // تحديث الإحصائيات العامة
-            updateGeneralStatistics(data);
-            
-            // تحديث الرسوم البيانية
-            createCharts(data);
-            
-            // تحديث الجداول
-            updateTables(data);
-            
-            // تحديث قائمة المنظمات
-            updateOrganizationsList(data);
-        } else {
-            showNoDataMessage();
-        }
-    } catch (error) {
-        console.error('خطأ في استرجاع بيانات الاستبيان:', error);
-        showErrorMessage();
-    }
-}
-
-// تحديث الإحصائيات العامة
-function updateGeneralStatistics(data) {
-    // عدد المشاركين
-    document.getElementById('totalParticipants').textContent = data.length;
-    
-    // عدد المنظمات
-    const organizations = [...new Set(data.map(item => item.organization))];
-    document.getElementById('totalOrganizations').textContent = organizations.length;
-    
-    // نسبة المشاركين الذين سبق لهم الحصول على تدريب
-    const previousTrainingCount = data.filter(item => item.previousTraining === 'نعم').length;
-    const previousTrainingPercentage = ((previousTrainingCount / data.length) * 100).toFixed(1);
-    document.getElementById('previousTrainingPercentage').textContent = `${previousTrainingPercentage}%`;
-    
-    // حساب متوسط الاحتياج لكل مجال
-    const domains = {
-        'النفسي والاجتماعي': calculateDomainAverage(data, ['psychologicalTrauma', 'selfConfidence', 'psychologicalCounseling', 'socialIntegration', 'effectiveCommunication']),
-        'التربوي والتعليمي': calculateDomainAverage(data, ['modernTeaching', 'learningDifficulties', 'talentDevelopment', 'motivationTechniques', 'careerGuidance']),
-        'الصحي والطبي': calculateDomainAverage(data, ['firstAid', 'healthCare', 'nutrition', 'commonDiseases', 'personalHygiene']),
-        'الديني والروحي': calculateDomainAverage(data, ['religiousValues', 'teachingWorship', 'spiritualAwareness', 'religiousRules', 'religiousIdentity']),
-        'الترفيهي والرياضي': calculateDomainAverage(data, ['recreationalActivities', 'tripsOrganization', 'eventsOrganization', 'leisureTime', 'sportsTraining'])
-    };
-    
-    // تحديد المجال ذو الاحتياج الأعلى والأدنى
-    const sortedDomains = Object.entries(domains).sort((a, b) => b[1] - a[1]);
-    document.getElementById('highestNeedDomain').textContent = `المجال ${sortedDomains[0][0]} (${sortedDomains[0][1].toFixed(2)})`;
-    document.getElementById('lowestNeedDomain').textContent = `المجال ${sortedDomains[sortedDomains.length - 1][0]} (${sortedDomains[sortedDomains.length - 1][1].toFixed(2)})`;
-}
-
-// حساب متوسط الاحتياج لمجال معين
-function calculateDomainAverage(data, fields) {
-    let sum = 0;
-    let count = 0;
-    
-    data.forEach(item => {
-        fields.forEach(field => {
-            if (item[field]) {
-                sum += parseInt(item[field]);
-                count++;
-            }
-        });
-    });
-    
-    return count > 0 ? sum / count : 0;
-}
-
-// إنشاء الرسوم البيانية
-function createCharts(data) {
-    // رسم بياني لتوزيع المشاركين حسب المسمى الوظيفي
-    createJobTitleChart(data);
-    
-    // رسم بياني لمتوسط الاحتياج التدريبي حسب المجالات
-    createDomainsChart(data);
-    
-    // رسم بياني لتوزيع المشاركين حسب سنوات الخبرة
-    createExperienceChart(data);
-    
-    // رسم بياني لتوزيع المشاركين حسب الدول
-    createCountriesChart(data);
-    
-    // رسوم بيانية للمجالات المختلفة
-    createPsychologicalChart(data);
-    createEducationalChart(data);
-    createMedicalChart(data);
-    createReligiousChart(data);
-    createRecreationalChart(data);
-}
-
-// رسم بياني لتوزيع المشاركين حسب المسمى الوظيفي
-function createJobTitleChart(data) {
-    const jobTitles = {};
-    data.forEach(item => {
-        if (item.jobTitle) {
-            jobTitles[item.jobTitle] = (jobTitles[item.jobTitle] || 0) + 1;
-        }
-    });
-    
-    const labels = Object.keys(jobTitles);
-    const values = Object.values(jobTitles);
-    
-    const ctx = document.getElementById('participantsChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: values,
-                backgroundColor: [
-                    '#4e73df',
-                    '#1cc88a',
-                    '#36b9cc',
-                    '#f6c23e',
-                    '#e74a3b',
-                    '#858796'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right'
-                }
-            }
-        }
-    });
-}
-
-// رسم بياني لمتوسط الاحتياج التدريبي حسب المجالات
-function createDomainsChart(data) {
-    const domains = {
-        'النفسي والاجتماعي': calculateDomainAverage(data, ['psychologicalTrauma', 'selfConfidence', 'psychologicalCounseling', 'socialIntegration', 'effectiveCommunication']),
-        'التربوي والتعليمي': calculateDomainAverage(data, ['modernTeaching', 'learningDifficulties', 'talentDevelopment', 'motivationTechniques', 'careerGuidance']),
-        'الصحي والطبي': calculateDomainAverage(data, ['firstAid', 'healthCare', 'nutrition', 'commonDiseases', 'personalHygiene']),
-        'الديني والروحي': calculateDomainAverage(data, ['religiousValues', 'teachingWorship', 'spiritualAwareness', 'religiousRules', 'religiousIdentity']),
-        'الترفيهي والرياضي': calculateDomainAverage(data, ['recreationalActivities', 'tripsOrganization', 'eventsOrganization', 'leisureTime', 'sportsTraining'])
-    };
-    
-    const labels = Object.keys(domains);
-    const values = Object.values(domains);
-    
-    const ctx = document.getElementById('domainsChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'متوسط الاحتياج التدريبي',
-                data: values,
-                backgroundColor: [
-                    '#4e73df',
-                    '#1cc88a',
-                    '#36b9cc',
-                    '#f6c23e',
-                    '#e74a3b'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5
-                }
-            }
-        }
-    });
-}
-
-// رسم بياني لتوزيع المشاركين حسب سنوات الخبرة
-function createExperienceChart(data) {
-    const experience = {};
-    data.forEach(item => {
-        if (item.experience) {
-            experience[item.experience] = (experience[item.experience] || 0) + 1;
-        }
-    });
-    
-    const labels = Object.keys(experience);
-    const values = Object.values(experience);
-    
-    const ctx = document.getElementById('experienceChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: values,
-                backgroundColor: [
-                    '#4e73df',
-                    '#1cc88a',
-                    '#36b9cc',
-                    '#f6c23e',
-                    '#e74a3b'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right'
-                }
-            }
-        }
-    });
-}
-
-// رسم بياني لتوزيع المشاركين حسب الدول
-function createCountriesChart(data) {
-    const countries = {};
-    data.forEach(item => {
-        if (item.country) {
-            countries[item.country] = (countries[item.country] || 0) + 1;
-        }
-    });
-    
-    const labels = Object.keys(countries);
-    const values = Object.values(countries);
-    
-    const ctx = document.getElementById('countriesChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: values,
-                backgroundColor: [
-                    '#4e73df',
-                    '#1cc88a',
-                    '#36b9cc',
-                    '#f6c23e',
-                    '#e74a3b',
-                    '#858796'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right'
-                }
-            }
-        }
-    });
-}
-
-// رسم بياني للمجال النفسي والاجتماعي
-function createPsychologicalChart(data) {
-    const skills = {
-        'مهارات التعامل مع الصدمات النفسية': calculateFieldAverage(data, 'psychologicalTrauma'),
-        'أساليب بناء الثقة بالنفس وتقدير الذات': calculateFieldAverage(data, 'selfConfidence'),
-        'مهارات الإرشاد النفسي': calculateFieldAverage(data, 'psychologicalCounseling'),
-        'استراتيجيات دمج الأيتام في المجتمع': calculateFieldAverage(data, 'socialIntegration'),
-        'مهارات التواصل الفعال': calculateFieldAverage(data, 'effectiveCommunication')
-    };
-    
-    const labels = Object.keys(skills);
-    const values = Object.values(skills);
-    
-    const ctx = document.getElementById('psychologicalChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'متوسط الاحتياج التدريبي',
-                data: values,
-                backgroundColor: '#4e73df',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5
-                }
-            }
-        }
-    });
-    
-    // تحديث قائمة أعلى المهارات احتياجاً
-    updateTopSkillsList('topPsychologicalSkills', skills);
-}
-
-// رسم بياني للمجال التربوي والتعليمي
-function createEducationalChart(data) {
-    const skills = {
-        'أساليب التعليم الحديثة': calculateFieldAverage(data, 'modernTeaching'),
-        'استراتيجيات التعامل مع صعوبات التعلم': calculateFieldAverage(data, 'learningDifficulties'),
-        'مهارات اكتشاف وتنمية المواهب': calculateFieldAverage(data, 'talentDevelopment'),
-        'أساليب التحفيز وتعزيز الدافعية': calculateFieldAverage(data, 'motivationTechniques'),
-        'مهارات التوجيه المهني': calculateFieldAverage(data, 'careerGuidance')
-    };
-    
-    const labels = Object.keys(skills);
-    const values = Object.values(skills);
-    
-    const ctx = document.getElementById('educationalChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'متوسط الاحتياج التدريبي',
-                data: values,
-                backgroundColor: '#1cc88a',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5
-                }
-            }
-        }
-    });
-    
-    // تحديث قائمة أعلى المهارات احتياجاً
-    updateTopSkillsList('topEducationalSkills', skills);
-}
-
-// رسم بياني للمجال الصحي والطبي
-function createMedicalChart(data) {
-    const skills = {
-        'أساسيات الإسعافات الأولية': calculateFieldAverage(data, 'firstAid'),
-        'مهارات الرعاية الصحية الأساسية': calculateFieldAverage(data, 'healthCare'),
-        'أساليب التغذية السليمة': calculateFieldAverage(data, 'nutrition'),
-        'مهارات التعامل مع الأمراض الشائعة': calculateFieldAverage(data, 'commonDiseases'),
-        'أساليب تعزيز النظافة الشخصية': calculateFieldAverage(data, 'personalHygiene')
-    };
-    
-    const labels = Object.keys(skills);
-    const values = Object.values(skills);
-    
-    const ctx = document.getElementById('medicalChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'متوسط الاحتياج التدريبي',
-                data: values,
-                backgroundColor: '#36b9cc',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5
-                }
-            }
-        }
-    });
-    
-    // تحديث قائمة أعلى المهارات احتياجاً
-    updateTopSkillsList('topMedicalSkills', skills);
-}
-
-// رسم بياني للمجال الديني والروحي
-function createReligiousChart(data) {
-    const skills = {
-        'أساليب غرس القيم الدينية': calculateFieldAverage(data, 'religiousValues'),
-        'مهارات تعليم العبادات بطريقة محببة': calculateFieldAverage(data, 'teachingWorship'),
-        'أساليب تنمية الوازع الديني': calculateFieldAverage(data, 'spiritualAwareness'),
-        'مهارات ربط الأحكام الشرعية بالحياة': calculateFieldAverage(data, 'religiousRules'),
-        'أساليب تعزيز الهوية الدينية': calculateFieldAverage(data, 'religiousIdentity')
-    };
-    
-    const labels = Object.keys(skills);
-    const values = Object.values(skills);
-    
-    const ctx = document.getElementById('religiousChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'متوسط الاحتياج التدريبي',
-                data: values,
-                backgroundColor: '#f6c23e',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5
-                }
-            }
-        }
-    });
-    
-    // تحديث قائمة أعلى المهارات احتياجاً
-    updateTopSkillsList('topReligiousSkills', skills);
-}
-
-// رسم بياني للمجال الترفيهي والرياضي
-function createRecreationalChart(data) {
-    const skills = {
-        'مهارات تصميم الأنشطة الترفيهية': calculateFieldAverage(data, 'recreationalActivities'),
-        'أساليب تنظيم الرحلات والمعسكرات': calculateFieldAverage(data, 'tripsOrganization'),
-        'مهارات تنظيم المسابقات والفعاليات': calculateFieldAverage(data, 'eventsOrganization'),
-        'أساليب استثمار أوقات الفراغ': calculateFieldAverage(data, 'leisureTime'),
-        'مهارات تدريب الألعاب الرياضية': calculateFieldAverage(data, 'sportsTraining')
-    };
-    
-    const labels = Object.keys(skills);
-    const values = Object.values(skills);
-    
-    const ctx = document.getElementById('recreationalChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'متوسط الاحتياج التدريبي',
-                data: values,
-                backgroundColor: '#e74a3b',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5
-                }
-            }
-        }
-    });
-    
-    // تحديث قائمة أعلى المهارات احتياجاً
-    updateTopSkillsList('topRecreationalSkills', skills);
-}
-
-// حساب متوسط الاحتياج لحقل معين
-function calculateFieldAverage(data, field) {
-    let sum = 0;
-    let count = 0;
-    
-    data.forEach(item => {
-        if (item[field]) {
-            sum += parseInt(item[field]);
-            count++;
-        }
-    });
-    
-    return count > 0 ? sum / count : 0;
-}
-
-// تحديث قائمة أعلى المهارات احتياجاً
-function updateTopSkillsList(elementId, skills) {
-    const sortedSkills = Object.entries(skills).sort((a, b) => b[1] - a[1]);
-    const topSkillsList = document.getElementById(elementId);
-    
-    topSkillsList.innerHTML = '';
-    
-    for (let i = 0; i < Math.min(3, sortedSkills.length); i++) {
-        const li = document.createElement('li');
-        li.textContent = `${sortedSkills[i][0]} (${sortedSkills[i][1].toFixed(2)})`;
-        topSkillsList.appendChild(li);
-    }
-}
-
-// تحديث الجداول
-function updateTables(data) {
-    // تحديث جداول المجالات المختلفة
-    updateDomainTable(data, 'psychologicalTable', [
-        { field: 'psychologicalTrauma', label: 'مهارات التعامل مع الصدمات النفسية' },
-        { field: 'selfConfidence', label: 'أساليب بناء الثقة بالنفس وتقدير الذات' },
-        { field: 'psychologicalCounseling', label: 'مهارات الإرشاد النفسي' },
-        { field: 'socialIntegration', label: 'استراتيجيات دمج الأيتام في المجتمع' },
-        { field: 'effectiveCommunication', label: 'مهارات التواصل الفعال' }
-    ]);
-    
-    updateDomainTable(data, 'educationalTable', [
-        { field: 'modernTeaching', label: 'أساليب التعليم الحديثة' },
-        { field: 'learningDifficulties', label: 'استراتيجيات التعامل مع صعوبات التعلم' },
-        { field: 'talentDevelopment', label: 'مهارات اكتشاف وتنمية المواهب' },
-        { field: 'motivationTechniques', label: 'أساليب التحفيز وتعزيز الدافعية' },
-        { field: 'careerGuidance', label: 'مهارات التوجيه المهني' }
-    ]);
-    
-    updateDomainTable(data, 'medicalTable', [
-        { field: 'firstAid', label: 'أساسيات الإسعافات الأولية' },
-        { field: 'healthCare', label: 'مهارات الرعاية الصحية الأساسية' },
-        { field: 'nutrition', label: 'أساليب التغذية السليمة' },
-        { field: 'commonDiseases', label: 'مهارات التعامل مع الأمراض الشائعة' },
-        { field: 'personalHygiene', label: 'أساليب تعزيز النظافة الشخصية' }
-    ]);
-    
-    updateDomainTable(data, 'religiousTable', [
-        { field: 'religiousValues', label: 'أساليب غرس القيم الدينية' },
-        { field: 'teachingWorship', label: 'مهارات تعليم العبادات بطريقة محببة' },
-        { field: 'spiritualAwareness', label: 'أساليب تنمية الوازع الديني' },
-        { field: 'religiousRules', label: 'مهارات ربط الأحكام الشرعية بالحياة' },
-        { field: 'religiousIdentity', label: 'أساليب تعزيز الهوية الدينية' }
-    ]);
-    
-    updateDomainTable(data, 'recreationalTable', [
-        { field: 'recreationalActivities', label: 'مهارات تصميم الأنشطة الترفيهية' },
-        { field: 'tripsOrganization', label: 'أساليب تنظيم الرحلات والمعسكرات' },
-        { field: 'eventsOrganization', label: 'مهارات تنظيم المسابقات والفعاليات' },
-        { field: 'leisureTime', label: 'أساليب استثمار أوقات الفراغ' },
-        { field: 'sportsTraining', label: 'مهارات تدريب الألعاب الرياضية' }
-    ]);
-    
-    // تحديث جداول الاقتراحات والملاحظات
-    updateSuggestionsTable(data);
-}
-
-// تحديث جدول مجال معين
-function updateDomainTable(data, tableId, fields) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
-    
-    table.innerHTML = '';
-    
-    // تصنيف البيانات حسب المسمى الوظيفي
-    const jobTitles = ['مدير', 'أخصائي نفسي', 'أخصائي اجتماعي', 'معلم', 'مقدم رعاية'];
-    
-    fields.forEach(field => {
-        const row = document.createElement('tr');
-        
-        // إضافة اسم المهارة
-        const skillCell = document.createElement('td');
-        skillCell.textContent = field.label;
-        row.appendChild(skillCell);
-        
-        // حساب متوسط الاحتياج لكل مسمى وظيفي
-        jobTitles.forEach(jobTitle => {
-            const jobData = data.filter(item => item.jobTitle === jobTitle);
-            const average = calculateFieldAverage(jobData, field.field);
-            
-            const cell = document.createElement('td');
-            cell.textContent = average.toFixed(2);
-            row.appendChild(cell);
-        });
-        
-        // إضافة المتوسط العام
-        const averageCell = document.createElement('td');
-        const average = calculateFieldAverage(data, field.field);
-        averageCell.textContent = average.toFixed(2);
-        row.appendChild(averageCell);
-        
-        table.appendChild(row);
-    });
-}
-
-// تحديث جداول الاقتراحات والملاحظات
-function updateSuggestionsTable(data) {
-    // تحليل المجالات التدريبية المقترحة
-    const otherAreas = {};
-    data.forEach(item => {
-        if (item.otherTrainingAreas && item.otherTrainingAreas.trim() !== '') {
-            const areas = item.otherTrainingAreas.split('\n');
-            areas.forEach(area => {
-                const trimmedArea = area.trim();
-                if (trimmedArea) {
-                    otherAreas[trimmedArea] = (otherAreas[trimmedArea] || 0) + 1;
-                }
-            });
-        }
-    });
-    
-    // تحليل اقتراحات تطوير البرامج التدريبية
-    const suggestions = {};
-    data.forEach(item => {
-        if (item.suggestions && item.suggestions.trim() !== '') {
-            const suggestionsList = item.suggestions.split('\n');
-            suggestionsList.forEach(suggestion => {
-                const trimmedSuggestion = suggestion.trim();
-                if (trimmedSuggestion) {
-                    suggestions[trimmedSuggestion] = (suggestions[trimmedSuggestion] || 0) + 1;
-                }
-            });
-        }
-    });
-    
-    // تحديث جدول المجالات المقترحة
-    updateFrequencyTable('otherAreasTable', otherAreas);
-    
-    // تحديث جدول الاقتراحات
-    updateFrequencyTable('suggestionsTable', suggestions);
-    
-    // تحديث جدول تفاصيل الاقتراحات والملاحظات
-    updateDetailedSuggestionsTable(data);
-}
-
-// تحديث جدول التكرارات
-function updateFrequencyTable(tableId, data) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
-    
-    table.innerHTML = '';
-    
-    const sortedData = Object.entries(data).sort((a, b) => b[1] - a[1]);
-    
-    sortedData.forEach((item, index) => {
-        const row = document.createElement('tr');
-        
-        const indexCell = document.createElement('td');
-        indexCell.textContent = index + 1;
-        row.appendChild(indexCell);
-        
-        const itemCell = document.createElement('td');
-        itemCell.textContent = item[0];
-        row.appendChild(itemCell);
-        
-        const frequencyCell = document.createElement('td');
-        frequencyCell.textContent = item[1];
-        row.appendChild(frequencyCell);
-        
-        table.appendChild(row);
-    });
-}
-
-// تحديث جدول تفاصيل الاقتراحات والملاحظات
-function updateDetailedSuggestionsTable(data) {
-    const table = document.getElementById('detailedSuggestionsTable');
-    if (!table) return;
-    
-    table.innerHTML = '';
-    
-    // فلترة البيانات للحصول على السجلات التي تحتوي على اقتراحات أو مجالات مقترحة
-    const filteredData = data.filter(item => 
-        (item.otherTrainingAreas && item.otherTrainingAreas.trim() !== '') || 
-        (item.suggestions && item.suggestions.trim() !== '')
-    );
-    
-    filteredData.forEach(item => {
-        const row = document.createElement('tr');
-        
-        const organizationCell = document.createElement('td');
-        organizationCell.textContent = item.organization || '-';
-        row.appendChild(organizationCell);
-        
-        const jobTitleCell = document.createElement('td');
-        jobTitleCell.textContent = item.jobTitle || '-';
-        row.appendChild(jobTitleCell);
-        
-        const areasCell = document.createElement('td');
-        areasCell.textContent = item.otherTrainingAreas || '-';
-        row.appendChild(areasCell);
-        
-        const suggestionsCell = document.createElement('td');
-        suggestionsCell.textContent = item.suggestions || '-';
-        row.appendChild(suggestionsCell);
-        
-        table.appendChild(row);
-    });
-}
-
-// تحديث قائمة المنظمات
-function updateOrganizationsList(data) {
-    const organizations = [...new Set(data.map(item => item.organization))];
-    const select = document.getElementById('organizationFilter');
-    
-    if (!select) return;
-    
-    // إضافة خيار "جميع المنظمات"
-    select.innerHTML = '<option value="all">جميع المنظمات</option>';
-    
-    // إضافة المنظمات
-    organizations.forEach(org => {
-        if (org) {
-            const option = document.createElement('option');
-            option.value = org;
-            option.textContent = org;
-            select.appendChild(option);
-        }
-    });
-    
-    // إضافة مستمع الحدث
-    select.addEventListener('change', () => filterOrganizationData(data));
-}
-
-// فلترة البيانات حسب المنظمة
-function filterOrganizationData() {
-    const organizationFilter = document.getElementById('organizationFilter').value;
-    
-    // إعادة استدعاء البيانات وتطبيق الفلتر
-    fetch('/api/survey-data')
-        .then(response => response.json())
-        .then(data => {
-            let filteredData = data;
-            
-            if (organizationFilter !== 'all') {
-                filteredData = data.filter(item => item.organization === organizationFilter);
-            }
-            
-            // تحديث الرسوم البيانية والجداول للمنظمة المحددة
-            updateOrganizationCharts(filteredData);
-            updateOrganizationTables(filteredData);
-        })
-        .catch(error => {
-            console.error('خطأ في استرجاع بيانات الاستبيان:', error);
-        });
-}
-
-// فلترة البيانات حسب كود المنظمة
-function filterOrganizationByCode() {
-    const organizationCode = document.getElementById('organizationCodeFilter').value;
-    
-    // إعادة استدعاء البيانات وتطبيق الفلتر
-    fetch('/api/survey-data')
-        .then(response => response.json())
-        .then(data => {
-            let filteredData = data;
-            
-            if (organizationCode) {
-                filteredData = data.filter(item => item.organizationCode === organizationCode);
-            }
-            
-            // تحديث الرسوم البيانية والجداول للمنظمة المحددة
-            updateOrganizationCharts(filteredData);
-            updateOrganizationTables(filteredData);
-        })
-        .catch(error => {
-            console.error('خطأ في استرجاع بيانات الاستبيان:', error);
-        });
-}
-
-// تحديث الرسوم البيانية للمنظمة
-function updateOrganizationCharts(data) {
-    // رسم بياني لمتوسط الاحتياج التدريبي حسب المجالات
-    const domains = {
-        'النفسي والاجتماعي': calculateDomainAverage(data, ['psychologicalTrauma', 'selfConfidence', 'psychologicalCounseling', 'socialIntegration', 'effectiveCommunication']),
-        'التربوي والتعليمي': calculateDomainAverage(data, ['modernTeaching', 'learningDifficulties', 'talentDevelopment', 'motivationTechniques', 'careerGuidance']),
-        'الصحي والطبي': calculateDomainAverage(data, ['firstAid', 'healthCare', 'nutrition', 'commonDiseases', 'personalHygiene']),
-        'الديني والروحي': calculateDomainAverage(data, ['religiousValues', 'teachingWorship', 'spiritualAwareness', 'religiousRules', 'religiousIdentity']),
-        'الترفيهي والرياضي': calculateDomainAverage(data, ['recreationalActivities', 'tripsOrganization', 'eventsOrganization', 'leisureTime', 'sportsTraining'])
-    };
-    
-    const labels = Object.keys(domains);
-    const values = Object.values(domains);
-    
-    // تدمير الرسم البياني السابق إذا وجد
-    const chartElement = document.getElementById('organizationDomainsChart');
-    if (chartElement && chartElement.chart) {
-        chartElement.chart.destroy();
-    }
-    
-    const ctx = chartElement.getContext('2d');
-    chartElement.chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'متوسط الاحتياج التدريبي',
-                data: values,
-                backgroundColor: [
-                    '#4e73df',
-                    '#1cc88a',
-                    '#36b9cc',
-                    '#f6c23e',
-                    '#e74a3b'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5
-                }
-            }
-        }
-    });
-    
-    // رسم بياني لتوزيع المشاركين حسب المسمى الوظيفي
-    const jobTitles = {};
-    data.forEach(item => {
-        if (item.jobTitle) {
-            jobTitles[item.jobTitle] = (jobTitles[item.jobTitle] || 0) + 1;
-        }
-    });
-    
-    const jobLabels = Object.keys(jobTitles);
-    const jobValues = Object.values(jobTitles);
-    
-    // تدمير الرسم البياني السابق إذا وجد
-    const jobsChartElement = document.getElementById('organizationJobsChart');
-    if (jobsChartElement && jobsChartElement.chart) {
-        jobsChartElement.chart.destroy();
-    }
-    
-    const jobsCtx = jobsChartElement.getContext('2d');
-    jobsChartElement.chart = new Chart(jobsCtx, {
-        type: 'pie',
-        data: {
-            labels: jobLabels,
-            datasets: [{
-                data: jobValues,
-                backgroundColor: [
-                    '#4e73df',
-                    '#1cc88a',
-                    '#36b9cc',
-                    '#f6c23e',
-                    '#e74a3b',
-                    '#858796'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right'
-                }
-            }
-        }
-    });
-}
-
-// تحديث جداول المنظمة
-function updateOrganizationTables(data) {
-    // تحديث جدول تفاصيل الاحتياجات التدريبية للمنظمة
-    const detailsTable = document.getElementById('organizationDetailsTable');
-    if (detailsTable) {
-        detailsTable.innerHTML = '';
-        
-        // جمع جميع المهارات وحساب متوسطاتها
-        const skills = [
-            { domain: 'النفسي والاجتماعي', field: 'psychologicalTrauma', label: 'مهارات التعامل مع الصدمات النفسية' },
-            { domain: 'النفسي والاجتماعي', field: 'selfConfidence', label: 'أساليب بناء الثقة بالنفس وتقدير الذات' },
-            { domain: 'النفسي والاجتماعي', field: 'psychologicalCounseling', label: 'مهارات الإرشاد النفسي' },
-            { domain: 'النفسي والاجتماعي', field: 'socialIntegration', label: 'استراتيجيات دمج الأيتام في المجتمع' },
-            { domain: 'النفسي والاجتماعي', field: 'effectiveCommunication', label: 'مهارات التواصل الفعال' },
-            
-            { domain: 'التربوي والتعليمي', field: 'modernTeaching', label: 'أساليب التعليم الحديثة' },
-            { domain: 'التربوي والتعليمي', field: 'learningDifficulties', label: 'استراتيجيات التعامل مع صعوبات التعلم' },
-            { domain: 'التربوي والتعليمي', field: 'talentDevelopment', label: 'مهارات اكتشاف وتنمية المواهب' },
-            { domain: 'التربوي والتعليمي', field: 'motivationTechniques', label: 'أساليب التحفيز وتعزيز الدافعية' },
-            { domain: 'التربوي والتعليمي', field: 'careerGuidance', label: 'مهارات التوجيه المهني' },
-            
-            { domain: 'الصحي والطبي', field: 'firstAid', label: 'أساسيات الإسعافات الأولية' },
-            { domain: 'الصحي والطبي', field: 'healthCare', label: 'مهارات الرعاية الصحية الأساسية' },
-            { domain: 'الصحي والطبي', field: 'nutrition', label: 'أساليب التغذية السليمة' },
-            { domain: 'الصحي والطبي', field: 'commonDiseases', label: 'مهارات التعامل مع الأمراض الشائعة' },
-            { domain: 'الصحي والطبي', field: 'personalHygiene', label: 'أساليب تعزيز النظافة الشخصية' },
-            
-            { domain: 'الديني والروحي', field: 'religiousValues', label: 'أساليب غرس القيم الدينية' },
-            { domain: 'الديني والروحي', field: 'teachingWorship', label: 'مهارات تعليم العبادات بطريقة محببة' },
-            { domain: 'الديني والروحي', field: 'spiritualAwareness', label: 'أساليب تنمية الوازع الديني' },
-            { domain: 'الديني والروحي', field: 'religiousRules', label: 'مهارات ربط الأحكام الشرعية بالحياة' },
-            { domain: 'الديني والروحي', field: 'religiousIdentity', label: 'أساليب تعزيز الهوية الدينية' },
-            
-            { domain: 'الترفيهي والرياضي', field: 'recreationalActivities', label: 'مهارات تصميم الأنشطة الترفيهية' },
-            { domain: 'الترفيهي والرياضي', field: 'tripsOrganization', label: 'أساليب تنظيم الرحلات والمعسكرات' },
-            { domain: 'الترفيهي والرياضي', field: 'eventsOrganization', label: 'مهارات تنظيم المسابقات والفعاليات' },
-            { domain: 'الترفيهي والرياضي', field: 'leisureTime', label: 'أساليب استثمار أوقات الفراغ' },
-            { domain: 'الترفيهي والرياضي', field: 'sportsTraining', label: 'مهارات تدريب الألعاب الرياضية' }
-        ];
-        
-        // حساب متوسط الاحتياج لكل مهارة
-        const skillsWithAverage = skills.map(skill => ({
-            ...skill,
-            average: calculateFieldAverage(data, skill.field)
-        }));
-        
-        // ترتيب المهارات حسب متوسط الاحتياج
-        const sortedSkills = skillsWithAverage.sort((a, b) => b.average - a.average);
-        
-        // إضافة الصفوف إلى الجدول
-        sortedSkills.forEach((skill, index) => {
-            const row = document.createElement('tr');
-            
-            const domainCell = document.createElement('td');
-            domainCell.textContent = skill.domain;
-            row.appendChild(domainCell);
-            
-            const skillCell = document.createElement('td');
-            skillCell.textContent = skill.label;
-            row.appendChild(skillCell);
-            
-            const averageCell = document.createElement('td');
-            averageCell.textContent = skill.average.toFixed(2);
-            row.appendChild(averageCell);
-            
-            const rankCell = document.createElement('td');
-            rankCell.textContent = index + 1;
-            row.appendChild(rankCell);
-            
-            detailsTable.appendChild(row);
-        });
-    }
-    
-    // تحديث جدول المشاركين من المنظمة
-    const participantsTable = document.getElementById('organizationParticipantsTable');
-    if (participantsTable) {
-        participantsTable.innerHTML = '';
-        
-        data.forEach(item => {
-            const row = document.createElement('tr');
-            
-            const nameCell = document.createElement('td');
-            nameCell.textContent = item.fullName || '-';
-            row.appendChild(nameCell);
-            
-            const jobTitleCell = document.createElement('td');
-            jobTitleCell.textContent = item.jobTitle || '-';
-            row.appendChild(jobTitleCell);
-            
-            const experienceCell = document.createElement('td');
-            experienceCell.textContent = item.experience || '-';
-            row.appendChild(experienceCell);
-            
-            const ageGroupsCell = document.createElement('td');
-            ageGroupsCell.textContent = Array.isArray(item.ageGroups) ? item.ageGroups.join(', ') : '-';
-            row.appendChild(ageGroupsCell);
-            
-            const careTypesCell = document.createElement('td');
-            careTypesCell.textContent = Array.isArray(item.careTypes) ? item.careTypes.join(', ') : '-';
-            row.appendChild(careTypesCell);
-            
-            participantsTable.appendChild(row);
-        });
-    }
-}
-
-// عرض رسالة عدم وجود بيانات
-function showNoDataMessage() {
-    const containers = document.querySelectorAll('.chart-container');
-    containers.forEach(container => {
-        container.innerHTML = '<div class="alert alert-info">لا توجد بيانات متاحة</div>';
-    });
-}
-
-// عرض رسالة خطأ
-function showErrorMessage() {
-    const containers = document.querySelectorAll('.chart-container');
-    containers.forEach(container => {
-        container.innerHTML = '<div class="alert alert-danger">حدث خطأ أثناء استرجاع البيانات</div>';
-    });
-}
+<%- include('../public/js/dashboard.v2.full.js') %>
 </script>
-</body>
-</html>
