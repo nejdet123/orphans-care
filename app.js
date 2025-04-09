@@ -149,4 +149,32 @@ app.get('/api/survey-data', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`تم تشغيل الخادم على المنفذ ${PORT}`);
+    // صفحة لوحة التحكم
+app.get('/dashboard', async (req, res) => {
+    try {
+        // محاولة الحصول على بيانات الاستبيان (إذا كانت متوفرة)
+        let surveyData = [];
+        try {
+            surveyData = await Survey.find().sort({ createdAt: -1 });
+        } catch (dbError) {
+            console.error('خطأ في استرجاع بيانات الاستبيان:', dbError);
+            // استمر في عرض الصفحة حتى لو فشل الاتصال بقاعدة البيانات
+        }
+        
+        // عرض الصفحة مع أو بدون بيانات
+        res.render('dashboard', { 
+            title: 'لوحة التحكم', 
+            active: 'dashboard',
+            surveyData: surveyData || [] 
+        });
+    } catch (error) {
+        console.error('خطأ في عرض صفحة لوحة التحكم:', error);
+        res.status(500).render('error', { 
+            title: 'خطأ في الخادم', 
+            active: '',
+            message: 'حدث خطأ أثناء تحميل صفحة لوحة التحكم. يرجى المحاولة مرة أخرى لاحقاً.' 
+        });
+    }
+});
+
 });
