@@ -867,5 +867,3 @@ function showErrorMessage() {
         mainContent.insertBefore(alertDiv, mainContent.firstChild);
     }
 }
-console.log("عدد العناصر:", data.length);
-
