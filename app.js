@@ -1,20 +1,28 @@
+// استيراد الحزم المطلوبة
 const express = require('express');
-const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
-const expressLayouts = require('express-ejs-layouts');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
 const cors = require('cors');
-const { isLoggedIn } = require('./middleware/auth');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const expressLayouts = require('express-ejs-layouts');
 
+// استيراد الميدلوير والمسارات
+const { isLoggedIn, protect } = require('./middleware/auth');
+const { USER_ROLES } = require('./models/User');
+const surveyRoutes = require('./routes/surveyRoutes');
+const authRoutes = require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const questionRoutes = require('./routes/questionRoutes');
+
+// إعداد التطبيق
 const app = express();
 app.set('trust proxy', 1);
 
 // إعداد القالب
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
 app.use(expressLayouts);
 app.set('layout', 'layout');
 app.set('layout extractScripts', true);
@@ -29,27 +37,32 @@ app.use(cors({
   credentials: true
 }));
 
-// معالجات الطلبات
+// ميدلوير
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cookieParser());
-
-// إعداد الجلسات
 app.use(session({
   secret: process.env.SESSION_SECRET || 'orphans-care-session-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true, // مطلوب لأننا على HTTPS
-    sameSite: "none", // ضروري حتى يقبل الكوكي من دومين خارجي
-    maxAge: 24 * 60 * 60 * 1000 // 24 ساعة
+    secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
-
-// إضافة معلومات المستخدم إلى كل الصفحات
 app.use(isLoggedIn);
 
-// الاتصال بقاعدة البيانات
+// استقبال JSON
+app.use(express.json());
+
+// ربط المسارات
+app.use('/api', surveyRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/admin', adminRoutes);
+app.use('/api/questions', questionRoutes);
+
+// اتصال بقاعدة البيانات
 mongoose.connect('mongodb+srv://admin_orphans:Mon243253efdf@orphans-care.0i5s7pm.mongodb.net/orphans_care?retryWrites=true&w=majority')
   .then(() => console.log('✅ تم الاتصال بقاعدة البيانات'))
   .catch(err => console.error('❌ فشل الاتصال بقاعدة البيانات:', err));
@@ -67,66 +80,45 @@ const surveySchema = new mongoose.Schema({
   ageGroups: [String],
   careTypes: [String],
   previousTraining: String,
-
   psychologicalTrauma: Number,
   selfConfidence: Number,
   psychologicalCounseling: Number,
   socialIntegration: Number,
   effectiveCommunication: Number,
-
   modernTeaching: Number,
   learningDifficulties: Number,
   talentDevelopment: Number,
   motivationTechniques: Number,
   careerGuidance: Number,
-
   firstAid: Number,
   healthCare: Number,
   nutrition: Number,
   commonDiseases: Number,
   personalHygiene: Number,
-
   religiousValues: Number,
   teachingWorship: Number,
   spiritualAwareness: Number,
   religiousRules: Number,
   religiousIdentity: Number,
-
   recreationalActivities: Number,
   tripsOrganization: Number,
   eventsOrganization: Number,
   leisureTime: Number,
   sportsTraining: Number,
-
   otherTrainingAreas: String,
   suggestions: String,
-
   createdAt: { type: Date, default: Date.now }
 });
 const Survey = mongoose.model('Survey', surveySchema);
 
-// استيراد المسارات
-const authRoutes = require('./routes/authRoutes');
-const adminRoutes = require('./routes/adminRoutes');
-const questionRoutes = require('./routes/questionRoutes');
-
-// استخدام المسارات
-app.use('/api/auth', authRoutes);
-app.use('/admin', adminRoutes);
-app.use('/api/questions', questionRoutes);
-
-// مسارات صفحات المصادقة
+// صفحات المصادقة
 app.get('/auth/login', (req, res) => {
-  if (req.user) {
-    return res.redirect('/dashboard');
-  }
+  if (req.user) return res.redirect('/dashboard');
   res.render('auth/login', { title: 'تسجيل الدخول', layout: false });
 });
 
 app.get('/auth/register', (req, res) => {
-  if (req.user) {
-    return res.redirect('/dashboard');
-  }
+  if (req.user) return res.redirect('/dashboard');
   res.render('auth/register', { title: 'إنشاء حساب جديد', layout: false });
 });
 
@@ -142,19 +134,12 @@ app.get('/research', (req, res) => res.render('research', { title: 'البحث',
 app.get('/methodology', (req, res) => res.render('methodology', { title: 'منهجية التحليل', active: 'methodology' }));
 app.get('/model', (req, res) => res.render('model', { title: 'النموذج التدريبي', active: 'model' }));
 
-// الصفحات المحمية
-const { protect, authorize } = require('./middleware/auth');
-const { USER_ROLES } = require('./models/User');
-
+// الصفحة المحمية
 app.get('/dashboard', protect, (req, res) => {
-  res.render('dashboard', {
-    title: 'لوحة التحكم',
-    active: 'dashboard',
-    user: req.user
-  });
+  res.render('dashboard', { title: 'لوحة التحكم', active: 'dashboard', user: req.user });
 });
 
-// صفحة الشكر بعد تعبئة الاستبيان
+// صفحة الشكر بعد الاستبيان
 app.get('/thank-you', (req, res) => {
   res.send('<h2 style="text-align:center; margin-top:50px;">شكرًا لمشاركتك في الاستبيان!</h2><p style="text-align:center;"><a href="/" style="color:blue;">العودة إلى الصفحة الرئيسية</a></p>');
 });
@@ -171,7 +156,7 @@ app.post('/survey', async (req, res) => {
   }
 });
 
-// استرجاع بيانات الاستبيان (للمستخدمين المسجلين فقط)
+// API بيانات الاستبيان
 app.get('/api/survey-data', protect, async (req, res) => {
   try {
     let query = {};
