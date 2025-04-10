@@ -9,6 +9,7 @@ const cors = require('cors');
 const { isLoggedIn } = require('./middleware/auth');
 
 const app = express();
+app.set('trust proxy', 1);
 
 // إعداد القالب
 app.set('view engine', 'ejs');
