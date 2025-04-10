@@ -51,14 +51,17 @@ async function fetchSurveyData() {
 
 // تحديث الإحصائيات العامة
 function updateGeneralStatistics(data) {
-    console.log("✅ البيانات في updateGeneralStatistics:", data);
- console.log("✅ البيانات المستلمة:", data);
+    console.log("✅ البيانات المستلمة:", data);
     console.log("📊 عدد العناصر:", data.length);
-    // عدد المشاركين
+
     const totalParticipants = document.getElementById('totalParticipants');
     if (totalParticipants) {
         totalParticipants.textContent = data.length;
+    } else {
+        console.warn("⚠️ لم يتم العثور على العنصر totalParticipants");
     }
+}
+
     
     // عدد المنظمات
     const organizations = [...new Set(data.map(item => item.organization).filter(Boolean))];
