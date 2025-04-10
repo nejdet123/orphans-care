@@ -7,69 +7,43 @@ const JWT_SECRET = process.env.JWT_SECRET || 'orphans-care-secret-key-change-in-
 // التحقق من المصادقة
 exports.protect = async (req, res, next) => {
     try {
-        let token;
-        
-        // التحقق من وجود التوكن في الهيدر
-        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-            token = req.headers.authorization.split(' ')[1];
-        } else if (req.cookies && req.cookies.token) {
-            // أو في الكوكيز
-            token = req.cookies.token;
+        // ✅ التحقق من وجود جلسة فعالة
+        if (req.session && req.session.user) {
+            const user = await User.findById(req.session.user.id);
+
+            if (!user || !user.isActive) {
+                return res.status(401).render('auth/login', {
+                    title: 'تسجيل الدخول',
+                    layout: false,
+                    error: 'تم تعطيل الحساب أو غير موجود'
+                });
+            }
+
+            req.user = user;
+            res.locals.user = {
+                id: user._id,
+                username: user.username,
+                fullName: user.fullName,
+                role: user.role,
+                organization: user.organization
+            };
+
+            return next();
         }
-        
-        // إذا لم يوجد توكن
-        if (!token) {
-            return res.status(401).json({
-                success: false,
-                message: 'يرجى تسجيل الدخول للوصول إلى هذه الصفحة'
-            });
-        }
-        
-        // التحقق من صحة التوكن
-        const decoded = jwt.verify(token, JWT_SECRET);
-        
-        // البحث عن المستخدم
-        const user = await User.findById(decoded.id);
-        
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'المستخدم غير موجود'
-            });
-        }
-        
-        // التحقق من أن الحساب نشط
-        if (!user.isActive) {
-            return res.status(401).json({
-                success: false,
-                message: 'تم تعطيل هذا الحساب، يرجى التواصل مع المسؤول'
-            });
-        }
-        
-        // إضافة المستخدم إلى الطلب
-        req.user = user;
-        next();
+
+        // ❌ لا يوجد جلسة
+        return res.status(401).render('auth/login', {
+            title: 'تسجيل الدخول',
+            layout: false,
+            error: 'يرجى تسجيل الدخول للوصول إلى هذه الصفحة'
+        });
+
     } catch (error) {
-        console.error('❌ خطأ في التحقق من المصادقة:', error);
-        
-        if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({
-                success: false,
-                message: 'توكن غير صالح، يرجى تسجيل الدخول مرة أخرى'
-            });
-        }
-        
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({
-                success: false,
-                message: 'انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى'
-            });
-        }
-        
-        res.status(500).json({
-            success: false,
-            message: 'حدث خطأ أثناء التحقق من المصادقة',
-            error: error.message
+        console.error('❌ خطأ في التحقق من الجلسة:', error);
+        res.status(500).render('auth/login', {
+            title: 'تسجيل الدخول',
+            layout: false,
+            error: 'حدث خطأ أثناء التحقق من تسجيل الدخول'
         });
     }
 };
