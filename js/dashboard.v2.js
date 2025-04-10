@@ -1,6 +1,6 @@
 
 // ملف JavaScript للوحة التحكم - نسخة v2
-
+alert("📢 تم تحميل ملف dashboard.v2.js بنجاح!");
 document.addEventListener('DOMContentLoaded', function() {
     console.log("📥 بدء تحميل بيانات الاستبيان...");
     fetchSurveyData();
