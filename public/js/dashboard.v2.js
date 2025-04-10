@@ -42,6 +42,7 @@ async function fetchSurveyData() {
         } else {
             showNoDataMessage();
         }
+        return data;
     } catch (error) {
         console.error('❌ خطأ في استرجاع بيانات الاستبيان:', error);
         showErrorMessage();
