@@ -82,69 +82,62 @@ exports.login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // التحقق من وجود اسم المستخدم وكلمة المرور
         if (!username || !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'يرجى إدخال اسم المستخدم وكلمة المرور'
+            return res.status(400).render('auth/login', {
+                title: 'تسجيل الدخول',
+                layout: false,
+                error: 'يرجى إدخال اسم المستخدم وكلمة المرور'
             });
         }
 
-        // البحث عن المستخدم
         const user = await User.findOne({ username }).select('+password');
         if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: 'اسم المستخدم أو كلمة المرور غير صحيحة'
+            return res.status(401).render('auth/login', {
+                title: 'تسجيل الدخول',
+                layout: false,
+                error: 'اسم المستخدم أو كلمة المرور غير صحيحة'
             });
         }
 
-        // التحقق من كلمة المرور
         const isPasswordCorrect = await user.comparePassword(password);
         if (!isPasswordCorrect) {
-            return res.status(401).json({
-                success: false,
-                message: 'اسم المستخدم أو كلمة المرور غير صحيحة'
+            return res.status(401).render('auth/login', {
+                title: 'تسجيل الدخول',
+                layout: false,
+                error: 'اسم المستخدم أو كلمة المرور غير صحيحة'
             });
         }
 
-        // التحقق من أن الحساب نشط
         if (!user.isActive) {
-            return res.status(401).json({
-                success: false,
-                message: 'تم تعطيل هذا الحساب، يرجى التواصل مع المسؤول'
+            return res.status(401).render('auth/login', {
+                title: 'تسجيل الدخول',
+                layout: false,
+                error: 'تم تعطيل هذا الحساب، يرجى التواصل مع المسؤول'
             });
         }
 
-        // تحديث تاريخ آخر تسجيل دخول
+        // حفظ الجلسة
+        req.session.user = {
+            id: user._id,
+            role: user.role,
+            email: user.email,
+            organizationCode: user.organizationCode
+        };
+
         user.lastLogin = Date.now();
         await user.save({ validateBeforeSave: false });
 
-        // إنشاء توكن JWT
-        const token = createToken(user._id);
-
-        res.status(200).json({
-            success: true,
-            message: 'تم تسجيل الدخول بنجاح',
-            token,
-            user: {
-                id: user._id,
-                username: user.username,
-                email: user.email,
-                fullName: user.fullName,
-                role: user.role,
-                organization: user.organization
-            }
-        });
+        res.redirect('/dashboard');
     } catch (error) {
         console.error('❌ خطأ في تسجيل الدخول:', error);
-        res.status(500).json({
-            success: false,
-            message: 'حدث خطأ أثناء تسجيل الدخول',
-            error: error.message
+        res.status(500).render('auth/login', {
+            title: 'تسجيل الدخول',
+            layout: false,
+            error: 'حدث خطأ أثناء تسجيل الدخول، يرجى المحاولة لاحقًا.'
         });
     }
 };
+
 
 // الحصول على معلومات المستخدم الحالي
 exports.getMe = async (req, res) => {
