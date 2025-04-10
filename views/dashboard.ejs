@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة التحكم | تقييم الاحتياجات التدريبية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS أو أي تنسيق تستخدمه -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <style>
+        body { direction: rtl; text-align: right; }
+        .nav-pills .nav-link.active { background-color: #0d6efd; }
+        .chart-container { height: 400px; margin-bottom: 40px; }
+        .table th, .table td { vertical-align: middle; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">لوحة التحكم</h1>
+        <p class="text-center text-muted">تحليل وعرض نتائج استبيان تقييم الاحتياجات التدريبية</p>
+
+        <div class="card p-4 shadow-sm">
+            <ul class="nav nav-pills justify-content-center mb-4" id="tabs">
+                <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#summary">ملخص النتائج</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#psych">المجال النفسي والاجتماعي</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#edu">المجال التربوي والتعليمي</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#med">المجال الصحي والطبي</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#rel">المجال الديني والروحي</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#rec">المجال الترفيهي والرياضي</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#org">تقارير المنظمات</a></li>
+                <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#suggestions">الاقتراحات والملاحظات</a></li>
+            </ul>
+
+            <div class="tab-content" id="tabsContent">
+                <!-- قسم ملخص النتائج -->
+                <div class="tab-pane fade show active" id="summary">
+                    <h4>ملخص نتائج الاستبيان</h4>
+                    <p>عدد المشاركين: <span id="totalParticipants">--</span></p>
+                    <p>عدد المنظمات: <span id="totalOrganizations">--</span></p>
+                    <p>نسبة من تلقوا تدريبًا سابقًا: <span id="previousTrainingPercentage">--</span></p>
+                    <p>أعلى مجال احتياجًا: <span id="highestNeedDomain">--</span></p>
+                    <p>أقل مجال احتياجًا: <span id="lowestNeedDomain">--</span></p>
+
+                    <div class="chart-container">
+                        <canvas id="participantsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="domainsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="experienceChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="countriesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- تقارير المنظمات -->
+                <div class="tab-pane fade" id="org">
+                    <h4 class="mb-3">تقرير تفصيلي حسب المنظمات</h4>
+                    <div class="mb-3">
+                        <label for="organizationFilter" class="form-label">اختر منظمة:</label>
+                        <select id="organizationFilter" class="form-select"></select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="organizationDomainsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="organizationJobsChart"></canvas>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>المجال</th>
+                                <th>المهارة</th>
+                                <th>المتوسط</th>
+                                <th>الترتيب</th>
+                            </tr>
+                        </thead>
+                        <tbody id="organizationDetailsTable">
+                        </tbody>
+                    </table>
+
+                    <h4 class="mt-5">المشاركون من المنظمة</h4>
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>الاسم</th>
+                                <th>المسمى الوظيفي</th>
+                                <th>سنوات الخبرة</th>
+                                <th>الفئات العمرية</th>
+                                <th>أنواع الرعاية</th>
+                            </tr>
+                        </thead>
+                        <tbody id="organizationParticipantsTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مكتبات JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/dashboard.v2.js"></script>
+</body>
+</html>

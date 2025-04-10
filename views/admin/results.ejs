@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتائج الاستبيانات | لوحة التحكم</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+            color: white;
+        }
+        .sidebar-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid #495057;
+        }
+        .sidebar-menu {
+            padding: 0;
+            list-style: none;
+        }
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        .sidebar-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            color: white;
+            background-color: #495057;
+        }
+        .sidebar-menu i {
+            margin-left: 10px;
+        }
+        .main-content {
+            margin-right: 250px;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 15px 20px;
+        }
+        .chart-container {
+            height: 400px;
+            margin-bottom: 30px;
+        }
+        .domain-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .domain-psychological {
+            background-color: #4e73df;
+            color: white;
+        }
+        .domain-educational {
+            background-color: #1cc88a;
+            color: white;
+        }
+        .domain-medical {
+            background-color: #36b9cc;
+            color: white;
+        }
+        .domain-religious {
+            background-color: #f6c23e;
+            color: white;
+        }
+        .domain-recreational {
+            background-color: #e74a3b;
+            color: white;
+        }
+        .filter-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- القائمة الجانبية -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h4>لوحة التحكم</h4>
+            <p class="text-muted">مرحباً، <span id="userFullName">المستخدم</span></p>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="/dashboard"><i class="fas fa-chart-line"></i> الإحصائيات</a></li>
+            <li><a href="/admin/surveys"><i class="fas fa-clipboard-list"></i> إدارة الاستبيانات</a></li>
+            <li><a href="/admin/questions"><i class="fas fa-question-circle"></i> إدارة الأسئلة</a></li>
+            <li><a href="/admin/results" class="active"><i class="fas fa-chart-bar"></i> نتائج الاستبيانات</a></li>
+            <li><a href="/admin/users"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
+            <li><a href="/admin/organizations"><i class="fas fa-building"></i> إدارة المنظمات</a></li>
+            <li><a href="/admin/reports"><i class="fas fa-file-alt"></i> التقارير</a></li>
+            <li><a href="/profile"><i class="fas fa-user"></i> الملف الشخصي</a></li>
+            <li><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+        </ul>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <h1 class="mb-4">نتائج الاستبيانات</h1>
+            
+            <!-- قسم الفلاتر -->
+            <div class="filter-section">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="organizationFilter" class="form-label">المنظمة</label>
+                        <select class="form-select" id="organizationFilter">
+                            <option value="all" selected>جميع المنظمات</option>
+                            <!-- سيتم ملء هذه القائمة ديناميكياً -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="countryFilter" class="form-label">الدولة</label>
+                        <select class="form-select" id="countryFilter">
+                            <option value="all" selected>جميع الدول</option>
+                            <!-- سيتم ملء هذه القائمة ديناميكياً -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="jobTitleFilter" class="form-label">المسمى الوظيفي</label>
+                        <select class="form-select" id="jobTitleFilter">
+                            <option value="all" selected>جميع المسميات</option>
+                            <!-- سيتم ملء هذه القائمة ديناميكياً -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="dateRangeFilter" class="form-label">الفترة الزمنية</label>
+                        <select class="form-select" id="dateRangeFilter">
+                            <option value="all" selected>جميع الفترات</option>
+                            <option value="last_week">آخر أسبوع</option>
+                            <option value="last_month">آخر شهر</option>
+                            <option value="last_3_months">آخر 3 أشهر</option>
+                            <option value="last_6_months">آخر 6 أشهر</option>
+                            <option value="last_year">آخر سنة</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-end">
+                        <button class="btn btn-primary" id="applyFiltersBtn">
+                            <i class="fas fa-filter"></i> تطبيق الفلاتر
+                        </button>
+                        <button class="btn btn-secondary" id="resetFiltersBtn">
+                            <i class="fas fa-undo"></i> إعادة تعيين
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ملخص النتائج -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">ملخص النتائج</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <h5>عدد المشاركين</h5>
+                                            <h2 id="totalParticipants">0</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <h5>عدد المنظمات</h5>
+                                            <h2 id="totalOrganizations">0</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <h5>نسبة التدريب السابق</h5>
+                                            <h2 id="previousTrainingPercentage">0%</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <h5>متوسط الاحتياج</h5>
+                                            <h2 id="averageNeed">0</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h5>أعلى مجال احتياجاً</h5>
+                                    <div class="chart-container">
+                                        <canvas id="domainsChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>توزيع المشاركين حسب المسمى الوظيفي</h5>
+                                    <div class="chart-container">
+                                        <canvas id="jobTitlesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>توزيع المشاركين حسب الدول</h5>
+                                    <div class="chart-container">
+                                        <canvas id="countriesChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>توزيع المشاركين حسب سنوات الخبرة</h5>
+                                    <div class="chart-container">
+                                        <canvas id="experienceChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تفاصيل المجالات -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">تفاصيل المجالات</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="domainTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="psychological-tab" data-bs-toggle="tab" data-bs-target="#psychological" type="button" role="tab">المجال النفسي والاجتماعي</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="educational-tab" data-bs-toggle="tab" data-bs-target="#educational" type="button" role="tab">المجال التربوي والتعليمي</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="medical-tab" data-bs-toggle="tab" data-bs-target="#medical" type="button" role="tab">المجال الصحي والطبي</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="religious-tab" data-bs-toggle="tab" data-bs-target="#religious" type="button" role="tab">المجال الديني والروحي</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="recreational-tab" data-bs-toggle="tab" data-bs-target="#recreational" type="button" role="tab">المجال الترفيهي والرياضي</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content p-3" id="domainTabsContent">
+                                <div class="tab-pane fade show active" id="psychological" role="tabpanel">
+                                    <div class="chart-container">
+                                        <canvas id="psychologicalChart"></canvas>
+                                    </div>
+                                    <div class="table-responsive mt-4">
+                                        <table class="table table-bordered">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>المهارة</th>
+                                                    <th>المتوسط</th>
+                                                    <th>الترتيب</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="psychologicalTable">
+                                                <!-- سيتم ملء هذا الجدول ديناميكياً -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="educational" role="tabpanel">
+                                    <div class="chart-container">
+                                        <canvas id="educationalChart"></canvas>
+                                    </div>
+                                    <div class="table-responsive mt-4">
+                                        <table class="table table-bordered">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>المهارة</th>
+                                                    <th>المتوسط</th>
+                                                    <th>الترتيب</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="educationalTable">
+                                                <!-- سيتم ملء هذا الجدول ديناميكياً -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- باقي علامات التبويب للمجالات الأخرى -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تقارير المنظمات -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">تقارير المنظمات</h5>
+                            <button class="btn btn-primary" id="exportReportBtn">
+                                <i class="fas fa-file-export"></i> تصدير التقرير
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="organizationReportFilter" class="form-label">اختر منظمة:</label>
+                                <select id="organizationReportFilter" class="form-select">
+                                    <!-- سيتم ملء هذه القائمة ديناميكياً -->
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="organizationDomainsChart"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="organizationJobsChart"></canvas>
+                            </div>
+                            <div class="table-responsive mt-4">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>المجال</th>
+                                            <th>المهارة</th>
+                                            <th>المتوسط</th>
+                                            <th>الترتيب</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="organizationDetailsTable">
+                                        <!-- سيتم ملء هذا الجدول ديناميكياً -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // تعريف المجالات والمهارات
+        const domains = {
+            psychological: {
+                name: 'المجال النفسي والاجتماعي',
+                color: '#4e73df',
+                skills: {
+                    psychologicalTrauma: 'مهارات التعامل مع الصدمات النفسية',
+                    selfConfidence: 'أساليب بناء الثقة بالنفس وتقدير الذات',
+                    psychologicalCounseling: 'مهارات الإرشاد النفسي',
+                    socialIntegration: 'استراتيجيات دمج الأيتام في المجتمع',
+                    effectiveCommunication: 'مهارات التواصل الفعال'
+                }
+            },
+            educational: {
+                name: 'المجال التربوي والتعليمي',
+                color: '#1cc88a',
+                skills: {
+                    modernTeaching: 'أساليب التعليم الحديثة',
+                    learningDifficulties: 'استراتيجيات التعامل مع صعوبات التعلم',
+                    talentDevelopment: 'مهارات اكتشاف وتنمية المواهب',
+                    motivationTechniques: 'أساليب التحفيز وتعزيز الدافعية',
+                    careerGuidance: 'مهارات التوجيه المهني'
+                }
+            },
+            medical: {
+                name: 'المجال الصحي والطبي',
+                color: '#36b9cc',
+                skills: {
+                    firstAid: 'أساسيات الإسعافات الأولية',
+                    healthCare: 'مهارات الرعاية الصحية الأساسية',
+                    nutrition: 'أساليب التغذية السليمة',
+                    commonDiseases: 'مهارات التعامل مع الأمراض الشائعة',
+                    personalHygiene: 'أساليب تعزيز النظافة الشخصية'
+                }
+            },
+            religious: {
+                name: 'المجال الديني والروحي',
+                color: '#f6c23e',
+                skills: {
+                    religiousValues: 'أساليب غرس القيم الدينية',
+                    teachingWorship: 'مهارات تعليم العبادات بطريقة محببة',
+                    spiritualAwareness: 'أساليب تنمية الوازع الديني',
+                    religiousRules: 'مهارات ربط الأحكام الشرعية بالحياة',
+                    religiousIdentity: 'أساليب تعزيز الهوية الدينية'
+                }
+            },
+            recreational: {
+                name: 'المجال الترفيهي والرياضي',
+                color: '#e74a3b',
+                skills: {
+                    recreationalActivities: 'تنظيم الأنشطة الترفيهية',
+                    tripsOrganization: 'مهارات تنظيم الرحلات',
+                    eventsOrganization: 'تنظيم الفعاليات والمناسبات',
+                    leisureTime: 'استثمار أوقات الفراغ',
+                    sportsTraining: 'أساسيات التدريب الرياضي'
+                }
+            }
+        };
+
+        // تحميل بيانات المستخدم والاستبيانات
+        document.addEventListener('DOMContentLoaded', function() {
+            // عرض اسم المستخدم في القائمة الجانبية
+            const user = JSON.parse(localStorage.getItem('user')) || {};
+            document.getElementById('userFullName').textContent = user.fullName || 'المستخدم';
+            
+            // تحميل بيانات الاستبيانات
+            loadSurveyData();
+            
+            // إضافة مستمعي الأحداث
+            setupEventListeners();
+        });
+
+        // تحميل بيانات الاستبيانات من الخادم
+        async function loadSurveyData() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/auth/login';
+                    return;
+                }
+                
+                const response = await fetch('/api/survey-data', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('فشل في استرجاع البيانات');
+                }
+                
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    // تحديث الإحصائيات العامة
+                    updateGeneralStatistics(data);
+                    
+                    // تحديث الرسوم البيانية
+                    createCharts(data);
+                    
+                    // تحديث الجداول
+                    updateTables(data);
+                    
+                    // تحديث قوائم الفلاتر
+                    updateFilterLists(data);
+                } else {
+                    showNoDataMessage();
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل بيانات الاستبيانات:', error);
+                showErrorMessage();
+            }
+        }
+
+        // تحديث الإحصائيات العامة
+        function updateGeneralStatistics(data) {
+            // عدد المشاركين
+            document.getElementById('totalParticipants').textContent = data.length;
+            
+            // عدد المنظمات
+            const organizations = [...new Set(data.map(item => item.organization))];
+            document.getElementById('totalOrganizations').textContent = organizations.length;
+            
+            // نسبة المشاركين الذين سبق لهم الحصول على تدريب
+            const previousTrainingCount = data.filter(item => item.previousTraining === 'نعم').length;
+            const previousTrainingPercentage = ((previousTrainingCount / data.length) * 100).toFixed(1);
+            document.getElementById('previousTrainingPercentage').textContent = `${previousTrainingPercentage}%`;
+            
+            // حساب متوسط الاحتياج العام
+            let totalSum = 0;
+            let totalCount = 0;
+            
+            data.forEach(item => {
+                for (const domain in domains) {
+                    for (const skill in domains[domain].skills) {
+                        if (item[skill]) {
+                            totalSum += parseInt(item[skill]);
+                            totalCount++;
+                        }
+                    }
+                }
+            });
+            
+            const averageNeed = totalCount > 0 ? (totalSum / totalCount).toFixed(2) : 0;
+            document.getElementById('averageNeed').textContent = averageNeed;
+        }
+
+        // إنشاء الرسوم البيانية
+        function createCharts(data) {
+            // رسم بياني لمتوسط الاحتياج التدريبي حسب المجالات
+            createDomainsChart(data);
+            
+            // رسم بياني لتوزيع المشاركين حسب المسمى الوظيفي
+            createJobTitlesChart(data);
+            
+            // رسم بياني لتوزيع المشاركين حسب الدول
+            createCountriesChart(data);
+            
+            // رسم بياني لتوزيع المشاركين حسب سنوات الخبرة
+            createExperienceChart(data);
+            
+            // رسوم بيانية للمجالات المختلفة
+            createDomainCharts(data);
+        }
+
+        // رسم بياني لمتوسط الاحتياج التدريبي حسب المجالات
+        function createDomainsChart(data) {
+            const domainAverages = {};
+            
+            for (const domain in domains) {
+                const skills = Object.keys(domains[domain].skills);
+                domainAverages[domain] = calculateDomainAverage(data, skills);
+            }
+            
+            const labels = Object.keys(domainAverages).map(key => domains[key].name);
+            const values = Object.values(domainAverages);
+            const colors = Object.keys(domainAverages).map(key => domains[key].color);
+            
+            const ctx = document.getElementById('domainsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'متوسط الاحتياج التدريبي',
+                        data: values,
+                        backgroundColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5
+                        }
+                    }
+                }
+            });
+        }
+
+        // حساب متوسط الاحتياج لمجال معين
+        function calculateDomainAverage(data, fields) {
+            let sum = 0;
+            let count = 0;
+            
+            data.forEach(item => {
+                fields.forEach(field => {
+                    if (item[field]) {
+                        sum += parseInt(item[field]);
+                        count++;
+                    }
+                });
+            });
+            
+            return count > 0 ? sum / count : 0;
+        }
+
+        // رسم بياني لتوزيع المشاركين حسب المسمى الوظيفي
+        function createJobTitlesChart(data) {
+            const jobTitles = {};
+            
+            data.forEach(item => {
+                if (item.jobTitle) {
+                    jobTitles[item.jobTitle] = (jobTitles[item.jobTitle] || 0) + 1;
+                }
+            });
+            
+            const labels = Object.keys(jobTitles);
+            const values = Object.values(jobTitles);
+            
+            const ctx = document.getElementById('jobTitlesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#4e73df',
+                            '#1cc88a',
+                            '#36b9cc',
+                            '#f6c23e',
+                            '#e74a3b',
+                            '#858796'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        // رسم بياني لتوزيع المشاركين حسب الدول
+        function createCountriesChart(data) {
+            const countries = {};
+            
+            data.forEach(item => {
+                if (item.country) {
+                    countries[item.country] = (countries[item.country] || 0) + 1;
+                }
+            });
+            
+            const labels = Object.keys(countries);
+            const values = Object.values(countries);
+            
+            const ctx = document.getElementById('countriesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#4e73df',
+                            '#1cc88a',
+                            '#36b9cc',
+                            '#f6c23e',
+                            '#e74a3b',
+                            '#858796'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        // رسم بياني لتوزيع المشاركين حسب سنوات الخبرة
+        function createExperienceChart(data) {
+            const experience = {};
+            
+            data.forEach(item => {
+                if (item.experience) {
+                    experience[item.experience] = (experience[item.experience] || 0) + 1;
+                }
+            });
+            
+            const labels = Object.keys(experience);
+            const values = Object.values(experience);
+            
+            const ctx = document.getElementById('experienceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#4e73df',
+                            '#1cc88a',
+                            '#36b9cc',
+                            '#f6c23e',
+                            '#e74a3b'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        // رسوم بيانية للمجالات المختلفة
+        function createDomainCharts(data) {
+            // المجال النفسي والاجتماعي
+            createDomainChart(data, 'psychological', 'psychologicalChart', 'psychologicalTable');
+            
+            // المجال التربوي والتعليمي
+            createDomainChart(data, 'educational', 'educationalChart', 'educationalTable');
+            
+            // باقي المجالات...
+        }
+
+        // رسم بياني لمجال معين
+        function createDomainChart(data, domainKey, chartId, tableId) {
+            const domain = domains[domainKey];
+            const skills = domain.skills;
+            
+            const skillAverages = {};
+            
+            for (const skill in skills) {
+                skillAverages[skill] = calculateFieldAverage(data, skill);
+            }
+            
+            const labels = Object.keys(skillAverages).map(key => skills[key]);
+            const values = Object.values(skillAverages);
+            
+            const ctx = document.getElementById(chartId).getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'متوسط الاحتياج التدريبي',
+                        data: values,
+                        backgroundColor: domain.color,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5
+                        }
+                    }
+                }
+            });
+            
+            // تحديث الجدول
+            updateDomainTable(skillAverages, skills, tableId);
+        }
+
+        // حساب متوسط الاحتياج لمهارة معينة
+        function calculateFieldAverage(data, field) {
+            let sum = 0;
+            let count = 0;
+            
+            data.forEach(item => {
+                if (item[field]) {
+                    sum += parseInt(item[field]);
+                    count++;
+                }
+            });
+            
+            return count > 0 ? sum / count : 0;
+        }
+
+        // تحديث جدول مجال معين
+        function updateDomainTable(skillAverages, skills, tableId) {
+            const tableBody = document.getElementById(tableId);
+            tableBody.innerHTML = '';
+            
+            // ترتيب المهارات حسب المتوسط (تنازلياً)
+            const sortedSkills = Object.keys(skillAverages).sort((a, b) => skillAverages[b] - skillAverages[a]);
+            
+            sortedSkills.forEach((skill, index) => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${skills[skill]}</td>
+                    <td>${skillAverages[skill].toFixed(2)}</td>
+                    <td>${index + 1}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // تحديث الجداول
+        function updateTables(data) {
+            // تم تنفيذه في الدوال السابقة
+        }
+
+        // تحديث قوائم الفلاتر
+        function updateFilterLists(data) {
+            // المنظمات
+            const organizations = [...new Set(data.map(item => item.organization).filter(Boolean))];
+            const organizationFilter = document.getElementById('organizationFilter');
+            const organizationReportFilter = document.getElementById('organizationReportFilter');
+            
+            organizations.forEach(org => {
+                const option = document.createElement('option');
+                option.value = org;
+                option.textContent = org;
+                organizationFilter.appendChild(option);
+                
+                const reportOption = option.cloneNode(true);
+                organizationReportFilter.appendChild(reportOption);
+            });
+            
+            // الدول
+            const countries = [...new Set(data.map(item => item.country).filter(Boolean))];
+            const countryFilter = document.getElementById('countryFilter');
+            
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countryFilter.appendChild(option);
+            });
+            
+            // المسميات الوظيفية
+            const jobTitles = [...new Set(data.map(item => item.jobTitle).filter(Boolean))];
+            const jobTitleFilter = document.getElementById('jobTitleFilter');
+            
+            jobTitles.forEach(title => {
+                const option = document.createElement('option');
+                option.value = title;
+                option.textContent = title;
+                jobTitleFilter.appendChild(option);
+            });
+        }
+
+        // إعداد مستمعي الأحداث
+        function setupEventListeners() {
+            // تطبيق الفلاتر
+            document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
+            
+            // إعادة تعيين الفلاتر
+            document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
+            
+            // تغيير المنظمة في تقارير المنظمات
+            document.getElementById('organizationReportFilter').addEventListener('change', updateOrganizationReport);
+            
+            // تصدير التقرير
+            document.getElementById('exportReportBtn').addEventListener('click', exportReport);
+        }
+
+        // تطبيق الفلاتر
+        function applyFilters() {
+            // يمكن تنفيذ هذه الوظيفة لاحقاً
+            alert('سيتم تنفيذ هذه الوظيفة قريباً');
+        }
+
+        // إعادة تعيين الفلاتر
+        function resetFilters() {
+            document.getElementById('organizationFilter').value = 'all';
+            document.getElementById('countryFilter').value = 'all';
+            document.getElementById('jobTitleFilter').value = 'all';
+            document.getElementById('dateRangeFilter').value = 'all';
+        }
+
+        // تحديث تقرير المنظمة
+        function updateOrganizationReport() {
+            // يمكن تنفيذ هذه الوظيفة لاحقاً
+            alert('سيتم تنفيذ هذه الوظيفة قريباً');
+        }
+
+        // تصدير التقرير
+        function exportReport() {
+            // يمكن تنفيذ هذه الوظيفة لاحقاً
+            alert('سيتم تنفيذ هذه الوظيفة قريباً');
+        }
+
+        // عرض رسالة عدم وجود بيانات
+        function showNoDataMessage() {
+            const mainContent = document.querySelector('.main-content');
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-info';
+            alertDiv.textContent = 'لا توجد بيانات استبيانات متاحة حالياً.';
+            
+            mainContent.insertBefore(alertDiv, mainContent.firstChild);
+        }
+
+        // عرض رسالة خطأ
+        function showErrorMessage() {
+            const mainContent = document.querySelector('.main-content');
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger';
+            alertDiv.textContent = 'حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.';
+            
+            mainContent.insertBefore(alertDiv, mainContent.firstChild);
+        }
+    </script>
+</body>
+</html>

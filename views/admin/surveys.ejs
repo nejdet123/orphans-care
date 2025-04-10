@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الاستبيانات | لوحة التحكم</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+            color: white;
+        }
+        .sidebar-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid #495057;
+        }
+        .sidebar-menu {
+            padding: 0;
+            list-style: none;
+        }
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        .sidebar-menu a {
+            display: block;
+            padding: 10px 15px;
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            color: white;
+            background-color: #495057;
+        }
+        .sidebar-menu i {
+            margin-left: 10px;
+        }
+        .main-content {
+            margin-right: 250px;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 15px 20px;
+        }
+        .btn-primary {
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+        .btn-primary:hover {
+            background-color: #375bcc;
+            border-color: #375bcc;
+        }
+        .btn-danger {
+            background-color: #e74a3b;
+            border-color: #e74a3b;
+        }
+        .btn-danger:hover {
+            background-color: #d52a1a;
+            border-color: #d52a1a;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .domain-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .domain-psychological {
+            background-color: #4e73df;
+            color: white;
+        }
+        .domain-educational {
+            background-color: #1cc88a;
+            color: white;
+        }
+        .domain-medical {
+            background-color: #36b9cc;
+            color: white;
+        }
+        .domain-religious {
+            background-color: #f6c23e;
+            color: white;
+        }
+        .domain-recreational {
+            background-color: #e74a3b;
+            color: white;
+        }
+        .modal-header, .modal-footer {
+            border: none;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- القائمة الجانبية -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h4>لوحة التحكم</h4>
+            <p class="text-muted">مرحباً، <span id="userFullName">المستخدم</span></p>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="/dashboard"><i class="fas fa-chart-line"></i> الإحصائيات</a></li>
+            <li><a href="/admin/surveys" class="active"><i class="fas fa-clipboard-list"></i> إدارة الاستبيانات</a></li>
+            <li><a href="/admin/questions"><i class="fas fa-question-circle"></i> إدارة الأسئلة</a></li>
+            <li><a href="/admin/users"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
+            <li><a href="/admin/organizations"><i class="fas fa-building"></i> إدارة المنظمات</a></li>
+            <li><a href="/admin/reports"><i class="fas fa-file-alt"></i> التقارير</a></li>
+            <li><a href="/profile"><i class="fas fa-user"></i> الملف الشخصي</a></li>
+            <li><a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+        </ul>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <h1 class="mb-4">إدارة الاستبيانات</h1>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">قائمة الاستبيانات</h5>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSurveyModal">
+                                <i class="fas fa-plus"></i> إضافة استبيان جديد
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>الاسم</th>
+                                            <th>المنظمة</th>
+                                            <th>تاريخ الإنشاء</th>
+                                            <th>الإجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="surveysTableBody">
+                                        <!-- سيتم ملء هذا الجدول بالبيانات من JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="noSurveysMessage" class="text-center p-4 d-none">
+                                <p class="text-muted">لا توجد استبيانات متاحة حالياً</p>
+                            </div>
+                            <div id="loadingSpinner" class="text-center p-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">جاري التحميل...</span>
+                                </div>
+                                <p class="mt-2">جاري تحميل البيانات...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">إدارة الأسئلة</h5>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
+                                <i class="fas fa-plus"></i> إضافة سؤال جديد
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="questionsTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="psychological-tab" data-bs-toggle="tab" data-bs-target="#psychological" type="button" role="tab">المجال النفسي والاجتماعي</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="educational-tab" data-bs-toggle="tab" data-bs-target="#educational" type="button" role="tab">المجال التربوي والتعليمي</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="medical-tab" data-bs-toggle="tab" data-bs-target="#medical" type="button" role="tab">المجال الصحي والطبي</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="religious-tab" data-bs-toggle="tab" data-bs-target="#religious" type="button" role="tab">المجال الديني والروحي</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="recreational-tab" data-bs-toggle="tab" data-bs-target="#recreational" type="button" role="tab">المجال الترفيهي والرياضي</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content p-3" id="questionsTabContent">
+                                <div class="tab-pane fade show active" id="psychological" role="tabpanel">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>الترتيب</th>
+                                                    <th>نص السؤال</th>
+                                                    <th>المجال الفرعي</th>
+                                                    <th>الحالة</th>
+                                                    <th>الإجراءات</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="psychologicalQuestionsTableBody">
+                                                <!-- سيتم ملء هذا الجدول بالبيانات من JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="educational" role="tabpanel">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>الترتيب</th>
+                                                    <th>نص السؤال</th>
+                                                    <th>المجال الفرعي</th>
+                                                    <th>الحالة</th>
+                                                    <th>الإجراءات</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="educationalQuestionsTableBody">
+                                                <!-- سيتم ملء هذا الجدول بالبيانات من JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- باقي علامات التبويب للمجالات الأخرى -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة سؤال جديد -->
+    <div class="modal fade" id="addQuestionModal" tabindex="-1" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addQuestionModalLabel">إضافة سؤال جديد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addQuestionForm">
+                        <div class="mb-3">
+                            <label for="questionText" class="form-label">نص السؤال</label>
+                            <textarea class="form-control" id="questionText" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="questionDomain" class="form-label">المجال الرئيسي</label>
+                                <select class="form-select" id="questionDomain" required>
+                                    <option value="" selected disabled>اختر المجال الرئيسي</option>
+                                    <option value="psychological">المجال النفسي والاجتماعي</option>
+                                    <option value="educational">المجال التربوي والتعليمي</option>
+                                    <option value="medical">المجال الصحي والطبي</option>
+                                    <option value="religious">المجال الديني والروحي</option>
+                                    <option value="recreational">المجال الترفيهي والرياضي</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="questionField" class="form-label">المجال الفرعي</label>
+                                <select class="form-select" id="questionField" required>
+                                    <option value="" selected disabled>اختر المجال الفرعي</option>
+                                    <!-- سيتم ملء هذه القائمة ديناميكياً بناءً على اختيار المجال الرئيسي -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="questionOrder" class="form-label">الترتيب</label>
+                                <input type="number" class="form-control" id="questionOrder" min="0" value="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label d-block">الحالة</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="questionStatus" id="questionStatusActive" value="true" checked>
+                                    <label class="form-check-label" for="questionStatusActive">نشط</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="questionStatus" id="questionStatusInactive" value="false">
+                                    <label class="form-check-label" for="questionStatusInactive">غير نشط</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary" id="saveQuestionBtn">حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل سؤال -->
+    <div class="modal fade" id="editQuestionModal" tabindex="-1" aria-labelledby="editQuestionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editQuestionModalLabel">تعديل سؤال</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editQuestionForm">
+                        <input type="hidden" id="editQuestionId">
+                        <div class="mb-3">
+                            <label for="editQuestionText" class="form-label">نص السؤال</label>
+                            <textarea class="form-control" id="editQuestionText" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editQuestionDomain" class="form-label">المجال الرئيسي</label>
+                                <select class="form-select" id="editQuestionDomain" required>
+                                    <option value="" selected disabled>اختر المجال الرئيسي</option>
+                                    <option value="psychological">المجال النفسي والاجتماعي</option>
+                                    <option value="educational">المجال التربوي والتعليمي</option>
+                                    <option value="medical">المجال الصحي والطبي</option>
+                                    <option value="religious">المجال الديني والروحي</option>
+                                    <option value="recreational">المجال الترفيهي والرياضي</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editQuestionField" class="form-label">المجال الفرعي</label>
+                                <select class="form-select" id="editQuestionField" required>
+                                    <option value="" selected disabled>اختر المجال الفرعي</option>
+                                    <!-- سيتم ملء هذه القائمة ديناميكياً بناءً على اختيار المجال الرئيسي -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editQuestionOrder" class="form-label">الترتيب</label>
+                                <input type="number" class="form-control" id="editQuestionOrder" min="0" value="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label d-block">الحالة</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="editQuestionStatus" id="editQuestionStatusActive" value="true">
+                                    <label class="form-check-label" for="editQuestionStatusActive">نشط</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="editQuestionStatus" id="editQuestionStatusInactive" value="false">
+                                    <label class="form-check-label" for="editQuestionStatusInactive">غير نشط</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary" id="updateQuestionBtn">حفظ التغييرات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تأكيد الحذف -->
+    <div class="modal fade" id="deleteQuestionModal" tabindex="-1" aria-labelledby="deleteQuestionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteQuestionModalLabel">تأكيد الحذف</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                </div>
+                <div class="modal-body">
+                    <p>هل أنت متأكد من رغبتك في حذف هذا السؤال؟</p>
+                    <p class="text-danger">هذا الإجراء لا يمكن التراجع عنه.</p>
+                    <input type="hidden" id="deleteQuestionId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">تأكيد الحذف</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // تعريف المجالات الفرعية لكل مجال رئيسي
+        const fieldsByDomain = {
+            psychological: [
+                { value: 'psychologicalTrauma', label: 'مهارات التعامل مع الصدمات النفسية' },
+                { value: 'selfConfidence', label: 'أساليب بناء الثقة بالنفس وتقدير الذات' },
+                { value: 'psychologicalCounseling', label: 'مهارات الإرشاد النفسي' },
+                { value: 'socialIntegration', label: 'استراتيجيات دمج الأيتام في المجتمع' },
+                { value: 'effectiveCommunication', label: 'مهارات التواصل الفعال' }
+            ],
+            educational: [
+                { value: 'modernTeaching', label: 'أساليب التعليم الحديثة' },
+                { value: 'learningDifficulties', label: 'استراتيجيات التعامل مع صعوبات التعلم' },
+                { value: 'talentDevelopment', label: 'مهارات اكتشاف وتنمية المواهب' },
+                { value: 'motivationTechniques', label: 'أساليب التحفيز وتعزيز الدافعية' },
+                { value: 'careerGuidance', label: 'مهارات التوجيه المهني' }
+            ],
+            medical: [
+                { value: 'firstAid', label: 'أساسيات الإسعافات الأولية' },
+                { value: 'healthCare', label: 'مهارات الرعاية الصحية الأساسية' },
+                { value: 'nutrition', label: 'أساليب التغذية السليمة' },
+                { value: 'commonDiseases', label: 'مهارات التعامل مع الأمراض الشائعة' },
+                { value: 'personalHygiene', label: 'أساليب تعزيز النظافة الشخصية' }
+            ],
+            religious: [
+                { value: 'religiousValues', label: 'أساليب غرس القيم الدينية' },
+                { value: 'teachingWorship', label: 'مهارات تعليم العبادات بطريقة محببة' },
+                { value: 'spiritualAwareness', label: 'أساليب تنمية الوازع الديني' },
+                { value: 'religiousRules', label: 'مهارات ربط الأحكام الشرعية بالحياة' },
+                { value: 'religiousIdentity', label: 'أساليب تعزيز الهوية الدينية' }
+            ],
+            recreational: [
+                { value: 'recreationalActivities', label: 'تنظيم الأنشطة الترفيهية' },
+                { value: 'tripsOrganization', label: 'مهارات تنظيم الرحلات' },
+                { value: 'eventsOrganization', label: 'تنظيم الفعاليات والمناسبات' },
+                { value: 'leisureTime', label: 'استثمار أوقات الفراغ' },
+                { value: 'sportsTraining', label: 'أساسيات التدريب الرياضي' }
+            ]
+        };
+
+        // تحميل بيانات المستخدم
+        document.addEventListener('DOMContentLoaded', function() {
+            // عرض اسم المستخدم في القائمة الجانبية
+            const user = JSON.parse(localStorage.getItem('user')) || {};
+            document.getElementById('userFullName').textContent = user.fullName || 'المستخدم';
+            
+            // تحميل الأسئلة
+            loadQuestions();
+            
+            // تحميل الاستبيانات
+            loadSurveys();
+            
+            // إضافة مستمعي الأحداث
+            setupEventListeners();
+        });
+
+        // تحميل الأسئلة من الخادم
+        async function loadQuestions() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/auth/login';
+                    return;
+                }
+                
+                const response = await fetch('/api/questions', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('فشل في استرجاع الأسئلة');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.questions) {
+                    // تصنيف الأسئلة حسب المجال
+                    const questionsByDomain = {
+                        psychological: [],
+                        educational: [],
+                        medical: [],
+                        religious: [],
+                        recreational: []
+                    };
+                    
+                    data.questions.forEach(question => {
+                        if (questionsByDomain[question.domain]) {
+                            questionsByDomain[question.domain].push(question);
+                        }
+                    });
+                    
+                    // عرض الأسئلة في الجداول المناسبة
+                    renderQuestionsByDomain(questionsByDomain);
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل الأسئلة:', error);
+                showAlert('فشل في تحميل الأسئلة. يرجى المحاولة مرة أخرى.', 'danger');
+            }
+        }
+
+        // عرض الأسئلة في الجداول حسب المجال
+        function renderQuestionsByDomain(questionsByDomain) {
+            // المجال النفسي والاجتماعي
+            const psychologicalTableBody = document.getElementById('psychologicalQuestionsTableBody');
+            renderQuestionsTable(psychologicalTableBody, questionsByDomain.psychological);
+            
+            // المجال التربوي والتعليمي
+            const educationalTableBody = document.getElementById('educationalQuestionsTableBody');
+            renderQuestionsTable(educationalTableBody, questionsByDomain.educational);
+            
+            // باقي المجالات...
+        }
+
+        // عرض الأسئلة في جدول معين
+        function renderQuestionsTable(tableBody, questions) {
+            tableBody.innerHTML = '';
+            
+            if (questions.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="5" class="text-center">لا توجد أسئلة في هذا المجال</td>
+                `;
+                tableBody.appendChild(row);
+                return;
+            }
+            
+            questions.forEach(question => {
+                const row = document.createElement('tr');
+                
+                // الحصول على اسم المجال الفرعي
+                const fieldLabel = getFieldLabel(question.domain, question.field);
+                
+                row.innerHTML = `
+                    <td>${question.order}</td>
+                    <td>${question.text}</td>
+                    <td>${fieldLabel}</td>
+                    <td>
+                        <span class="badge ${question.isActive ? 'bg-success' : 'bg-secondary'}">
+                            ${question.isActive ? 'نشط' : 'غير نشط'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary edit-question" data-id="${question._id}">
+                            <i class="fas fa-edit"></i> تعديل
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-question" data-id="${question._id}">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار التعديل والحذف
+            addQuestionActionListeners();
+        }
+
+        // الحصول على اسم المجال الفرعي
+        function getFieldLabel(domain, fieldValue) {
+            const fields = fieldsByDomain[domain] || [];
+            const field = fields.find(f => f.value === fieldValue);
+            return field ? field.label : fieldValue;
+        }
+
+        // إضافة مستمعي الأحداث لأزرار التعديل والحذف
+        function addQuestionActionListeners() {
+            // أزرار التعديل
+            document.querySelectorAll('.edit-question').forEach(button => {
+                button.addEventListener('click', function() {
+                    const questionId = this.getAttribute('data-id');
+                    openEditQuestionModal(questionId);
+                });
+            });
+            
+            // أزرار الحذف
+            document.querySelectorAll('.delete-question').forEach(button => {
+                button.addEventListener('click', function() {
+                    const questionId = this.getAttribute('data-id');
+                    openDeleteQuestionModal(questionId);
+                });
+            });
+        }
+
+        // فتح نافذة تعديل السؤال
+        async function openEditQuestionModal(questionId) {
+            try {
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch(`/api/questions/${questionId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('فشل في استرجاع بيانات السؤال');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.question) {
+                    const question = data.question;
+                    
+                    // ملء النموذج ببيانات السؤال
+                    document.getElementById('editQuestionId').value = question._id;
+                    document.getElementById('editQuestionText').value = question.text;
+                    document.getElementById('editQuestionDomain').value = question.domain;
+                    
+                    // تحديث قائمة المجالات الفرعية
+                    updateFieldsDropdown('editQuestionDomain', 'editQuestionField');
+                    
+                    document.getElementById('editQuestionField').value = question.field;
+                    document.getElementById('editQuestionOrder').value = question.order;
+                    
+                    // تحديد حالة السؤال
+                    if (question.isActive) {
+                        document.getElementById('editQuestionStatusActive').checked = true;
+                    } else {
+                        document.getElementById('editQuestionStatusInactive').checked = true;
+                    }
+                    
+                    // فتح النافذة
+                    const modal = new bootstrap.Modal(document.getElementById('editQuestionModal'));
+                    modal.show();
+                }
+            } catch (error) {
+                console.error('خطأ في استرجاع بيانات السؤال:', error);
+                showAlert('فشل في استرجاع بيانات السؤال. يرجى المحاولة مرة أخرى.', 'danger');
+            }
+        }
+
+        // فتح نافذة تأكيد حذف السؤال
+        function openDeleteQuestionModal(questionId) {
+            document.getElementById('deleteQuestionId').value = questionId;
+            const modal = new bootstrap.Modal(document.getElementById('deleteQuestionModal'));
+            modal.show();
+        }
+
+        // تحديث قائمة المجالات الفرعية بناءً على المجال الرئيسي
+        function updateFieldsDropdown(domainSelectId, fieldSelectId) {
+            const domainSelect = document.getElementById(domainSelectId);
+            const fieldSelect = document.getElementById(fieldSelectId);
+            
+            const selectedDomain = domainSelect.value;
+            const fields = fieldsByDomain[selectedDomain] || [];
+            
+            // إفراغ القائمة
+            fieldSelect.innerHTML = '<option value="" selected disabled>اختر المجال الفرعي</option>';
+            
+            // إضافة الخيارات الجديدة
+            fields.forEach(field => {
+                const option = document.createElement('option');
+                option.value = field.value;
+                option.textContent = field.label;
+                fieldSelect.appendChild(option);
+            });
+        }
+
+        // إعداد مستمعي الأحداث
+        function setupEventListeners() {
+            // تحديث قائمة المجالات الفرعية عند تغيير المجال الرئيسي
+            document.getElementById('questionDomain').addEventListener('change', function() {
+                updateFieldsDropdown('questionDomain', 'questionField');
+            });
+            
+            document.getElementById('editQuestionDomain').addEventListener('change', function() {
+                updateFieldsDropdown('editQuestionDomain', 'editQuestionField');
+            });
+            
+            // حفظ السؤال الجديد
+            document.getElementById('saveQuestionBtn').addEventListener('click', saveQuestion);
+            
+            // تحديث السؤال
+            document.getElementById('updateQuestionBtn').addEventListener('click', updateQuestion);
+            
+            // تأكيد حذف السؤال
+            document.getElementById('confirmDeleteBtn').addEventListener('click', deleteQuestion);
+        }
+
+        // حفظ سؤال جديد
+        async function saveQuestion() {
+            try {
+                const text = document.getElementById('questionText').value;
+                const domain = document.getElementById('questionDomain').value;
+                const field = document.getElementById('questionField').value;
+                const order = document.getElementById('questionOrder').value;
+                const isActive = document.getElementById('questionStatusActive').checked;
+                
+                // التحقق من صحة البيانات
+                if (!text || !domain || !field) {
+                    showAlert('يرجى ملء جميع الحقول المطلوبة', 'warning');
+                    return;
+                }
+                
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch('/api/questions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        text,
+                        domain,
+                        field,
+                        order: parseInt(order),
+                        isActive
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // إغلاق النافذة
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addQuestionModal'));
+                    modal.hide();
+                    
+                    // إعادة تحميل الأسئلة
+                    loadQuestions();
+                    
+                    // عرض رسالة نجاح
+                    showAlert('تم إضافة السؤال بنجاح', 'success');
+                    
+                    // إعادة تعيين النموذج
+                    document.getElementById('addQuestionForm').reset();
+                } else {
+                    throw new Error(data.message || 'فشل في إضافة السؤال');
+                }
+            } catch (error) {
+                console.error('خطأ في إضافة السؤال:', error);
+                showAlert('فشل في إضافة السؤال. يرجى المحاولة مرة أخرى.', 'danger');
+            }
+        }
+
+        // تحديث سؤال
+        async function updateQuestion() {
+            try {
+                const id = document.getElementById('editQuestionId').value;
+                const text = document.getElementById('editQuestionText').value;
+                const domain = document.getElementById('editQuestionDomain').value;
+                const field = document.getElementById('editQuestionField').value;
+                const order = document.getElementById('editQuestionOrder').value;
+                const isActive = document.getElementById('editQuestionStatusActive').checked;
+                
+                // التحقق من صحة البيانات
+                if (!text || !domain || !field) {
+                    showAlert('يرجى ملء جميع الحقول المطلوبة', 'warning');
+                    return;
+                }
+                
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch(`/api/questions/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        text,
+                        domain,
+                        field,
+                        order: parseInt(order),
+                        isActive
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // إغلاق النافذة
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editQuestionModal'));
+                    modal.hide();
+                    
+                    // إعادة تحميل الأسئلة
+                    loadQuestions();
+                    
+                    // عرض رسالة نجاح
+                    showAlert('تم تحديث السؤال بنجاح', 'success');
+                } else {
+                    throw new Error(data.message || 'فشل في تحديث السؤال');
+                }
+            } catch (error) {
+                console.error('خطأ في تحديث السؤال:', error);
+                showAlert('فشل في تحديث السؤال. يرجى المحاولة مرة أخرى.', 'danger');
+            }
+        }
+
+        // حذف سؤال
+        async function deleteQuestion() {
+            try {
+                const id = document.getElementById('deleteQuestionId').value;
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch(`/api/questions/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // إغلاق النافذة
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteQuestionModal'));
+                    modal.hide();
+                    
+                    // إعادة تحميل الأسئلة
+                    loadQuestions();
+                    
+                    // عرض رسالة نجاح
+                    showAlert('تم حذف السؤال بنجاح', 'success');
+                } else {
+                    throw new Error(data.message || 'فشل في حذف السؤال');
+                }
+            } catch (error) {
+                console.error('خطأ في حذف السؤال:', error);
+                showAlert('فشل في حذف السؤال. يرجى المحاولة مرة أخرى.', 'danger');
+            }
+        }
+
+        // تحميل الاستبيانات
+        async function loadSurveys() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/auth/login';
+                    return;
+                }
+                
+                const response = await fetch('/api/survey-data', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('فشل في استرجاع الاستبيانات');
+                }
+                
+                const data = await response.json();
+                
+                // إخفاء مؤشر التحميل
+                document.getElementById('loadingSpinner').classList.add('d-none');
+                
+                if (data && data.length > 0) {
+                    // عرض الاستبيانات في الجدول
+                    renderSurveysTable(data);
+                } else {
+                    // عرض رسالة عدم وجود استبيانات
+                    document.getElementById('noSurveysMessage').classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل الاستبيانات:', error);
+                document.getElementById('loadingSpinner').classList.add('d-none');
+                showAlert('فشل في تحميل الاستبيانات. يرجى المحاولة مرة أخرى.', 'danger');
+            }
+        }
+
+        // عرض الاستبيانات في الجدول
+        function renderSurveysTable(surveys) {
+            const tableBody = document.getElementById('surveysTableBody');
+            tableBody.innerHTML = '';
+            
+            surveys.forEach((survey, index) => {
+                const row = document.createElement('tr');
+                
+                // تنسيق التاريخ
+                const date = new Date(survey.createdAt);
+                const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${survey.fullName || 'غير محدد'}</td>
+                    <td>${survey.organization || 'غير محدد'}</td>
+                    <td>${formattedDate}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary view-survey" data-id="${survey._id}">
+                            <i class="fas fa-eye"></i> عرض
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-survey" data-id="${survey._id}">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // إضافة مستمعي الأحداث لأزرار العرض والحذف
+            addSurveyActionListeners();
+        }
+
+        // إضافة مستمعي الأحداث لأزرار العرض والحذف
+        function addSurveyActionListeners() {
+            // أزرار العرض
+            document.querySelectorAll('.view-survey').forEach(button => {
+                button.addEventListener('click', function() {
+                    const surveyId = this.getAttribute('data-id');
+                    // توجيه المستخدم إلى صفحة عرض الاستبيان
+                    window.location.href = `/admin/surveys/${surveyId}`;
+                });
+            });
+            
+            // أزرار الحذف
+            document.querySelectorAll('.delete-survey').forEach(button => {
+                button.addEventListener('click', function() {
+                    const surveyId = this.getAttribute('data-id');
+                    // فتح نافذة تأكيد الحذف
+                    // يمكن إضافة هذه الوظيفة لاحقاً
+                });
+            });
+        }
+
+        // عرض رسالة تنبيه
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="إغلاق"></button>
+            `;
+            
+            // إضافة التنبيه في أعلى الصفحة
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(alertDiv, mainContent.firstChild);
+            
+            // إزالة التنبيه بعد 5 ثوانٍ
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

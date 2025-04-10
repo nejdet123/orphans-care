@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب جديد | تقييم الاحتياجات التدريبية للعاملين مع الأيتام</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .register-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .register-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .register-logo img {
+            max-width: 150px;
+        }
+        .register-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #3a3a3a;
+        }
+        .form-control {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .btn-register {
+            background-color: #4e73df;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-register:hover {
+            background-color: #375bcc;
+        }
+        .register-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .alert {
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-container">
+            <div class="register-logo">
+                <img src="/img/logo.png" alt="شعار تقييم الاحتياجات التدريبية" onerror="this.src='/img/default-logo.png'; this.onerror=null;">
+            </div>
+            <h2 class="register-title">إنشاء حساب جديد</h2>
+            
+            <% if (locals.error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <% if (locals.success) { %>
+                <div class="alert alert-success">
+                    <%= success %>
+                </div>
+            <% } %>
+            
+            <form action="/auth/register" method="POST" id="registerForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="username" class="form-label">اسم المستخدم</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="fullName" class="form-label">الاسم الكامل</label>
+                        <input type="text" class="form-control" id="fullName" name="fullName" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label">البريد الإلكتروني</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="password" class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-control" id="password" name="password" required minlength="6">
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="confirmPassword" class="form-label">تأكيد كلمة المرور</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required minlength="6">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="organization" class="form-label">اسم المنظمة/الجمعية</label>
+                        <input type="text" class="form-control" id="organization" name="organization" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="organizationCode" class="form-label">كود المنظمة</label>
+                        <input type="text" class="form-control" id="organizationCode" name="organizationCode" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-register">إنشاء حساب</button>
+            </form>
+            
+            <div class="register-footer">
+                <p>لديك حساب بالفعل؟ <a href="/auth/login">تسجيل الدخول</a></p>
+                <p><a href="/">العودة إلى الصفحة الرئيسية</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const organization = document.getElementById('organization').value;
+            const organizationCode = document.getElementById('organizationCode').value;
+            
+            // التحقق من تطابق كلمة المرور
+            if (password !== confirmPassword) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.textContent = 'كلمة المرور وتأكيدها غير متطابقين';
+                
+                const form = document.getElementById('registerForm');
+                form.insertBefore(alertDiv, form.firstChild);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username,
+                        fullName,
+                        email,
+                        password,
+                        organization,
+                        organizationCode
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // حفظ التوكن في localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // توجيه المستخدم إلى لوحة التحكم أو الصفحة الرئيسية
+                    window.location.href = '/dashboard';
+                } else {
+                    // عرض رسالة الخطأ
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger';
+                    alertDiv.textContent = data.message || 'حدث خطأ أثناء إنشاء الحساب';
+                    
+                    const form = document.getElementById('registerForm');
+                    form.insertBefore(alertDiv, form.firstChild);
+                }
+            } catch (error) {
+                console.error('خطأ في إنشاء الحساب:', error);
+                
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.textContent = 'حدث خطأ في الاتصال بالخادم';
+                
+                const form = document.getElementById('registerForm');
+                form.insertBefore(alertDiv, form.firstChild);
+            }
+        });
+    </script>
+</body>
+</html>
