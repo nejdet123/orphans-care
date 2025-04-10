@@ -51,6 +51,7 @@ async function fetchSurveyData() {
 
 // تحديث الإحصائيات العامة
 function updateGeneralStatistics(data) {
+    console.log("✅ البيانات في updateGeneralStatistics:", data);
     // عدد المشاركين
     const totalParticipants = document.getElementById('totalParticipants');
     if (totalParticipants) {
