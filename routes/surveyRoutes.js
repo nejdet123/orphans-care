@@ -13,4 +13,16 @@ router.get('/survey-data', async (req, res) => {
     }
 });
 
+// حفظ بيانات الاستبيان الجديدة
+router.post('/survey-data', async (req, res) => {
+  try {
+    const surveyData = new Survey(req.body);
+    await surveyData.save();
+    res.status(201).json({ success: true, message: 'تم حفظ بيانات الاستبيان بنجاح' });
+  } catch (err) {
+    console.error('❌ خطأ في حفظ بيانات الاستبيان:', err);
+    res.status(500).json({ success: false, message: 'حدث خطأ أثناء حفظ البيانات' });
+  }
+});
+
 module.exports = router;

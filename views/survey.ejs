@@ -559,6 +559,52 @@
                 
                 <button type="submit" class="btn-submit">إرسال الاستبيان</button>
             </form>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const surveyForm = document.getElementById('surveyForm');
+  if (!surveyForm) return;
+
+  surveyForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(surveyForm);
+    const formDataObj = {};
+
+    formData.forEach((value, key) => {
+      if (key.endsWith('[]')) {
+        const actualKey = key.slice(0, -2);
+        if (!formDataObj[actualKey]) {
+          formDataObj[actualKey] = [];
+        }
+        formDataObj[actualKey].push(value);
+      } else {
+        formDataObj[key] = value;
+      }
+    });
+
+    try {
+      const response = await fetch('/api/survey-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formDataObj)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        window.location.href = '/thank-you';
+      } else {
+        alert('حدث خطأ أثناء إرسال الاستبيان: ' + (result.message || 'يرجى المحاولة لاحقًا.'));
+      }
+    } catch (error) {
+      console.error('خطأ في إرسال الاستبيان:', error);
+      alert('حدث خطأ أثناء إرسال الاستبيان. يرجى المحاولة مرة أخرى.');
+    }
+  });
+});
+</script>
         </div>
     </div>
 </section>
