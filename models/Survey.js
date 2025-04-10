@@ -49,5 +49,5 @@ const surveySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Survey', surveySchema);
+// ✅ هذا السطر هو الصح لتجنب تكرار تعريف النموذج
 module.exports = mongoose.models.Survey || mongoose.model('Survey', surveySchema);
