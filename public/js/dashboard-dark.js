@@ -8,76 +8,93 @@ async function fetchSurveyStats() {
   try {
     const res = await fetch('/api/survey-data');
     const result = await res.json();
-
-    console.log("📦 البيانات:", result);
-
     const surveys = result.data;
 
-    if (surveys && surveys.length > 0) {
-      const orgs = new Set();
-      let previousTrainingCount = 0;
+    console.log("📦 البيانات:", surveys);
 
-      surveys.forEach(s => {
-        if (s.organization) orgs.add(s.organization);
-        if (s.previousTraining === 'نعم') previousTrainingCount++;
-      });
+    if (!surveys || surveys.length === 0) return;
 
-      const total = surveys.length;
-      const orgCount = orgs.size;
-      const trainingPercentage = Math.round((previousTrainingCount / total) * 100);
+    const orgs = new Set();
+    let previousTrainingCount = 0;
+    const domainSums = {
+      psychological: 0,
+      educational: 0,
+      health: 0
+    };
 
-      document.getElementById('totalParticipants').textContent = total;
-      document.getElementById('totalOrganizations').textContent = orgCount;
-      document.getElementById('previousTrainingPercentage').textContent = `${trainingPercentage}%`;
+    surveys.forEach(s => {
+      if (s.organization) orgs.add(s.organization);
+      if (s.previousTraining === 'نعم') previousTrainingCount++;
 
-      drawDomainsChart(surveys);
-    }
+      domainSums.psychological += averageDomain(s, ["psychologicalTrauma", "selfConfidence", "psychologicalCounseling", "socialIntegration", "effectiveCommunication"]);
+      domainSums.educational += averageDomain(s, ["modernTeaching", "learningDifficulties", "talentDevelopment", "motivationTechniques", "careerGuidance"]);
+      domainSums.health       += averageDomain(s, ["firstAid", "healthCare", "nutrition", "commonDiseases", "personalHygiene"]);
+    });
+
+    const total = surveys.length;
+    const orgCount = orgs.size;
+    const trainingPercentage = Math.round((previousTrainingCount / total) * 100);
+
+    document.getElementById('totalParticipants').textContent = total;
+    document.getElementById('totalOrganizations').textContent = orgCount;
+    document.getElementById('previousTrainingPercentage').textContent = `${trainingPercentage}%`;
+
+    // أعلى مجال احتياجًا
+    const maxDomain = Object.entries(domainSums).sort((a,b) => b[1] - a[1])[0][0];
+    const domainLabels = { psychological: 'نفسي', educational: 'تربوي', health: 'صحي' };
+    document.getElementById('highestNeedDomain').textContent = domainLabels[maxDomain];
+
+    drawDomainsChart(domainSums);
+    drawExperienceChart(surveys);
   } catch (error) {
     console.error("❌ فشل في تحميل بيانات الإحصاء:", error);
   }
 }
 
-function drawDomainsChart(surveys) {
-  const domainKeys = {
-    psychological: ["psychologicalTrauma", "selfConfidence", "psychologicalCounseling", "socialIntegration", "effectiveCommunication"],
-    educational: ["modernTeaching", "learningDifficulties", "talentDevelopment", "motivationTechniques", "careerGuidance"],
-    health: ["firstAid", "healthCare", "nutrition", "commonDiseases", "personalHygiene"]
-  };
+function averageDomain(entry, keys) {
+  let sum = 0;
+  keys.forEach(k => sum += entry[k] || 0);
+  return sum / keys.length;
+}
 
-  const labels = ["نفسي", "تربوي", "صحي"];
-  const averages = [0, 0, 0];
-
-  surveys.forEach(s => {
-    Object.entries(domainKeys).forEach(([key, questions], i) => {
-      questions.forEach(q => {
-        if (typeof s[q] === "number") {
-          averages[i] += s[q];
-        }
-      });
-    });
-  });
-
-  const counts = surveys.length;
-  averages.forEach((_, i) => {
-    averages[i] = Math.round(averages[i] / (counts * 5) * 100);
-  });
-
+function drawDomainsChart(domainSums) {
   const ctx = document.getElementById('domainsChart').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels,
+      labels: ['نفسي', 'تربوي', 'صحي'],
       datasets: [{
-        label: 'متوسط نسبة الاحتياج',
-        data: averages,
-        borderWidth: 1
+        label: 'معدل الاحتياج',
+        data: [domainSums.psychological, domainSums.educational, domainSums.health],
+        backgroundColor: ['#6f42c1', '#0d6efd', '#20c997']
       }]
     },
-    options: {
-      scales: {
-        y: { beginAtZero: true, max: 100 }
-      }
-    }
+    options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+  });
+}
+
+function drawExperienceChart(surveys) {
+  const groups = {};
+  surveys.forEach(s => {
+    if (!groups[s.experience]) groups[s.experience] = 0;
+    groups[s.experience]++;
+  });
+
+  const labels = Object.keys(groups);
+  const data = Object.values(groups);
+
+  const ctx = document.getElementById('experienceChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'سنوات الخبرة',
+        data: data,
+        backgroundColor: ['#ffc107', '#17a2b8', '#dc3545', '#6610f2', '#198754']
+      }]
+    },
+    options: { responsive: true }
   });
 }
 
