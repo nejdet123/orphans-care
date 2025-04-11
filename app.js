@@ -110,6 +110,7 @@ app.use((err, req, res, next) => {
   console.error('🔥 خطأ داخلي في السيرفر:', err.stack);
   res.status(500).send("حدث خطأ داخلي في السيرفر: " + err.message);
 });
+app.use('/', require('./routes/surveyRoutes'));
 
 // تشغيل الخادم
 const PORT = process.env.PORT || 3000;
