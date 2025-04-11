@@ -1,115 +1,98 @@
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("📊 تم تحميل لوحة التحكم الداكنة");
-  fetchSurveyStats();
-  window.exportToExcel = exportToExcel;
+// 📊 تحميل البيانات وتفعيل الفلاتر
+let allSurveys = [];
+
+window.addEventListener("DOMContentLoaded", async () => {
+  const res = await fetch('/api/survey-data');
+  const data = await res.json();
+  allSurveys = data;
+
+  populateOrganizationFilter(allSurveys);
+  updateGeneralStatistics(allSurveys);
+  drawDomainsChart(allSurveys);
+
+  document.getElementById('filterOrganization').addEventListener('change', applyFilters);
+  document.getElementById('filterCode').addEventListener('input', applyFilters);
+  document.getElementById('filterAge').addEventListener('change', applyFilters);
+  document.getElementById('filterTraining').addEventListener('change', applyFilters);
 });
 
-async function fetchSurveyStats() {
-  try {
-    const res = await fetch('/api/survey-data');
-    const result = await res.json();
-    const surveys = result.data;
-
-    console.log("📦 البيانات:", surveys);
-
-    if (!surveys || surveys.length === 0) return;
-
-    const orgs = new Set();
-    let previousTrainingCount = 0;
-    const domainSums = {
-      psychological: 0,
-      educational: 0,
-      health: 0
-    };
-
-    surveys.forEach(s => {
-      if (s.organization) orgs.add(s.organization);
-      if (s.previousTraining === 'نعم') previousTrainingCount++;
-
-      domainSums.psychological += averageDomain(s, ["psychologicalTrauma", "selfConfidence", "psychologicalCounseling", "socialIntegration", "effectiveCommunication"]);
-      domainSums.educational += averageDomain(s, ["modernTeaching", "learningDifficulties", "talentDevelopment", "motivationTechniques", "careerGuidance"]);
-      domainSums.health       += averageDomain(s, ["firstAid", "healthCare", "nutrition", "commonDiseases", "personalHygiene"]);
-    });
-
-    const total = surveys.length;
-    const orgCount = orgs.size;
-    const trainingPercentage = Math.round((previousTrainingCount / total) * 100);
-
-    document.getElementById('totalParticipants').textContent = total;
-    document.getElementById('totalOrganizations').textContent = orgCount;
-    document.getElementById('previousTrainingPercentage').textContent = `${trainingPercentage}%`;
-
-    // أعلى مجال احتياجًا
-    const maxDomain = Object.entries(domainSums).sort((a,b) => b[1] - a[1])[0][0];
-    const domainLabels = { psychological: 'نفسي', educational: 'تربوي', health: 'صحي' };
-    document.getElementById('highestNeedDomain').textContent = domainLabels[maxDomain];
-
-    drawDomainsChart(domainSums);
-    drawExperienceChart(surveys);
-  } catch (error) {
-    console.error("❌ فشل في تحميل بيانات الإحصاء:", error);
-  }
+function populateOrganizationFilter(data) {
+  const select = document.getElementById('filterOrganization');
+  const orgs = [...new Set(data.map(s => s.organization))].sort();
+  orgs.forEach(org => {
+    const option = document.createElement('option');
+    option.value = org;
+    option.textContent = org;
+    select.appendChild(option);
+  });
 }
 
-function averageDomain(entry, keys) {
-  let sum = 0;
-  keys.forEach(k => sum += entry[k] || 0);
-  return sum / keys.length;
+function applyFilters() {
+  const org = document.getElementById('filterOrganization').value.trim();
+  const code = document.getElementById('filterCode').value.trim().toLowerCase();
+  const age = document.getElementById('filterAge').value;
+  const training = document.getElementById('filterTraining').value;
+
+  const filtered = allSurveys.filter(s => {
+    return (!org || s.organization === org) &&
+           (!code || (s.organizationCode || '').toLowerCase().includes(code)) &&
+           (!age || (s.ageGroups || []).includes(age)) &&
+           (!training || s.previousTraining === training);
+  });
+
+  updateGeneralStatistics(filtered);
+  drawDomainsChart(filtered);
 }
 
-function drawDomainsChart(domainSums) {
+function updateGeneralStatistics(surveys) {
+  const total = surveys.length;
+  const orgs = new Set(surveys.map(s => s.organization));
+  const trained = surveys.filter(s => s.previousTraining === 'نعم').length;
+  const percentage = total > 0 ? Math.round((trained / total) * 100) : 0;
+
+  document.getElementById('totalParticipants').textContent = total;
+  document.getElementById('totalOrganizations').textContent = orgs.size;
+  document.getElementById('previousTrainingPercentage').textContent = `${percentage}%`;
+}
+
+function drawDomainsChart(surveys) {
   const ctx = document.getElementById('domainsChart').getContext('2d');
-  new Chart(ctx, {
+  const domainKeys = {
+    نفسي: ["psychologicalTrauma", "selfConfidence", "psychologicalCounseling", "socialIntegration", "effectiveCommunication"],
+    تربوي: ["modernTeaching", "learningDifficulties", "talentDevelopment", "motivationTechniques", "careerGuidance"],
+    صحي: ["firstAid", "healthCare", "nutrition", "commonDiseases", "personalHygiene"]
+  };
+
+  const labels = Object.keys(domainKeys);
+  const values = labels.map(domain => {
+    const sum = surveys.reduce((acc, s) => {
+      const domainSum = domainKeys[domain].reduce((dAcc, k) => dAcc + (s[k] || 0), 0);
+      return acc + domainSum / domainKeys[domain].length;
+    }, 0);
+    return surveys.length > 0 ? Math.round(sum / surveys.length) : 0;
+  });
+
+  if (window.domainsChartInstance) window.domainsChartInstance.destroy();
+  window.domainsChartInstance = new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels: ['نفسي', 'تربوي', 'صحي'],
-      datasets: [{
-        label: 'معدل الاحتياج',
-        data: [domainSums.psychological, domainSums.educational, domainSums.health],
-        backgroundColor: ['#6f42c1', '#0d6efd', '#20c997']
-      }]
-    },
-    options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
-  });
-}
-
-function drawExperienceChart(surveys) {
-  const groups = {};
-  surveys.forEach(s => {
-    if (!groups[s.experience]) groups[s.experience] = 0;
-    groups[s.experience]++;
-  });
-
-  const labels = Object.keys(groups);
-  const data = Object.values(groups);
-
-  const ctx = document.getElementById('experienceChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'pie',
     data: {
       labels: labels,
       datasets: [{
-        label: 'سنوات الخبرة',
-        data: data,
-        backgroundColor: ['#ffc107', '#17a2b8', '#dc3545', '#6610f2', '#198754']
+        label: 'معدل الاحتياج لكل مجال',
+        data: values,
+        backgroundColor: ['#6f42c1', '#0d6efd', '#20c997']
       }]
     },
-    options: { responsive: true }
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true, max: 100 } }
+    }
   });
 }
 
 function exportToExcel() {
-  fetch('/api/survey-data')
-    .then(res => res.json())
-    .then(result => {
-      const data = result.data;
-      const worksheet = XLSX.utils.json_to_sheet(data);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "البيانات");
-      XLSX.writeFile(workbook, "survey-data.xlsx");
-    })
-    .catch(err => {
-      console.error("❌ فشل في تصدير Excel:", err);
-      alert("حدث خطأ أثناء التصدير");
-    });
+  const worksheet = XLSX.utils.json_to_sheet(allSurveys);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "البيانات");
+  XLSX.writeFile(workbook, "survey-data.xlsx");
 }
