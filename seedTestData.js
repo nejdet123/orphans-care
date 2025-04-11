@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
- require('./models/Survey');
+const Survey = require('./models/Survey'); // ✅
 
 // الاتصال بقاعدة البيانات
 mongoose.connect('mongodb+srv://admin_orphans:Mon243253efdf@orphans-care.0i5s7pm.mongodb.net/orphans_care')
