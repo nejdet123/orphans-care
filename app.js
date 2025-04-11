@@ -94,6 +94,10 @@ app.get('/dashboard', protect, (req, res) => {
     user: req.user
   });
 });
+// ✅ صفحة لوحة التحكم الداكنة بدون استخدام layout
+app.get('/dashboard-dark', (req, res) => {
+  res.render('dashboard-dark', { title: 'لوحة التحكم الليلية', layout: false });
+});
 
 // صفحة الشكر بعد تعبئة الاستبيان
 app.get('/thank-you', (req, res) => {
