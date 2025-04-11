@@ -21,6 +21,7 @@
         <div class="card p-4 shadow-sm">
             <ul class="nav nav-pills justify-content-center mb-4" id="tabs">
                 <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#summary">ملخص النتائج</a></li>
+<li class="nav-item"><a class="nav-link" id="edit-tab" data-bs-toggle="pill" href="#editSurvey">تعديل الاستبيان</a></li>
                 <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#psych">المجال النفسي والاجتماعي</a></li>
                 <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#edu">المجال التربوي والتعليمي</a></li>
                 <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#med">المجال الصحي والطبي</a></li>
@@ -53,6 +54,17 @@
                         <canvas id="countriesChart"></canvas>
                     </div>
                 </div>
+<div class="tab-pane fade" id="editSurvey">
+  <h4 class="mt-3 mb-3">🛠 إدارة أسئلة الاستبيان</h4>
+  <div id="questionsList" class="mb-4"></div>
+
+  <hr>
+  <h5 class="mb-2">➕ إضافة سؤال جديد</h5>
+  <div class="input-group mb-3">
+    <input type="text" id="newQuestionText" class="form-control" placeholder="اكتب نص السؤال الجديد هنا">
+    <button class="btn btn-success" onclick="addNewQuestion()">إضافة</button>
+  </div>
+</div>
 
                 <!-- المجال النفسي والاجتماعي -->
                 <div class="tab-pane fade" id="psych">
