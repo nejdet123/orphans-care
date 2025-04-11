@@ -74,5 +74,10 @@ router.put('/api/questions/:index', async (req, res) => {
         res.sendStatus(500);
     }
 });
+// ✅ عرض لوحة التحكم الجديدة (الوضع الليلي)
+router.get('/dashboard-dark', async (req, res) => {
+  res.render('dashboard-dark');
+});
+
 
 module.exports = router;
