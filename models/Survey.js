@@ -46,8 +46,10 @@ const surveySchema = new mongoose.Schema({
   otherTrainingAreas: String,
   suggestions: String,
 
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+
+  // ✅ مصفوفة الأسئلة القابلة للتعديل من لوحة التحكم
+  questions: [String]
 });
 
-// ✅ هذا السطر هو الصح لتجنب تكرار تعريف النموذج
 module.exports = mongoose.models.Survey || mongoose.model('Survey', surveySchema);
