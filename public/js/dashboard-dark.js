@@ -1,16 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("📊 تم تحميل لوحة التحكم الداكنة");
   fetchSurveyStats();
-
-  // تأكد من ربط الدالة بالتصدير
   window.exportToExcel = exportToExcel;
 });
 
-// 📊 إحضار الإحصائيات العامة
 async function fetchSurveyStats() {
   try {
     const res = await fetch('/api/survey-data');
     const data = await res.json();
+
+    console.log("📦 البيانات:", data);
 
     if (data && data.length > 0) {
       const surveys = data;
@@ -37,7 +36,6 @@ async function fetchSurveyStats() {
   }
 }
 
-// 📈 رسم الرسم البياني للمجالات
 function drawDomainsChart(surveys) {
   const domainKeys = {
     psychological: ["psychologicalTrauma", "selfConfidence", "psychologicalCounseling", "socialIntegration", "effectiveCommunication"],
@@ -60,7 +58,7 @@ function drawDomainsChart(surveys) {
 
   const counts = surveys.length;
   averages.forEach((_, i) => {
-    averages[i] = Math.round(averages[i] / (counts * 5) * 100); // تحويل لنسبة
+    averages[i] = Math.round(averages[i] / (counts * 5) * 100);
   });
 
   const ctx = document.getElementById('domainsChart').getContext('2d');
@@ -82,7 +80,6 @@ function drawDomainsChart(surveys) {
   });
 }
 
-// 📥 تصدير البيانات إلى Excel
 function exportToExcel() {
   fetch('/api/survey-data')
     .then(res => res.json())
