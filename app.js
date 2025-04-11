@@ -9,6 +9,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { isLoggedIn, protect, authorize } = require('./middleware/auth');
 const { USER_ROLES } = require('./models/User');
+
 // استيراد المسارات
 const surveyRoutes = require('./routes/surveyRoutes');
 const authRoutes = require('./routes/authRoutes');
@@ -65,12 +66,12 @@ app.use('/api/questions', questionRoutes);
 
 // مسارات صفحات المصادقة
 app.get('/auth/login', (req, res) => {
-  if (req.user) return res.redirect('/dashboard');
+  if (req.user) return res.redirect('/dashboard-dark');
   res.render('auth/login', { title: 'تسجيل الدخول', layout: false });
 });
 
 app.get('/auth/register', (req, res) => {
-  if (req.user) return res.redirect('/dashboard');
+  if (req.user) return res.redirect('/dashboard-dark');
   res.render('auth/register', { title: 'إنشاء حساب جديد', layout: false });
 });
 
@@ -86,16 +87,13 @@ app.get('/research', (req, res) => res.render('research', { title: 'البحث',
 app.get('/methodology', (req, res) => res.render('methodology', { title: 'منهجية التحليل', active: 'methodology' }));
 app.get('/model', (req, res) => res.render('model', { title: 'النموذج التدريبي', active: 'model' }));
 
-// لوحة التحكم - محمية
-app.get('/dashboard', protect, (req, res) => {
-  res.render('dashboard', {
-    title: 'لوحة التحكم',
-    active: 'dashboard',
-    user: req.user
-  });
+// ✅ إعادة توجيه dashboard العادي إلى النسخة الداكنة
+app.get('/dashboard', (req, res) => {
+  res.redirect('/dashboard-dark');
 });
-// ✅ صفحة لوحة التحكم الداكنة بدون استخدام layout
-app.get('/dashboard-dark', (req, res) => {
+
+// ✅ صفحة لوحة التحكم الداكنة
+app.get('/dashboard-dark', protect, (req, res) => {
   res.render('dashboard-dark', { title: 'لوحة التحكم الليلية', layout: false });
 });
 
@@ -114,6 +112,7 @@ app.use((err, req, res, next) => {
   console.error('🔥 خطأ داخلي في السيرفر:', err.stack);
   res.status(500).send("حدث خطأ داخلي في السيرفر: " + err.message);
 });
+
 app.use('/', surveyRoutes);
 
 // تشغيل الخادم
