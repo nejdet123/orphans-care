@@ -22,6 +22,7 @@
     .main-content { margin-right: 260px; padding: 30px; }
     .card-dark { background-color: #2c2c3d; border: none; }
     .filter-label { font-weight: bold; margin-bottom: 5px; }
+    select, input { font-size: 0.9rem !important; }
   </style>
 </head>
 <body>
@@ -35,38 +36,35 @@
 </div>
 <div class="main-content">
   <section id="stats">
-    <h2 class="mb-3">📊 إحصاءات عامة</h2>
+    <h2 class="mb-4">📊 إحصاءات عامة</h2>
 
-    <!-- 🎛️ واجهة الفلاتر التفاعلية -->
-    <div class="card card-dark p-4 mb-4">
-      <h5 class="mb-3"><i class="bi bi-funnel"></i> فلاتر التقارير</h5>
-      <form id="filterForm" class="row g-3">
-        <div class="col-md-3">
-          <label for="filterOrganization" class="form-label">المنظمة</label>
-          <select id="filterOrganization" class="form-select form-select-sm"><option value="">الكل</option></select>
-        </div>
-        <div class="col-md-3">
-          <label for="filterCode" class="form-label">رمز المنظمة</label>
-          <input type="text" id="filterCode" class="form-control form-control-sm">
-        </div>
-        <div class="col-md-3">
-          <label for="filterAge" class="form-label">الفئة العمرية</label>
-          <select id="filterAge" class="form-select form-select-sm">
-            <option value="">الكل</option>
-            <option value="6-12">6-12</option>
-            <option value="13-18">13-18</option>
-            <option value=">18">أكبر من 18</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label for="filterTraining" class="form-label">هل تلقى تدريب سابق؟</label>
-          <select id="filterTraining" class="form-select form-select-sm">
-            <option value="">الكل</option>
-            <option value="نعم">نعم</option>
-            <option value="لا">لا</option>
-          </select>
-        </div>
-      </form>
+    <!-- 🎛️ فلاتر التقارير -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <label class="filter-label">المنظمة</label>
+        <select id="filterOrganization" class="form-select form-select-sm"><option value="">الكل</option></select>
+      </div>
+      <div class="col-md-3">
+        <label class="filter-label">رمز المنظمة</label>
+        <input type="text" id="filterCode" class="form-control form-control-sm" placeholder="مثال: ORG-1">
+      </div>
+      <div class="col-md-3">
+        <label class="filter-label">الفئة العمرية</label>
+        <select id="filterAge" class="form-select form-select-sm">
+          <option value="">الكل</option>
+          <option value="6-12">6-12</option>
+          <option value="13-18">13-18</option>
+          <option value=">18">أكبر من 18</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="filter-label">هل تلقى تدريب سابق؟</label>
+        <select id="filterTraining" class="form-select form-select-sm">
+          <option value="">الكل</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+        </select>
+      </div>
     </div>
 
     <!-- كروت الإحصاءات -->
@@ -76,28 +74,33 @@
       <div class="col-md-4"><div class="card card-dark p-3 mb-3"><h5>نسبة المتدربين سابقًا</h5><h3 id="previousTrainingPercentage">--</h3></div></div>
     </div>
 
-    <!-- رسوم بيانية -->
+    <!-- الرسم البياني -->
     <div class="card card-dark p-4 mb-4">
       <canvas id="domainsChart"></canvas>
     </div>
   </section>
+
   <section id="export" class="mt-5">
     <h2>📝 تصدير البيانات</h2>
     <button class="btn btn-outline-light me-2" onclick="exportToExcel()">📥 Excel</button>
   </section>
+
   <section id="questions" class="mt-5">
     <h2>🧩 إدارة الأسئلة</h2>
     <p>سيتم تطوير واجهة مخصصة هنا لتعديل كامل الاستبيان.</p>
   </section>
+
   <section id="team" class="mt-5">
     <h2>👥 إدارة الفريق</h2>
     <p>إضافة وتعديل أعضاء الفريق لاحقًا.</p>
   </section>
+
   <section id="account" class="mt-5">
     <h2>⚙️ إعدادات الحساب</h2>
     <p>خيارات تغيير كلمة المرور وتسجيل الخروج.</p>
   </section>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="/js/dashboard-dark.js"></script>
