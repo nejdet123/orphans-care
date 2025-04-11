@@ -9,8 +9,6 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { isLoggedIn, protect, authorize } = require('./middleware/auth');
 const { USER_ROLES } = require('./models/User');
-const dashboardRoutes = require('./routes/dashboardRoutes');
-app.use('/', dashboardRoutes);
 // استيراد المسارات
 const surveyRoutes = require('./routes/surveyRoutes');
 const authRoutes = require('./routes/authRoutes');
