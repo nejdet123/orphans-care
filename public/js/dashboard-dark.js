@@ -79,3 +79,17 @@ function drawDomainsChart(surveys) {
   });
 }
 <script src="/js/dashboard-dark.js"></script>
+function exportToExcel() {
+  fetch('/api/survey-data')
+    .then(res => res.json())
+    .then(data => {
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "البيانات");
+      XLSX.writeFile(workbook, "survey-data.xlsx");
+    })
+    .catch(err => {
+      console.error("❌ فشل في تصدير Excel:", err);
+      alert("حدث خطأ أثناء التصدير");
+    });
+}
