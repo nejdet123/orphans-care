@@ -75,5 +75,7 @@ function drawDomainsChart(surveys) {
         y: { beginAtZero: true, max: 100 }
       }
     }
+    
   });
 }
+<script src="/js/dashboard-dark.js"></script>
