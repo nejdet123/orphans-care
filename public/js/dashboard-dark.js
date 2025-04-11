@@ -7,12 +7,13 @@ document.addEventListener("DOMContentLoaded", function () {
 async function fetchSurveyStats() {
   try {
     const res = await fetch('/api/survey-data');
-    const data = await res.json();
+    const result = await res.json();
 
-    console.log("📦 البيانات:", data);
+    console.log("📦 البيانات:", result);
 
-    if (data && data.length > 0) {
-      const surveys = data;
+    const surveys = result.data;
+
+    if (surveys && surveys.length > 0) {
       const orgs = new Set();
       let previousTrainingCount = 0;
 
@@ -83,7 +84,8 @@ function drawDomainsChart(surveys) {
 function exportToExcel() {
   fetch('/api/survey-data')
     .then(res => res.json())
-    .then(data => {
+    .then(result => {
+      const data = result.data;
       const worksheet = XLSX.utils.json_to_sheet(data);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "البيانات");
