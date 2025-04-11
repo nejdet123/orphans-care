@@ -44,30 +44,31 @@ router.post('/survey-data', async (req, res) => {
 });
 
 /**
- * POST: إضافة سؤال جديد إلى استبيان محدد
- * يتم تحديد الاستبيان باستخدام surveyId
+ * POST: إضافة سؤال جديد إلى الاستبيان (نفترض وجود استبيان واحد فقط)
+ * إذا كان لديك استبيانات متعددة فيجب تمرير surveyId مثلاً في المسار.
  */
-router.post('/survey-data/:surveyId/questions', async (req, res) => {
+router.post('/api/questions', async (req, res) => {
   try {
-    const { questionText } = req.body;
+    const { question } = req.body;
 
     // تحقق أساسي من صحة السؤال
-    if (!questionText || typeof questionText !== 'string') {
+    if (!question || typeof question !== 'string') {
       return res.status(400).json({
         success: false,
         message: 'يجب إدخال سؤال بشكل نصي غير فارغ'
       });
     }
 
-    const survey = await Survey.findById(req.params.surveyId);
+    // ابحث عن أي استبيان (أول استبيان في قاعدة البيانات)
+    const survey = await Survey.findOne();
     if (!survey) {
       return res.status(404).json({
         success: false,
-        message: 'الاستبيان غير موجود'
+        message: 'لا يوجد استبيان بعد'
       });
     }
 
-    survey.questions.push({ text: questionText });
+    survey.questions.push(question);
     await survey.save();
 
     return res.status(200).json({
@@ -86,29 +87,38 @@ router.post('/survey-data/:surveyId/questions', async (req, res) => {
 });
 
 /**
- * DELETE: حذف سؤال من استبيان باستخدام questionId
+ * DELETE: حذف سؤال من الاستبيان بالاعتماد على فهرس السؤال (index)
  */
-router.delete('/survey-data/:surveyId/questions/:questionId', async (req, res) => {
+router.delete('/api/questions/:index', async (req, res) => {
   try {
-    const { surveyId, questionId } = req.params;
+    const index = parseInt(req.params.index, 10);
 
-    const survey = await Survey.findById(surveyId);
+    // تأكد من أن الفهرس رقم صالح
+    if (isNaN(index)) {
+      return res.status(400).json({
+        success: false,
+        message: 'يجب أن يكون الفهرس رقمًا صحيحًا'
+      });
+    }
+
+    const survey = await Survey.findOne();
     if (!survey) {
       return res.status(404).json({
         success: false,
-        message: 'الاستبيان غير موجود'
+        message: 'لا يوجد استبيان بعد'
       });
     }
 
-    const questionIndex = survey.questions.findIndex(q => q._id.toString() === questionId);
-    if (questionIndex === -1) {
-      return res.status(404).json({
+    // تحقق من أن الفهرس ضمن حدود مصفوفة الأسئلة
+    if (index < 0 || index >= survey.questions.length) {
+      return res.status(400).json({
         success: false,
-        message: 'السؤال غير موجود'
+        message: 'الفهرس غير صالح'
       });
     }
 
-    survey.questions.splice(questionIndex, 1);
+    // احذف السؤال
+    survey.questions.splice(index, 1);
     await survey.save();
 
     return res.status(200).json({
@@ -127,37 +137,47 @@ router.delete('/survey-data/:surveyId/questions/:questionId', async (req, res) =
 });
 
 /**
- * PUT: تعديل سؤال في استبيان باستخدام questionId
+ * PUT: تعديل سؤال استنادًا إلى الفهرس (index)
  */
-router.put('/survey-data/:surveyId/questions/:questionId', async (req, res) => {
+router.put('/api/questions/:index', async (req, res) => {
   try {
-    const { surveyId, questionId } = req.params;
-    const { newQuestionText } = req.body;
+    const index = parseInt(req.params.index, 10);
+    const { newQuestion } = req.body;
 
-    if (!newQuestionText || typeof newQuestionText !== 'string') {
+    // تحقق من أن الفهرس رقم صالح
+    if (isNaN(index)) {
       return res.status(400).json({
         success: false,
-        message: 'يجب إدخال سؤال جديد بشكل نصي غير فارغ'
+        message: 'يجب أن يكون الفهرس رقمًا صحيحًا'
       });
     }
 
-    const survey = await Survey.findById(surveyId);
+    // تحقق أساسي من صحة السؤال الجديد
+    if (!newQuestion || typeof newQuestion !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'يجب إدخال سؤال بشكل نصي غير فارغ'
+      });
+    }
+
+    const survey = await Survey.findOne();
     if (!survey) {
       return res.status(404).json({
         success: false,
-        message: 'الاستبيان غير موجود'
+        message: 'لا يوجد استبيان بعد'
       });
     }
 
-    const question = survey.questions.id(questionId);
-    if (!question) {
-      return res.status(404).json({
+    // تحقق من أن الفهرس ضمن حدود مصفوفة الأسئلة
+    if (index < 0 || index >= survey.questions.length) {
+      return res.status(400).json({
         success: false,
-        message: 'السؤال غير موجود'
+        message: 'الفهرس غير صالح'
       });
     }
 
-    question.text = newQuestionText;
+    // عدّل السؤال
+    survey.questions[index] = newQuestion;
     await survey.save();
 
     return res.status(200).json({
@@ -179,6 +199,7 @@ router.put('/survey-data/:surveyId/questions/:questionId', async (req, res) => {
  * GET: عرض لوحة التحكم الجديدة (الوضع الليلي)
  */
 router.get('/dashboard-dark', (req, res) => {
+  // مجرّد عرض لواجهة (View) باسم 'dashboard-dark'
   res.render('dashboard-dark');
 });
 
