@@ -1,24 +1,27 @@
-// ✅ dashboard-dark.js الجديد بالكامل
 
 let allSurveys = [];
 
 window.addEventListener("DOMContentLoaded", async () => {
-  const res = await fetch("/api/survey-data");
-  const data = await res.json();
-  allSurveys = data;
+  try {
+    const res = await fetch("/api/survey-data");
+    const response = await res.json();
+    const data = response.data; // ✅ تصحيح هنا
+    allSurveys = data;
 
-  console.log("✅ تم تحميل البيانات:", data);
+    console.log("✅ تم تحميل البيانات:", data);
 
-  updateFilters(data);
-  updateGeneralStatistics(data);
-  drawDomainsChart(data);
+    updateFilters(data);
+    updateGeneralStatistics(data);
+    drawDomainsChart(data);
 
-  document.getElementById("filterOrganization").addEventListener("change", applyFilters);
-  document.getElementById("filterCode").addEventListener("input", applyFilters);
-  document.getElementById("filterAge").addEventListener("change", applyFilters);
-  document.getElementById("filterTraining").addEventListener("change", applyFilters);
+    document.getElementById("filterOrganization").addEventListener("change", applyFilters);
+    document.getElementById("filterCode").addEventListener("input", applyFilters);
+    document.getElementById("filterAge").addEventListener("change", applyFilters);
+    document.getElementById("filterTraining").addEventListener("change", applyFilters);
+  } catch (error) {
+    console.error("❌ فشل في تحميل البيانات:", error);
+  }
 });
-
 function updateFilters(data) {
   const select = document.getElementById("filterOrganization");
   const orgs = [...new Set(data.map(s => s.organization))];
