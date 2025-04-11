@@ -873,3 +873,61 @@ function showErrorMessage() {
     }
     
 }
+// ✅ تحميل الأسئلة الحالية
+async function loadQuestions() {
+    const res = await fetch('/api/survey-data');
+    const data = await res.json();
+    const questions = data[0]?.questions || [];
+    const container = document.getElementById('questionsList');
+    container.innerHTML = '';
+
+    questions.forEach((q, index) => {
+        container.innerHTML += `
+            <div class="input-group mb-2">
+                <input value="${q}" class="form-control" id="q-${index}">
+                <button class="btn btn-primary" onclick="editQuestion(${index})">تعديل</button>
+                <button class="btn btn-danger" onclick="deleteQuestion(${index})">حذف</button>
+            </div>
+        `;
+    });
+}
+
+// ✅ إضافة سؤال جديد
+async function addNewQuestion() {
+    const question = document.getElementById('newQuestionText').value;
+    if (!question) return;
+    await fetch('/api/questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+    });
+    document.getElementById('newQuestionText').value = '';
+    loadQuestions();
+}
+
+// ✅ حذف سؤال
+async function deleteQuestion(index) {
+    await fetch(`/api/questions/${index}`, { method: 'DELETE' });
+    loadQuestions();
+}
+
+// ✅ تعديل سؤال
+async function editQuestion(index) {
+    const newQuestion = document.getElementById(`q-${index}`).value;
+    await fetch(`/api/questions/${index}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newQuestion })
+    });
+    loadQuestions();
+}
+
+// ✅ تحميل الأسئلة تلقائيًا عند الدخول إلى التبويب
+document.addEventListener('DOMContentLoaded', () => {
+    const editTab = document.getElementById('edit-tab');
+    if (editTab) {
+        editTab.addEventListener('click', () => {
+            setTimeout(() => loadQuestions(), 100); // انتظار بسيط بعد فتح التبويب
+        });
+    }
+});
