@@ -145,10 +145,62 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
-    console.log("📥 التحقق من وجود العناصر:");
-    console.log("filterOrganization:", document.getElementById('filterOrganization'));
-    console.log("domainsChart:", document.getElementById('domainsChart'));
+    // تحميل البيانات وعرضها مباشرة داخل الصفحة
+    async function fetchSurveyDataDirectly() {
+      try {
+        const res = await fetch('/api/survey-data');
+        const data = await res.json();
+
+        if (!Array.isArray(data)) throw new Error("البيانات غير صحيحة");
+
+        document.getElementById("totalParticipants").textContent = data.length;
+
+        const orgs = [...new Set(data.map(item => item.organization))];
+        document.getElementById("totalOrganizations").textContent = orgs.length;
+
+        const trainedCount = data.filter(d => d.previousTraining === "نعم").length;
+        const trainingPercentage = ((trainedCount / data.length) * 100).toFixed(1);
+        document.getElementById("previousTrainingPercentage").textContent = trainingPercentage + "%";
+
+        // تعبئة فلاتر المنظمات
+        const orgFilter = document.getElementById("filterOrganization");
+        orgs.forEach(org => {
+          const option = document.createElement("option");
+          option.value = org;
+          option.textContent = org;
+          orgFilter.appendChild(option);
+        });
+
+        // عرض الرسم البياني
+        const domainLabels = Object.keys(data[0].domains || {});
+        const domainAverages = domainLabels.map(label => {
+          const sum = data.reduce((acc, item) => acc + (item.domains?.[label] || 0), 0);
+          return (sum / data.length).toFixed(1);
+        });
+
+        new Chart(document.getElementById("domainsChart"), {
+          type: "bar",
+          data: {
+            labels: domainLabels,
+            datasets: [{
+              label: "متوسط التقييم",
+              data: domainAverages,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: { beginAtZero: true, max: 5 }
+            }
+          }
+        });
+
+      } catch (err) {
+        console.error("❌ فشل في تحميل البيانات مباشرة:", err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchSurveyDataDirectly);
   </script>
-  <script src="/js/dashboard-dark.js"></script>
 </body>
 </html>
