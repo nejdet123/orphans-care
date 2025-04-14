@@ -1,21 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const Survey = require('../models/Survey');
+const { protect, authorize } = require('../middleware/auth');
 
 /**
  * GET: استرجاع جميع الاستبيانات
  */
-const { protect, authorize } = require('../middleware/auth');
-
 router.get('/survey-data', protect, async (req, res) => {
   try {
     const surveys = await Survey.find();
- 
+
     return res.status(200).json({
       success: true,
       data: surveys
-    }
-});
+    }); // ✅ تم إغلاق الأقواس بشكل صحيح هنا
 
   } catch (err) {
     console.error('❌ خطأ في استرجاع بيانات الاستبيان:', err);
@@ -26,6 +24,7 @@ router.get('/survey-data', protect, async (req, res) => {
     });
   }
 });
+
 
 /**
  * POST: حفظ استبيان جديد
