@@ -103,7 +103,7 @@ app.get('/thank-you', (req, res) => {
 });
 
 // الاتصال بقاعدة البيانات
-mongoose.connect('mongodb+srv://admin_orphans:Mon243253efdf@orphans-care.0i5s7pm.mongodb.net/orphans_care?retryWrites=true&w=majority')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/orphans_care')
   .then(() => console.log('✅ تم الاتصال بقاعدة البيانات'))
   .catch(err => console.error('❌ فشل الاتصال بقاعدة البيانات:', err));
 
