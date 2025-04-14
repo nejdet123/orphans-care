@@ -81,15 +81,15 @@
     <!-- الفلاتر -->
     <div class="row g-3 mb-4">
       <div class="col-md-3">
-        <label class="form-label">المنظمة</label>
+        <label for="filterOrganization" class="form-label">المنظمة</label>
         <select id="filterOrganization" class="form-select form-select-sm"></select>
       </div>
       <div class="col-md-3">
-        <label class="form-label">رمز المنظمة</label>
+        <label for="filterCode" class="form-label">رمز المنظمة</label>
         <input type="text" id="filterCode" class="form-control form-control-sm">
       </div>
       <div class="col-md-3">
-        <label class="form-label">الفئة العمرية</label>
+        <label for="filterAge" class="form-label">الفئة العمرية</label>
         <select id="filterAge" class="form-select form-select-sm">
           <option value="">الكل</option>
           <option value="6-12">6-12</option>
@@ -98,7 +98,7 @@
         </select>
       </div>
       <div class="col-md-3">
-        <label class="form-label">تلقى تدريبًا سابقًا</label>
+        <label for="filterTraining" class="form-label">تلقى تدريبًا سابقًا</label>
         <select id="filterTraining" class="form-select form-select-sm">
           <option value="">الكل</option>
           <option value="نعم">نعم</option>
@@ -144,6 +144,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    console.log("📥 التحقق من وجود العناصر:");
+    console.log("filterOrganization:", document.getElementById('filterOrganization'));
+    console.log("domainsChart:", document.getElementById('domainsChart'));
+  </script>
   <script src="/js/dashboard-dark.js"></script>
 </body>
 </html>
