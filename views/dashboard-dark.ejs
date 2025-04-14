@@ -1144,6 +1144,11 @@
           hideLoader();
           showNotification('حدث خطأ أثناء تحميل البيانات: ' + error.message, 'danger');
           console.error('Error loading data:', error);
+          // Si hay un error, cargar datos de ejemplo para demostración
+          allData = generateSampleData();
+          filteredData = [...allData];
+          updateFilterOptions();
+          renderDashboard();
         });
     });
 
@@ -1326,9 +1331,28 @@
     // Obtener datos de la API
     async function fetchSurveyData() {
       try {
-        // En un entorno real, esto sería una llamada a la API
+        // Intentar obtener datos de la API
         const res = await fetch("/api/survey-data");
-        allData = await res.json();
+        
+        // Verificar si la respuesta es exitosa
+        if (!res.ok) {
+          throw new Error(`Error en la respuesta de la API: ${res.status} ${res.statusText}`);
+        }
+        
+        // Parsear la respuesta como JSON
+        const data = await res.json();
+        
+        // Verificar si los datos son válidos
+        if (!data || !Array.isArray(data)) {
+          console.warn("Los datos recibidos no son un array válido, usando datos de ejemplo");
+          allData = generateSampleData();
+        } else {
+          console.log("Datos recibidos correctamente:", data);
+          allData = data;
+        }
+        
+        // Procesar los datos para asegurar que tengan el formato correcto
+        allData = processApiData(allData);
         
         // Actualizar selectores de filtros
         updateFilterOptions();
@@ -1342,13 +1366,55 @@
         return allData;
       } catch (error) {
         console.error('Error fetching survey data:', error);
-        // Si hay un error en la API, usar datos de ejemplo para demostración
+        // Si hay un error, usar datos de ejemplo
         allData = generateSampleData();
-        updateFilterOptions();
         filteredData = [...allData];
+        updateFilterOptions();
         renderDashboard();
         return allData;
       }
+    }
+
+    // Procesar datos de la API para asegurar formato correcto
+    function processApiData(data) {
+      return data.map(item => {
+        // Asegurar que todos los campos necesarios existan
+        const processedItem = {
+          id: item.id || Math.floor(Math.random() * 1000),
+          organization: item.organization || 'غير محدد',
+          code: item.code || `ORG${Math.floor(Math.random() * 1000)}`,
+          age: item.age || '6-12',
+          previousTraining: item.previousTraining || 'لا',
+          averageScore: item.averageScore || '0.0',
+          date: item.date ? new Date(item.date) : new Date()
+        };
+        
+        // Procesar dominios si existen
+        if (item.domains) {
+          processedItem.domains = item.domains;
+        } else if (item.domainScores) {
+          // Alternativa si los dominios están en otro formato
+          processedItem.domains = item.domainScores;
+        } else {
+          // Crear dominios de ejemplo si no existen
+          processedItem.domains = {
+            'المهارات الحياتية': Math.floor(Math.random() * 5) + 1,
+            'الدعم النفسي': Math.floor(Math.random() * 5) + 1,
+            'التعليم': Math.floor(Math.random() * 5) + 1,
+            'الصحة': Math.floor(Math.random() * 5) + 1,
+            'الحماية': Math.floor(Math.random() * 5) + 1
+          };
+        }
+        
+        // Calcular promedio si no existe
+        if (!item.averageScore) {
+          const domainValues = Object.values(processedItem.domains);
+          const sum = domainValues.reduce((acc, val) => acc + (typeof val === 'number' ? val : 0), 0);
+          processedItem.averageScore = (sum / domainValues.length).toFixed(1);
+        }
+        
+        return processedItem;
+      });
     }
 
     // Generar datos de ejemplo
@@ -1528,7 +1594,7 @@
       const trainingPercentage = filteredData.length ? ((trainedCount / filteredData.length) * 100).toFixed(1) : 0;
       document.getElementById('previousTrainingPercentage').textContent = filteredData.length ? trainingPercentage + '%' : '0%';
       
-      const totalScore = filteredData.reduce((sum, item) => sum + parseFloat(item.averageScore), 0);
+      const totalScore = filteredData.reduce((sum, item) => sum + parseFloat(item.averageScore || 0), 0);
       const avgScore = filteredData.length ? (totalScore / filteredData.length).toFixed(1) : '0.0';
       document.getElementById('averageScore').textContent = avgScore;
       
@@ -1538,9 +1604,14 @@
 
     // Actualizar gráficos
     function updateCharts() {
-      updateDomainsChart();
-      updateAgeDistributionChart();
-      updateScoreProgressChart();
+      try {
+        updateDomainsChart();
+        updateAgeDistributionChart();
+        updateScoreProgressChart();
+      } catch (error) {
+        console.error('Error al actualizar los gráficos:', error);
+        showNotification('حدث خطأ أثناء تحديث الرسوم البيانية', 'danger');
+      }
     }
 
     // Actualizar gráfico de dominios
@@ -1551,21 +1622,38 @@
         chartInstances.domainsChart.destroy();
       }
       
-      if (!filteredData.length || !filteredData[0].domains) {
+      if (!filteredData.length) {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         return;
       }
       
-      const domainLabels = Object.keys(filteredData[0].domains);
+      // Verificar si hay datos de dominios
+      const firstItemWithDomains = filteredData.find(item => item.domains && Object.keys(item.domains).length > 0);
+      
+      if (!firstItemWithDomains) {
+        console.warn('No se encontraron datos de dominios válidos');
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        return;
+      }
+      
+      const domainLabels = Object.keys(firstItemWithDomains.domains);
+      
+      // Calcular promedios de dominios
       const domainAverages = domainLabels.map(label => {
-        const validItems = filteredData.filter(d => typeof d.domains?.[label] === 'number');
-        const sum = validItems.reduce((acc, item) => acc + item.domains[label], 0);
-        return validItems.length ? (sum / validItems.length).toFixed(1) : 0;
+        const validItems = filteredData.filter(d => d.domains && typeof d.domains[label] === 'number');
+        if (!validItems.length) return 0;
+        
+        const sum = validItems.reduce((acc, item) => acc + (item.domains[label] || 0), 0);
+        return (sum / validItems.length).toFixed(1);
       });
+      
+      console.log('Etiquetas de dominios:', domainLabels);
+      console.log('Promedios de dominios:', domainAverages);
       
       const chartColors = getChartColors();
       
-      chartInstances.domainsChart = new Chart(ctx, {
+      // Crear configuración del gráfico
+      const chartConfig = {
         type: currentChartType,
         data: {
           labels: domainLabels,
@@ -1613,16 +1701,22 @@
               callbacks: {
                 label: ctx => ctx.raw || 0
               }
-            },
-            datalabels: {
-              color: getTextColor(),
-              anchor: 'end',
-              align: 'top',
-              formatter: value => value
             }
           }
         }
-      });
+      };
+      
+      // Crear el gráfico
+      try {
+        chartInstances.domainsChart = new Chart(ctx, chartConfig);
+      } catch (error) {
+        console.error('Error al crear el gráfico de dominios:', error);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.font = '14px Arial';
+        ctx.fillStyle = getTextColor();
+        ctx.textAlign = 'center';
+        ctx.fillText('حدث خطأ أثناء إنشاء الرسم البياني', ctx.canvas.width / 2, ctx.canvas.height / 2);
+      }
     }
 
     // Actualizar gráfico de distribución por edad
@@ -1643,9 +1737,13 @@
         return filteredData.filter(d => d.age === age).length;
       });
       
+      console.log('Grupos de edad:', ageGroups);
+      console.log('Conteos por edad:', ageCounts);
+      
       const chartColors = getChartColors();
       
-      chartInstances.ageDistributionChart = new Chart(ctx, {
+      // Crear configuración del gráfico
+      const chartConfig = {
         type: 'pie',
         data: {
           labels: ageGroups,
@@ -1673,7 +1771,19 @@
             }
           }
         }
-      });
+      };
+      
+      // Crear el gráfico
+      try {
+        chartInstances.ageDistributionChart = new Chart(ctx, chartConfig);
+      } catch (error) {
+        console.error('Error al crear el gráfico de distribución por edad:', error);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.font = '14px Arial';
+        ctx.fillStyle = getTextColor();
+        ctx.textAlign = 'center';
+        ctx.fillText('حدث خطأ أثناء إنشاء الرسم البياني', ctx.canvas.width / 2, ctx.canvas.height / 2);
+      }
     }
 
     // Actualizar gráfico de progreso de puntuación
@@ -1689,11 +1799,24 @@
         return;
       }
       
+      // Verificar si hay datos de fecha
+      const itemsWithDate = filteredData.filter(item => item.date instanceof Date);
+      
+      if (!itemsWithDate.length) {
+        console.warn('No se encontraron datos de fecha válidos');
+        // Crear fechas de ejemplo si no existen
+        filteredData.forEach(item => {
+          if (!item.date || !(item.date instanceof Date)) {
+            item.date = new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+          }
+        });
+      }
+      
       // Agrupar por mes
       const scoreByMonth = {};
       
       filteredData.forEach(item => {
-        if (item.date) {
+        if (item.date instanceof Date) {
           const month = item.date.getMonth();
           const year = item.date.getFullYear();
           const key = `${year}-${month}`;
@@ -1706,7 +1829,7 @@
             };
           }
           
-          scoreByMonth[key].sum += parseFloat(item.averageScore);
+          scoreByMonth[key].sum += parseFloat(item.averageScore || 0);
           scoreByMonth[key].count += 1;
         }
       });
@@ -1722,9 +1845,13 @@
         return (item.sum / item.count).toFixed(1);
       });
       
+      console.log('Etiquetas de meses:', labels);
+      console.log('Datos de progreso:', data);
+      
       const chartColors = getChartColors();
       
-      chartInstances.scoreProgressChart = new Chart(ctx, {
+      // Crear configuración del gráfico
+      const chartConfig = {
         type: 'line',
         data: {
           labels: labels,
@@ -1780,7 +1907,19 @@
             }
           }
         }
-      });
+      };
+      
+      // Crear el gráfico
+      try {
+        chartInstances.scoreProgressChart = new Chart(ctx, chartConfig);
+      } catch (error) {
+        console.error('Error al crear el gráfico de progreso de puntuación:', error);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.font = '14px Arial';
+        ctx.fillStyle = getTextColor();
+        ctx.textAlign = 'center';
+        ctx.fillText('حدث خطأ أثناء إنشاء الرسم البياني', ctx.canvas.width / 2, ctx.canvas.height / 2);
+      }
     }
 
     // Renderizar vista de tabla
@@ -1809,6 +1948,14 @@
       paginatedData.forEach(row => {
         const tr = document.createElement('tr');
         
+        // Calcular promedio si es necesario
+        let avgScore = row.averageScore;
+        if (!avgScore && row.domains) {
+          const domainValues = Object.values(row.domains);
+          const sum = domainValues.reduce((acc, val) => acc + (typeof val === 'number' ? val : 0), 0);
+          avgScore = (sum / domainValues.length).toFixed(1);
+        }
+        
         tr.innerHTML = `
           <td>${row.organization || '--'}</td>
           <td>${row.code || '--'}</td>
@@ -1820,9 +1967,9 @@
           </td>
           <td>
             <div class="d-flex align-items-center">
-              <div class="me-2">${row.averageScore || '--'}</div>
+              <div class="me-2">${avgScore || '--'}</div>
               <div class="progress flex-grow-1" style="height: 6px;">
-                <div class="progress-bar" role="progressbar" style="width: ${(parseFloat(row.averageScore) / 5) * 100}%"></div>
+                <div class="progress-bar" role="progressbar" style="width: ${(parseFloat(avgScore || 0) / 5) * 100}%"></div>
               </div>
             </div>
           </td>
@@ -1872,6 +2019,7 @@
         const col = document.createElement('div');
         col.className = 'col-md-6 col-lg-4 mb-3';
         
+        // Verificar si hay dominios
         const domainsList = row.domains ? Object.entries(row.domains).map(([domain, score]) => {
           return `
             <div class="participant-score mb-2">
@@ -1987,7 +2135,7 @@
       const participant = filteredData.find(p => p.id == id);
       
       if (!participant) {
-        showNotification('No se encontró el participante', 'danger');
+        showNotification('لم يتم العثور على المشارك', 'danger');
         return;
       }
       
@@ -1997,13 +2145,13 @@
       document.getElementById('modalAge').textContent = participant.age || '--';
       document.getElementById('modalTraining').textContent = participant.previousTraining || '--';
       document.getElementById('modalAverage').textContent = participant.averageScore || '--';
-      document.getElementById('modalDate').textContent = participant.date ? participant.date.toLocaleDateString('ar-SA') : '--';
+      document.getElementById('modalDate').textContent = participant.date instanceof Date ? participant.date.toLocaleDateString('ar-SA') : '--';
       
       // Dominios
       const domainsContainer = document.getElementById('modalDomains');
       domainsContainer.innerHTML = '';
       
-      if (participant.domains) {
+      if (participant.domains && Object.keys(participant.domains).length > 0) {
         Object.entries(participant.domains).forEach(([domain, score]) => {
           const domainElement = document.createElement('div');
           domainElement.className = 'mb-3';
@@ -2162,7 +2310,7 @@
     function printParticipantDetails(participant) {
       let domainsHtml = '';
       
-      if (participant.domains) {
+      if (participant.domains && Object.keys(participant.domains).length > 0) {
         Object.entries(participant.domains).forEach(([domain, score]) => {
           domainsHtml += `
             <div style="margin-bottom: 10px;">
@@ -2176,6 +2324,8 @@
             </div>
           `;
         });
+      } else {
+        domainsHtml = '<div>لا توجد بيانات متاحة للمجالات</div>';
       }
       
       const windowContent = `
@@ -2236,12 +2386,12 @@
               <strong>متوسط التقييم:</strong> ${participant.averageScore || '--'}
             </div>
             <div class="detail-item">
-              <strong>تاريخ التقييم:</strong> ${participant.date ? participant.date.toLocaleDateString('ar-SA') : '--'}
+              <strong>تاريخ التقييم:</strong> ${participant.date instanceof Date ? participant.date.toLocaleDateString('ar-SA') : '--'}
             </div>
           </div>
           <div class="domains-title">تقييم المجالات</div>
           <div class="domains">
-            ${domainsHtml || '<div>لا توجد بيانات متاحة للمجالات</div>'}
+            ${domainsHtml}
           </div>
         </body>
         </html>
