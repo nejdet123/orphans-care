@@ -7,262 +7,2369 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <style>
-    body {
-      background-color: #1e1e2f;
-      color: #f8f9fa;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    :root {
+      --primary-color: #4e73df;
+      --secondary-color: #1cc88a;
+      --info-color: #36b9cc;
+      --warning-color: #f6c23e;
+      --danger-color: #e74a3b;
+      --dark-bg: #1e1e2f;
+      --darker-bg: #12121c;
+      --card-bg: #2c2c3d;
+      --border-color: #444;
+      --text-color: #f8f9fa;
+      --text-muted: #adb5bd;
+      --topbar-height: 70px;
+      --sidebar-width: 250px;
+      --transition-speed: 0.3s;
     }
+
+    /* Modo claro (se puede activar con un botón) */
+    [data-theme="light"] {
+      --dark-bg: #f8f9fc;
+      --darker-bg: #eaecf4;
+      --card-bg: #ffffff;
+      --border-color: #e3e6f0;
+      --text-color: #5a5c69;
+      --text-muted: #858796;
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text-color);
+      font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Barra lateral mejorada */
     .sidebar {
-      width: 220px;
+      width: var(--sidebar-width);
       height: 100vh;
       position: fixed;
       top: 0;
       right: 0;
-      background-color: #12121c;
-      padding-top: 60px;
-      border-left: 1px solid #333;
+      background-color: var(--darker-bg);
+      padding-top: var(--topbar-height);
+      border-left: 1px solid var(--border-color);
+      transition: all var(--transition-speed);
+      z-index: 1000;
+      overflow-y: auto;
     }
-    .sidebar a {
-      display: block;
-      padding: 15px 20px;
-      color: #f8f9fa;
+
+    .sidebar-heading {
+      padding: 0.875rem 1.25rem;
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .sidebar .nav-item {
+      position: relative;
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.25rem;
+      color: var(--text-color);
       text-decoration: none;
-      transition: 0.3s;
+      transition: all var(--transition-speed);
+      border-radius: 0.35rem;
+      margin: 0 0.5rem;
     }
-    .sidebar a:hover {
-      background-color: #343a40;
+
+    .sidebar .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
     }
+
+    .sidebar .nav-link.active {
+      background-color: rgba(78, 115, 223, 0.2);
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    .sidebar .nav-link i {
+      margin-left: 0.5rem;
+      font-size: 1rem;
+      opacity: 0.8;
+      width: 1.5rem;
+      text-align: center;
+    }
+
+    .sidebar .nav-link .badge {
+      margin-right: auto;
+    }
+
+    .sidebar-divider {
+      border-top: 1px solid var(--border-color);
+      margin: 1rem 0;
+    }
+
+    /* Barra superior mejorada */
     .topbar {
-      height: 60px;
-      background-color: #1c1c2b;
-      padding: 10px 30px;
+      height: var(--topbar-height);
+      background-color: var(--darker-bg);
+      padding: 0 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #333;
-      margin-right: 220px;
+      border-bottom: 1px solid var(--border-color);
+      margin-right: var(--sidebar-width);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: var(--sidebar-width);
+      z-index: 999;
+      transition: all var(--transition-speed);
     }
-    .main {
-      margin-right: 240px;
-      padding: 30px;
+
+    .topbar .navbar-brand {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.25rem;
+      color: var(--text-color);
     }
-    .card-dark {
-      background-color: #2c2c3d;
+
+    .topbar .navbar-brand i {
+      margin-left: 0.5rem;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .topbar .dropdown-toggle {
+      color: var(--text-color);
+      background: none;
       border: none;
-      border-radius: 12px;
+      display: flex;
+      align-items: center;
     }
+
+    .topbar .dropdown-toggle::after {
+      display: none;
+    }
+
+    .topbar .dropdown-toggle img {
+      height: 2.5rem;
+      width: 2.5rem;
+      border-radius: 50%;
+      border: 2px solid var(--border-color);
+      margin-left: 0.5rem;
+    }
+
+    /* Contenido principal mejorado */
+    .main {
+      margin-right: var(--sidebar-width);
+      margin-top: var(--topbar-height);
+      padding: 1.5rem;
+      transition: all var(--transition-speed);
+    }
+
+    /* Tarjetas mejoradas */
+    .card-dark {
+      background-color: var(--card-bg);
+      border: none;
+      border-radius: 0.75rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.15);
+      margin-bottom: 1.5rem;
+      transition: all var(--transition-speed);
+      overflow: hidden;
+    }
+
+    .card-dark:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0.5rem 2rem 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .card-dark .card-header {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-dark .card-header h6 {
+      margin-bottom: 0;
+      font-weight: bold;
+    }
+
+    .card-dark .card-body {
+      padding: 1.25rem;
+    }
+
+    .card-dark .card-footer {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-top: 1px solid var(--border-color);
+      padding: 0.75rem 1.25rem;
+      font-size: 0.8rem;
+    }
+
+    /* Tarjetas de estadísticas */
+    .stat-card {
+      border-left: 0.25rem solid;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all var(--transition-speed);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .stat-card.primary {
+      border-left-color: var(--primary-color);
+    }
+
+    .stat-card.success {
+      border-left-color: var(--secondary-color);
+    }
+
+    .stat-card.info {
+      border-left-color: var(--info-color);
+    }
+
+    .stat-card.warning {
+      border-left-color: var(--warning-color);
+    }
+
+    .stat-card.danger {
+      border-left-color: var(--danger-color);
+    }
+
+    .stat-card .stat-icon {
+      font-size: 2rem;
+      opacity: 0.3;
+    }
+
+    .stat-card .stat-title {
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+
+    .stat-card .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+
+    /* Formularios mejorados */
     .form-select, .form-control {
-      background-color: #343a40;
-      color: #fff;
-      border: 1px solid #555;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      transition: all var(--transition-speed);
     }
+
     .form-select:focus, .form-control:focus {
-      box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25);
+      box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+      border-color: var(--primary-color);
     }
-    table {
-      background-color: #2c2c3d;
+
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
     }
-    th, td {
-      color: #f8f9fa;
+
+    /* Tablas mejoradas */
+    .table-responsive {
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .table {
+      margin-bottom: 0;
+    }
+
+    .table th, .table td {
+      padding: 1rem;
       vertical-align: middle;
+      border-color: var(--border-color);
+    }
+
+    .table thead th {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-bottom: 2px solid var(--border-color);
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05rem;
+    }
+
+    .table tbody tr {
+      transition: all var(--transition-speed);
+    }
+
+    .table tbody tr:hover {
+      background-color: rgba(0, 0, 0, 0.075);
+    }
+
+    /* Botones mejorados */
+    .btn {
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: all var(--transition-speed);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-success {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+    }
+
+    .btn-info {
+      background-color: var(--info-color);
+      border-color: var(--info-color);
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+      border-color: var(--warning-color);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    /* Paginación mejorada */
+    .pagination {
+      margin-bottom: 0;
+    }
+
+    .page-item .page-link {
+      color: var(--primary-color);
+      background-color: var(--card-bg);
+      border-color: var(--border-color);
+    }
+
+    .page-item.active .page-link {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    /* Tooltips y popovers */
+    .tooltip {
+      font-size: 0.8rem;
+    }
+
+    .popover {
+      border-color: var(--border-color);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .popover-header {
+      background-color: var(--card-bg);
+      border-bottom-color: var(--border-color);
+    }
+
+    .popover-body {
+      color: var(--text-color);
+    }
+
+    /* Animaciones y transiciones */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Modo responsivo */
+    @media (max-width: 768px) {
+      :root {
+        --sidebar-width: 0;
+      }
+
+      .sidebar {
+        transform: translateX(100%);
+      }
+
+      .sidebar.show {
+        transform: translateX(0);
+        width: 250px;
+      }
+
+      .topbar, .main {
+        margin-right: 0;
+        width: 100%;
+      }
+
+      .toggle-sidebar {
+        display: block !important;
+      }
+    }
+
+    /* Botón para alternar la barra lateral en móviles */
+    .toggle-sidebar {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Botón para alternar el tema claro/oscuro */
+    .toggle-theme {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      font-size: 1.25rem;
+      cursor: pointer;
+      margin-left: 1rem;
+    }
+
+    /* Estilos para gráficos */
+    .chart-container {
+      position: relative;
+      height: 350px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Estilos para filtros avanzados */
+    .filters-container {
+      background-color: var(--card-bg);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.15);
+    }
+
+    .filters-toggle {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .filters-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height var(--transition-speed);
+    }
+
+    .filters-body.show {
+      max-height: 500px;
+    }
+
+    /* Estilos para notificaciones */
+    .notification {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 9999;
+      max-width: 300px;
+    }
+
+    .notification .toast {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    /* Estilos para tooltips personalizados */
+    .custom-tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .custom-tooltip .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: var(--card-bg);
+      color: var(--text-color);
       text-align: center;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity var(--transition-speed);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--border-color);
+    }
+
+    .custom-tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Estilos para badges */
+    .badge {
+      padding: 0.35em 0.65em;
+      font-size: 0.75em;
+      font-weight: 700;
+      border-radius: 0.35rem;
+    }
+
+    .badge-primary {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .badge-success {
+      background-color: var(--secondary-color);
+      color: #fff;
+    }
+
+    .badge-info {
+      background-color: var(--info-color);
+      color: #fff;
+    }
+
+    .badge-warning {
+      background-color: var(--warning-color);
+      color: #212529;
+    }
+
+    .badge-danger {
+      background-color: var(--danger-color);
+      color: #fff;
+    }
+
+    /* Estilos para el loader */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 5px solid var(--border-color);
+      border-top: 5px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Estilos para el selector de fecha */
+    .date-range-picker {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+
+    /* Estilos para tabs */
+    .nav-tabs {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-tabs .nav-link {
+      color: var(--text-muted);
+      border: none;
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+      padding: 0.75rem 1rem;
+      margin-bottom: -1px;
+      transition: all var(--transition-speed);
+    }
+
+    .nav-tabs .nav-link:hover {
+      border-color: transparent;
+      color: var(--text-color);
+    }
+
+    .nav-tabs .nav-link.active {
+      color: var(--primary-color);
+      background-color: transparent;
+      border-bottom: 2px solid var(--primary-color);
+    }
+
+    /* Estilos para el selector de visualización */
+    .view-selector {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .view-selector .btn {
+      padding: 0.375rem 0.75rem;
+      border-radius: 0;
+      background-color: var(--card-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .view-selector .btn:first-child {
+      border-top-left-radius: 0.5rem;
+      border-bottom-left-radius: 0.5rem;
+    }
+
+    .view-selector .btn:last-child {
+      border-top-right-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
+
+    .view-selector .btn.active {
+      background-color: var(--primary-color);
+      color: #fff;
+      border-color: var(--primary-color);
+    }
+
+    /* Estilos para tarjetas de participantes (vista alternativa) */
+    .participant-card {
+      background-color: var(--card-bg);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.15);
+      transition: all var(--transition-speed);
+    }
+
+    .participant-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0.5rem 2rem 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .participant-card .participant-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .participant-card .participant-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 0;
+    }
+
+    .participant-card .participant-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .participant-card .participant-detail {
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 0.35rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .participant-card .participant-detail i {
+      margin-left: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .participant-card .participant-score {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .participant-card .score-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .participant-card .score-value {
+      font-weight: bold;
+    }
+
+    .participant-card .progress {
+      height: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.1);
+      border-radius: 0.25rem;
+      margin-top: 0.25rem;
+    }
+
+    .participant-card .progress-bar {
+      background-color: var(--primary-color);
+      border-radius: 0.25rem;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <a href="/"><i class="bi bi-house"></i> الرئيسية</a>
-    <a href="#stats"><i class="bi bi-bar-chart"></i> الإحصاءات العامة</a>
-    <a href="#report"><i class="bi bi-file-earmark-text"></i> التقارير</a>
-    <a href="#settings"><i class="bi bi-gear"></i> الإعدادات</a>
-    <a href="/auth/logout"><i class="bi bi-box-arrow-left"></i> تسجيل الخروج</a>
+  <!-- Loader -->
+  <div class="loader-container" id="loader" style="display: none;">
+    <div class="loader"></div>
   </div>
 
+  <!-- Notificaciones -->
+  <div class="notification" id="notification"></div>
+
+  <!-- Barra lateral -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-heading">
+      لوحة التحكم
+    </div>
+    <div class="nav-item">
+      <a href="#dashboard" class="nav-link active" data-section="dashboard">
+        <i class="bi bi-house-door"></i>
+        الرئيسية
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="#stats" class="nav-link" data-section="stats">
+        <i class="bi bi-bar-chart"></i>
+        الإحصاءات العامة
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="#participants" class="nav-link" data-section="participants">
+        <i class="bi bi-people"></i>
+        المشاركون
+        <span class="badge badge-primary" id="participantsCount">0</span>
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="#domains" class="nav-link" data-section="domains">
+        <i class="bi bi-grid-3x3-gap"></i>
+        المجالات
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="#reports" class="nav-link" data-section="reports">
+        <i class="bi bi-file-earmark-text"></i>
+        التقارير
+      </a>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-heading">
+      الإعدادات
+    </div>
+    <div class="nav-item">
+      <a href="#profile" class="nav-link" data-section="profile">
+        <i class="bi bi-person"></i>
+        الملف الشخصي
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="#settings" class="nav-link" data-section="settings">
+        <i class="bi bi-gear"></i>
+        الإعدادات
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="/auth/logout" class="nav-link">
+        <i class="bi bi-box-arrow-left"></i>
+        تسجيل الخروج
+      </a>
+    </div>
+  </div>
+
+  <!-- Barra superior -->
   <div class="topbar">
-    <div><strong>📊 لوحة التحكم - تقييم الاحتياجات</strong></div>
-    <div>👤 <span id="userName">اسم المستخدم</span></div>
+    <div class="d-flex align-items-center">
+      <button class="toggle-sidebar me-2" id="toggleSidebar">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="navbar-brand">
+        <i class="bi bi-clipboard-data"></i>
+        لوحة تقييم الاحتياجات
+      </div>
+    </div>
+    <div class="d-flex align-items-center">
+      <button class="toggle-theme" id="toggleTheme">
+        <i class="bi bi-moon"></i>
+      </button>
+      <div class="dropdown">
+        <button class="dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <span id="userName">اسم المستخدم</span>
+          <img src="https://ui-avatars.com/api/?name=User&background=4e73df&color=fff" alt="User Avatar">
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="#profile"><i class="bi bi-person me-2"></i> الملف الشخصي</a></li>
+          <li><a class="dropdown-item" href="#settings"><i class="bi bi-gear me-2"></i> الإعدادات</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-left me-2"></i> تسجيل الخروج</a></li>
+        </ul>
+      </div>
+    </div>
   </div>
 
+  <!-- Contenido principal -->
   <div class="main">
-    <h2 class="mb-4">الإحصاءات العامة</h2>
+    <!-- Sección de filtros avanzados -->
+    <div class="filters-container mb-4">
+      <div class="filters-toggle d-flex justify-content-between align-items-center" id="filtersToggle">
+        <h5 class="mb-0"><i class="bi bi-funnel"></i> الفلاتر المتقدمة</h5>
+        <i class="bi bi-chevron-down"></i>
+      </div>
+      <div class="filters-body mt-3" id="filtersBody">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label for="filterOrganization" class="form-label">المنظمة</label>
+            <select id="filterOrganization" class="form-select">
+              <option value="">الكل</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="filterCode" class="form-label">رمز المنظمة</label>
+            <input type="text" id="filterCode" class="form-control" placeholder="أدخل الرمز">
+          </div>
+          <div class="col-md-3">
+            <label for="filterAge" class="form-label">الفئة العمرية</label>
+            <select id="filterAge" class="form-select">
+              <option value="">الكل</option>
+              <option value="6-12">6-12</option>
+              <option value="13-18">13-18</option>
+              <option value=">18">أكبر من 18</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="filterTraining" class="form-label">تلقى تدريبًا سابقًا</label>
+            <select id="filterTraining" class="form-select">
+              <option value="">الكل</option>
+              <option value="نعم">نعم</option>
+              <option value="لا">لا</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="filterDomain" class="form-label">المجال</label>
+            <select id="filterDomain" class="form-select">
+              <option value="">الكل</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="filterScore" class="form-label">متوسط التقييم</label>
+            <select id="filterScore" class="form-select">
+              <option value="">الكل</option>
+              <option value="1">أقل من 2</option>
+              <option value="2">2 - 3</option>
+              <option value="3">3 - 4</option>
+              <option value="4">أكثر من 4</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="filterDate" class="form-label">تاريخ التقييم</label>
+            <input type="text" id="filterDate" class="form-control date-range-picker" placeholder="اختر نطاق التاريخ">
+          </div>
+          <div class="col-12 d-flex justify-content-end">
+            <button class="btn btn-secondary me-2" id="resetFilters">إعادة تعيين</button>
+            <button class="btn btn-primary" id="applyFilters">تطبيق الفلاتر</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div class="row g-3 mb-4">
-      <div class="col-md-3">
-        <label for="filterOrganization" class="form-label">المنظمة</label>
-        <select id="filterOrganization" class="form-select form-select-sm"></select>
+    <!-- Sección de estadísticas -->
+    <div class="row mb-4">
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card-dark">
+          <div class="stat-card primary">
+            <div>
+              <div class="stat-title">عدد المشاركين</div>
+              <div class="stat-value" id="totalParticipants">0</div>
+            </div>
+            <div class="stat-icon">
+              <i class="bi bi-people"></i>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-3">
-        <label for="filterCode" class="form-label">رمز المنظمة</label>
-        <input type="text" id="filterCode" class="form-control form-control-sm">
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card-dark">
+          <div class="stat-card success">
+            <div>
+              <div class="stat-title">عدد المنظمات</div>
+              <div class="stat-value" id="totalOrganizations">0</div>
+            </div>
+            <div class="stat-icon">
+              <i class="bi bi-building"></i>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-3">
-        <label for="filterAge" class="form-label">الفئة العمرية</label>
-        <select id="filterAge" class="form-select form-select-sm">
-          <option value="">الكل</option>
-          <option value="6-12">6-12</option>
-          <option value="13-18">13-18</option>
-          <option value=">18">أكبر من 18</option>
-        </select>
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card-dark">
+          <div class="stat-card info">
+            <div>
+              <div class="stat-title">نسبة تلقوا تدريبًا سابقًا</div>
+              <div class="stat-value" id="previousTrainingPercentage">0%</div>
+            </div>
+            <div class="stat-icon">
+              <i class="bi bi-person-check"></i>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-3">
-        <label for="filterTraining" class="form-label">تلقى تدريبًا سابقًا</label>
-        <select id="filterTraining" class="form-select form-select-sm">
-          <option value="">الكل</option>
-          <option value="نعم">نعم</option>
-          <option value="لا">لا</option>
-        </select>
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card-dark">
+          <div class="stat-card warning">
+            <div>
+              <div class="stat-title">متوسط التقييم العام</div>
+              <div class="stat-value" id="averageScore">0.0</div>
+            </div>
+            <div class="stat-icon">
+              <i class="bi bi-star"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de gráficos -->
+    <div class="row mb-4">
+      <div class="col-xl-8 col-lg-7">
+        <div class="card-dark">
+          <div class="card-header">
+            <h6><i class="bi bi-bar-chart"></i> متوسط التقييم حسب المجالات</h6>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="chartOptionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="chartOptionsDropdown">
+                <li><a class="dropdown-item" href="#" id="downloadChartImage"><i class="bi bi-download me-2"></i> تحميل كصورة</a></li>
+                <li><a class="dropdown-item" href="#" id="printChart"><i class="bi bi-printer me-2"></i> طباعة</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" id="toggleChartType"><i class="bi bi-arrow-repeat me-2"></i> تغيير نوع الرسم البياني</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="domainsChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-5">
+        <div class="card-dark">
+          <div class="card-header">
+            <h6><i class="bi bi-pie-chart"></i> توزيع الفئات العمرية</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="ageDistributionChart"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="card card-dark p-3">
-          <h6><i class="bi bi-people"></i> عدد المشاركين</h6>
-          <h3 id="totalParticipants">--</h3>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card card-dark p-3">
-          <h6><i class="bi bi-building"></i> عدد المنظمات</h6>
-          <h3 id="totalOrganizations">--</h3>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card card-dark p-3">
-          <h6><i class="bi bi-person-check"></i> نسبة تلقوا تدريبًا سابقًا</h6>
-          <h3 id="previousTrainingPercentage">--</h3>
+      <div class="col-12">
+        <div class="card-dark">
+          <div class="card-header">
+            <h6><i class="bi bi-graph-up"></i> تطور متوسط التقييم</h6>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="scoreProgressChart"></canvas>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="card card-dark p-4 mb-5">
-      <canvas id="domainsChart"></canvas>
-    </div>
-
-    <div class="mb-5">
-      <h4 class="mb-3">📋 بيانات المشاركين</h4>
-      <button class="btn btn-sm btn-outline-info mb-3" onclick="exportTableToExcel('participantsTable')">تصدير الجدول إلى Excel</button>
-      <div class="table-responsive">
-        <table class="table table-bordered" id="participantsTable">
-          <thead>
-            <tr>
-              <th>اسم المنظمة</th>
-              <th>رمز</th>
-              <th>العمر</th>
-              <th>تلقى تدريب</th>
-              <th>متوسط التقييم</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+    <!-- Sección de participantes -->
+    <div class="card-dark mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h6><i class="bi bi-people"></i> بيانات المشاركين</h6>
+        <div class="d-flex">
+          <div class="view-selector me-2">
+            <button class="btn active" id="tableView"><i class="bi bi-table"></i></button>
+            <button class="btn" id="cardView"><i class="bi bi-grid"></i></button>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-download"></i> تصدير
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+              <li><a class="dropdown-item" href="#" id="exportExcel"><i class="bi bi-file-earmark-excel me-2"></i> Excel</a></li>
+              <li><a class="dropdown-item" href="#" id="exportPDF"><i class="bi bi-file-earmark-pdf me-2"></i> PDF</a></li>
+              <li><a class="dropdown-item" href="#" id="exportCSV"><i class="bi bi-file-earmark-text me-2"></i> CSV</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Vista de tabla -->
+        <div id="tableViewContainer">
+          <div class="table-responsive">
+            <table class="table table-hover" id="participantsTable">
+              <thead>
+                <tr>
+                  <th>اسم المنظمة <i class="bi bi-arrow-down-up sortable" data-sort="organization"></i></th>
+                  <th>رمز <i class="bi bi-arrow-down-up sortable" data-sort="code"></i></th>
+                  <th>العمر <i class="bi bi-arrow-down-up sortable" data-sort="age"></i></th>
+                  <th>تلقى تدريب <i class="bi bi-arrow-down-up sortable" data-sort="previousTraining"></i></th>
+                  <th>متوسط التقييم <i class="bi bi-arrow-down-up sortable" data-sort="averageScore"></i></th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+              <span id="showingEntries">عرض 0 من 0 مشارك</span>
+            </div>
+            <nav aria-label="Page navigation">
+              <ul class="pagination" id="pagination"></ul>
+            </nav>
+          </div>
+        </div>
+        
+        <!-- Vista de tarjetas -->
+        <div id="cardViewContainer" style="display: none;">
+          <div class="row" id="participantsCards"></div>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+              <span id="showingEntriesCards">عرض 0 من 0 مشارك</span>
+            </div>
+            <nav aria-label="Page navigation">
+              <ul class="pagination" id="paginationCards"></ul>
+            </nav>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script>
-    let allData = [];
+  <!-- Modal para detalles del participante -->
+  <div class="modal fade" id="participantDetailsModal" tabindex="-1" aria-labelledby="participantDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="participantDetailsModalLabel">تفاصيل المشارك</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <p><strong>المنظمة:</strong> <span id="modalOrganization"></span></p>
+              <p><strong>الرمز:</strong> <span id="modalCode"></span></p>
+              <p><strong>العمر:</strong> <span id="modalAge"></span></p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>تلقى تدريب سابق:</strong> <span id="modalTraining"></span></p>
+              <p><strong>متوسط التقييم:</strong> <span id="modalAverage"></span></p>
+              <p><strong>تاريخ التقييم:</strong> <span id="modalDate"></span></p>
+            </div>
+          </div>
+          <h6 class="mb-3">تقييم المجالات</h6>
+          <div id="modalDomains"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+          <button type="button" class="btn btn-primary" id="printParticipantDetails">طباعة التفاصيل</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    // Variables globales
+    let allData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let currentSort = { field: null, direction: 'asc' };
+    let chartInstances = {};
+    let currentChartType = 'bar';
+    let currentTheme = 'dark';
+
+    // Inicialización de la página
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inicializar componentes
+      initSidebar();
+      initThemeToggle();
+      initFilters();
+      initViewToggle();
+      initSortable();
+      initExport();
+      initChartOptions();
+      
+      // Cargar datos
+      showLoader();
+      fetchSurveyData()
+        .then(() => {
+          hideLoader();
+          showNotification('تم تحميل البيانات بنجاح', 'success');
+        })
+        .catch(error => {
+          hideLoader();
+          showNotification('حدث خطأ أثناء تحميل البيانات: ' + error.message, 'danger');
+          console.error('Error loading data:', error);
+        });
+    });
+
+    // Inicialización de la barra lateral
+    function initSidebar() {
+      const toggleSidebar = document.getElementById('toggleSidebar');
+      const sidebar = document.getElementById('sidebar');
+      
+      toggleSidebar.addEventListener('click', () => {
+        sidebar.classList.toggle('show');
+      });
+
+      // Navegación
+      const navLinks = document.querySelectorAll('.sidebar .nav-link[data-section]');
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          
+          // Actualizar enlaces activos
+          navLinks.forEach(l => l.classList.remove('active'));
+          link.classList.toggle('active');
+          
+          // En una implementación real, aquí se cambiaría de sección
+          const section = link.getAttribute('data-section');
+          console.log(`Navegando a la sección: ${section}`);
+          
+          // Cerrar sidebar en móvil
+          if (window.innerWidth < 768) {
+            sidebar.classList.remove('show');
+          }
+        });
+      });
+    }
+
+    // Inicialización del toggle de tema
+    function initThemeToggle() {
+      const toggleTheme = document.getElementById('toggleTheme');
+      const themeIcon = toggleTheme.querySelector('i');
+      
+      toggleTheme.addEventListener('click', () => {
+        if (currentTheme === 'dark') {
+          document.body.setAttribute('data-theme', 'light');
+          themeIcon.classList.remove('bi-moon');
+          themeIcon.classList.add('bi-sun');
+          currentTheme = 'light';
+        } else {
+          document.body.removeAttribute('data-theme');
+          themeIcon.classList.remove('bi-sun');
+          themeIcon.classList.add('bi-moon');
+          currentTheme = 'dark';
+        }
+        
+        // Actualizar gráficos con el nuevo tema
+        updateChartsTheme();
+      });
+    }
+
+    // Inicialización de filtros
+    function initFilters() {
+      const filtersToggle = document.getElementById('filtersToggle');
+      const filtersBody = document.getElementById('filtersBody');
+      
+      filtersToggle.addEventListener('click', () => {
+        filtersBody.classList.toggle('show');
+        const icon = filtersToggle.querySelector('i.bi-chevron-down, i.bi-chevron-up');
+        if (filtersBody.classList.contains('show')) {
+          icon.classList.remove('bi-chevron-down');
+          icon.classList.add('bi-chevron-up');
+        } else {
+          icon.classList.remove('bi-chevron-up');
+          icon.classList.add('bi-chevron-down');
+        }
+      });
+      
+      // Aplicar filtros
+      document.getElementById('applyFilters').addEventListener('click', () => {
+        applyFilters();
+        showNotification('تم تطبيق الفلاتر', 'info');
+      });
+      
+      // Resetear filtros
+      document.getElementById('resetFilters').addEventListener('click', () => {
+        resetFilters();
+        showNotification('تم إعادة تعيين الفلاتر', 'info');
+      });
+    }
+
+    // Inicialización del toggle de vista
+    function initViewToggle() {
+      const tableView = document.getElementById('tableView');
+      const cardView = document.getElementById('cardView');
+      const tableViewContainer = document.getElementById('tableViewContainer');
+      const cardViewContainer = document.getElementById('cardViewContainer');
+      
+      tableView.addEventListener('click', () => {
+        tableView.classList.add('active');
+        cardView.classList.remove('active');
+        tableViewContainer.style.display = 'block';
+        cardViewContainer.style.display = 'none';
+      });
+      
+      cardView.addEventListener('click', () => {
+        cardView.classList.add('active');
+        tableView.classList.remove('active');
+        cardViewContainer.style.display = 'block';
+        tableViewContainer.style.display = 'none';
+        renderCardView();
+      });
+    }
+
+    // Inicialización de ordenamiento
+    function initSortable() {
+      const sortableHeaders = document.querySelectorAll('.sortable');
+      sortableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+          const field = header.getAttribute('data-sort');
+          
+          // Cambiar dirección si es el mismo campo
+          if (currentSort.field === field) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+          } else {
+            currentSort.field = field;
+            currentSort.direction = 'asc';
+          }
+          
+          // Actualizar iconos
+          sortableHeaders.forEach(h => {
+            h.classList.remove('bi-arrow-down', 'bi-arrow-up');
+            h.classList.add('bi-arrow-down-up');
+          });
+          
+          const currentHeader = document.querySelector(`.sortable[data-sort="${field}"]`);
+          currentHeader.classList.remove('bi-arrow-down-up');
+          currentHeader.classList.add(currentSort.direction === 'asc' ? 'bi-arrow-down' : 'bi-arrow-up');
+          
+          // Ordenar y renderizar
+          sortData();
+          renderTableView();
+        });
+      });
+    }
+
+    // Inicialización de exportación
+    function initExport() {
+      document.getElementById('exportExcel').addEventListener('click', () => {
+        exportTableToExcel();
+        showNotification('تم تصدير البيانات إلى Excel', 'success');
+      });
+      
+      document.getElementById('exportPDF').addEventListener('click', () => {
+        exportTableToPDF();
+        showNotification('تم تصدير البيانات إلى PDF', 'success');
+      });
+      
+      document.getElementById('exportCSV').addEventListener('click', () => {
+        exportTableToCSV();
+        showNotification('تم تصدير البيانات إلى CSV', 'success');
+      });
+    }
+
+    // Inicialización de opciones de gráficos
+    function initChartOptions() {
+      document.getElementById('downloadChartImage').addEventListener('click', () => {
+        downloadChartAsImage('domainsChart');
+        showNotification('تم تحميل الرسم البياني كصورة', 'success');
+      });
+      
+      document.getElementById('printChart').addEventListener('click', () => {
+        printChart('domainsChart');
+        showNotification('جاري طباعة الرسم البياني...', 'info');
+      });
+      
+      document.getElementById('toggleChartType').addEventListener('click', () => {
+        currentChartType = currentChartType === 'bar' ? 'line' : 'bar';
+        updateDomainsChart();
+        showNotification(`تم تغيير نوع الرسم البياني إلى ${currentChartType === 'bar' ? 'أعمدة' : 'خط'}`, 'info');
+      });
+    }
+
+    // Obtener datos de la API
+    async function fetchSurveyData() {
+      try {
+        // En un entorno real, esto sería una llamada a la API
+        const res = await fetch("/api/survey-data");
+        allData = await res.json();
+        
+        // Actualizar selectores de filtros
+        updateFilterOptions();
+        
+        // Aplicar filtros iniciales (sin filtros)
+        filteredData = [...allData];
+        
+        // Renderizar dashboard
+        renderDashboard();
+        
+        return allData;
+      } catch (error) {
+        console.error('Error fetching survey data:', error);
+        // Si hay un error en la API, usar datos de ejemplo para demostración
+        allData = generateSampleData();
+        updateFilterOptions();
+        filteredData = [...allData];
+        renderDashboard();
+        return allData;
+      }
+    }
+
+    // Generar datos de ejemplo
+    function generateSampleData() {
+      const organizations = ['منظمة الأمل', 'جمعية الرعاية', 'مؤسسة المستقبل', 'دار الأيتام', 'مركز التنمية'];
+      const domains = {
+        'المهارات الحياتية': 0,
+        'الدعم النفسي': 0,
+        'التعليم': 0,
+        'الصحة': 0,
+        'الحماية': 0
+      };
+      const ageGroups = ['6-12', '13-18', '>18'];
+      const trainingOptions = ['نعم', 'لا'];
+      
+      const data = [];
+      
+      for (let i = 0; i < 50; i++) {
+        const org = organizations[Math.floor(Math.random() * organizations.length)];
+        const age = ageGroups[Math.floor(Math.random() * ageGroups.length)];
+        const training = trainingOptions[Math.floor(Math.random() * trainingOptions.length)];
+        
+        const domainScores = {};
+        let totalScore = 0;
+        
+        Object.keys(domains).forEach(domain => {
+          const score = Math.floor(Math.random() * 5) + 1; // 1-5
+          domainScores[domain] = score;
+          totalScore += score;
+        });
+        
+        const avgScore = totalScore / Object.keys(domains).length;
+        
+        data.push({
+          id: i + 1,
+          organization: org,
+          code: `ORG${Math.floor(Math.random() * 1000)}`,
+          age: age,
+          previousTraining: training,
+          domains: domainScores,
+          averageScore: avgScore.toFixed(1),
+          date: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)
+        });
+      }
+      
+      return data;
+    }
+
+    // Actualizar opciones de filtros
+    function updateFilterOptions() {
+      // Organizaciones
+      const orgSelect = document.getElementById('filterOrganization');
+      const organizations = [...new Set(allData.map(item => item.organization))].filter(Boolean);
+      
+      orgSelect.innerHTML = '<option value="">الكل</option>';
+      organizations.forEach(org => {
+        const opt = document.createElement('option');
+        opt.value = org;
+        opt.textContent = org;
+        orgSelect.appendChild(opt);
+      });
+      
+      // Dominios
+      const domainSelect = document.getElementById('filterDomain');
+      if (allData.length && allData[0].domains) {
+        const domains = Object.keys(allData[0].domains);
+        
+        domainSelect.innerHTML = '<option value="">الكل</option>';
+        domains.forEach(domain => {
+          const opt = document.createElement('option');
+          opt.value = domain;
+          opt.textContent = domain;
+          domainSelect.appendChild(opt);
+        });
+      }
+    }
+
+    // Aplicar filtros
     function applyFilters() {
       const org = document.getElementById('filterOrganization').value;
       const code = document.getElementById('filterCode').value.toLowerCase();
       const age = document.getElementById('filterAge').value;
       const training = document.getElementById('filterTraining').value;
-
-      const filtered = allData.filter(row => {
+      const domain = document.getElementById('filterDomain').value;
+      const score = document.getElementById('filterScore').value;
+      
+      filteredData = allData.filter(row => {
+        let matchesScore = true;
+        
+        if (score) {
+          const avgScore = parseFloat(row.averageScore);
+          switch (score) {
+            case '1': matchesScore = avgScore < 2; break;
+            case '2': matchesScore = avgScore >= 2 && avgScore < 3; break;
+            case '3': matchesScore = avgScore >= 3 && avgScore < 4; break;
+            case '4': matchesScore = avgScore >= 4; break;
+          }
+        }
+        
+        let matchesDomain = true;
+        if (domain && row.domains) {
+          // Aquí podríamos filtrar por un valor específico del dominio
+          matchesDomain = domain in row.domains;
+        }
+        
         return (!org || row.organization === org) &&
                (!code || row.code?.toLowerCase().includes(code)) &&
                (!age || row.age === age) &&
-               (!training || row.previousTraining === training);
+               (!training || row.previousTraining === training) &&
+               matchesDomain &&
+               matchesScore;
       });
-
-      renderDashboard(filtered);
+      
+      // Resetear paginación
+      currentPage = 1;
+      
+      // Renderizar dashboard con datos filtrados
+      renderDashboard();
     }
 
-    function renderDashboard(data) {
-      document.getElementById("totalParticipants").textContent = data.length || 0;
-      const orgs = [...new Set(data.map(item => item.organization))].filter(Boolean);
-      document.getElementById("totalOrganizations").textContent = orgs.length || 0;
+    // Resetear filtros
+    function resetFilters() {
+      document.getElementById('filterOrganization').value = '';
+      document.getElementById('filterCode').value = '';
+      document.getElementById('filterAge').value = '';
+      document.getElementById('filterTraining').value = '';
+      document.getElementById('filterDomain').value = '';
+      document.getElementById('filterScore').value = '';
+      document.getElementById('filterDate').value = '';
+      
+      filteredData = [...allData];
+      currentPage = 1;
+      
+      renderDashboard();
+    }
 
-      const trainedCount = data.filter(d => d.previousTraining === "نعم").length;
-      const trainingPercentage = data.length ? ((trainedCount / data.length) * 100).toFixed(1) : 0;
-      document.getElementById("previousTrainingPercentage").textContent = data.length ? trainingPercentage + "%" : "--";
+    // Ordenar datos
+    function sortData() {
+      if (currentSort.field) {
+        filteredData.sort((a, b) => {
+          let valueA = a[currentSort.field];
+          let valueB = b[currentSort.field];
+          
+          // Convertir a número si es posible
+          if (!isNaN(valueA) && !isNaN(valueB)) {
+            valueA = parseFloat(valueA);
+            valueB = parseFloat(valueB);
+          }
+          
+          if (valueA < valueB) {
+            return currentSort.direction === 'asc' ? -1 : 1;
+          }
+          if (valueA > valueB) {
+            return currentSort.direction === 'asc' ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+    }
 
-      const ctx = document.getElementById("domainsChart").getContext('2d');
-      if (window.myChart) window.myChart.destroy();
+    // Renderizar dashboard
+    function renderDashboard() {
+      updateStatistics();
+      updateCharts();
+      renderTableView();
+      updatePagination();
+    }
 
-      if (!data.length || !data[0].domains) {
+    // Actualizar estadísticas
+    function updateStatistics() {
+      document.getElementById('totalParticipants').textContent = filteredData.length || 0;
+      
+      const orgs = [...new Set(filteredData.map(item => item.organization))].filter(Boolean);
+      document.getElementById('totalOrganizations').textContent = orgs.length || 0;
+      
+      const trainedCount = filteredData.filter(d => d.previousTraining === 'نعم').length;
+      const trainingPercentage = filteredData.length ? ((trainedCount / filteredData.length) * 100).toFixed(1) : 0;
+      document.getElementById('previousTrainingPercentage').textContent = filteredData.length ? trainingPercentage + '%' : '0%';
+      
+      const totalScore = filteredData.reduce((sum, item) => sum + parseFloat(item.averageScore), 0);
+      const avgScore = filteredData.length ? (totalScore / filteredData.length).toFixed(1) : '0.0';
+      document.getElementById('averageScore').textContent = avgScore;
+      
+      // Actualizar contador de participantes en el menú
+      document.getElementById('participantsCount').textContent = filteredData.length;
+    }
+
+    // Actualizar gráficos
+    function updateCharts() {
+      updateDomainsChart();
+      updateAgeDistributionChart();
+      updateScoreProgressChart();
+    }
+
+    // Actualizar gráfico de dominios
+    function updateDomainsChart() {
+      const ctx = document.getElementById('domainsChart').getContext('2d');
+      
+      if (chartInstances.domainsChart) {
+        chartInstances.domainsChart.destroy();
+      }
+      
+      if (!filteredData.length || !filteredData[0].domains) {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         return;
       }
-
-      const domainLabels = Object.keys(data[0].domains);
+      
+      const domainLabels = Object.keys(filteredData[0].domains);
       const domainAverages = domainLabels.map(label => {
-        const validItems = data.filter(d => typeof d.domains?.[label] === 'number');
+        const validItems = filteredData.filter(d => typeof d.domains?.[label] === 'number');
         const sum = validItems.reduce((acc, item) => acc + item.domains[label], 0);
         return validItems.length ? (sum / validItems.length).toFixed(1) : 0;
       });
-
-      window.myChart = new Chart(ctx, {
-        type: "bar",
+      
+      const chartColors = getChartColors();
+      
+      chartInstances.domainsChart = new Chart(ctx, {
+        type: currentChartType,
         data: {
           labels: domainLabels,
-          datasets: [{ label: "متوسط التقييم", data: domainAverages }]
+          datasets: [{
+            label: 'متوسط التقييم',
+            data: domainAverages,
+            backgroundColor: chartColors.backgroundColors,
+            borderColor: chartColors.borderColors,
+            borderWidth: 1,
+            borderRadius: 5,
+            tension: 0.1
+          }]
         },
         options: {
           responsive: true,
-          scales: { y: { beginAtZero: true, max: 5 } },
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 5,
+              ticks: {
+                color: getTextColor()
+              },
+              grid: {
+                color: getBorderColor()
+              }
+            },
+            x: {
+              ticks: {
+                color: getTextColor()
+              },
+              grid: {
+                color: getBorderColor()
+              }
+            }
+          },
           plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: ctx => ctx.raw || 0 } }
+            legend: {
+              display: true,
+              labels: {
+                color: getTextColor()
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => ctx.raw || 0
+              }
+            },
+            datalabels: {
+              color: getTextColor(),
+              anchor: 'end',
+              align: 'top',
+              formatter: value => value
+            }
           }
         }
       });
+    }
 
-      const tbody = document.querySelector("#participantsTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(row => {
-        const avg = domainLabels.reduce((acc, l) => acc + (row.domains?.[l] || 0), 0) / domainLabels.length;
-        tbody.innerHTML += `
+    // Actualizar gráfico de distribución por edad
+    function updateAgeDistributionChart() {
+      const ctx = document.getElementById('ageDistributionChart').getContext('2d');
+      
+      if (chartInstances.ageDistributionChart) {
+        chartInstances.ageDistributionChart.destroy();
+      }
+      
+      if (!filteredData.length) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        return;
+      }
+      
+      const ageGroups = ['6-12', '13-18', '>18'];
+      const ageCounts = ageGroups.map(age => {
+        return filteredData.filter(d => d.age === age).length;
+      });
+      
+      const chartColors = getChartColors();
+      
+      chartInstances.ageDistributionChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ageGroups,
+          datasets: [{
+            data: ageCounts,
+            backgroundColor: chartColors.backgroundColors,
+            borderColor: chartColors.borderColors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: getTextColor()
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.label}: ${ctx.raw} (${((ctx.raw / filteredData.length) * 100).toFixed(1)}%)`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Actualizar gráfico de progreso de puntuación
+    function updateScoreProgressChart() {
+      const ctx = document.getElementById('scoreProgressChart').getContext('2d');
+      
+      if (chartInstances.scoreProgressChart) {
+        chartInstances.scoreProgressChart.destroy();
+      }
+      
+      if (!filteredData.length) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        return;
+      }
+      
+      // Agrupar por mes
+      const scoreByMonth = {};
+      
+      filteredData.forEach(item => {
+        if (item.date) {
+          const month = item.date.getMonth();
+          const year = item.date.getFullYear();
+          const key = `${year}-${month}`;
+          
+          if (!scoreByMonth[key]) {
+            scoreByMonth[key] = {
+              sum: 0,
+              count: 0,
+              date: new Date(year, month, 1)
+            };
+          }
+          
+          scoreByMonth[key].sum += parseFloat(item.averageScore);
+          scoreByMonth[key].count += 1;
+        }
+      });
+      
+      // Ordenar por fecha
+      const sortedMonths = Object.values(scoreByMonth).sort((a, b) => a.date - b.date);
+      
+      const labels = sortedMonths.map(item => {
+        return item.date.toLocaleDateString('ar-SA', { year: 'numeric', month: 'short' });
+      });
+      
+      const data = sortedMonths.map(item => {
+        return (item.sum / item.count).toFixed(1);
+      });
+      
+      const chartColors = getChartColors();
+      
+      chartInstances.scoreProgressChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'متوسط التقييم',
+            data: data,
+            backgroundColor: chartColors.backgroundColors[0],
+            borderColor: chartColors.borderColors[0],
+            borderWidth: 2,
+            tension: 0.4,
+            fill: false,
+            pointBackgroundColor: chartColors.borderColors[0],
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 5,
+              ticks: {
+                color: getTextColor()
+              },
+              grid: {
+                color: getBorderColor()
+              }
+            },
+            x: {
+              ticks: {
+                color: getTextColor()
+              },
+              grid: {
+                color: getBorderColor()
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                color: getTextColor()
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => `متوسط التقييم: ${ctx.raw}`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Renderizar vista de tabla
+    function renderTableView() {
+      const tbody = document.querySelector('#participantsTable tbody');
+      tbody.innerHTML = '';
+      
+      if (!filteredData.length) {
+        tbody.innerHTML = `
           <tr>
-            <td>${row.organization || '--'}</td>
-            <td>${row.code || '--'}</td>
-            <td>${row.age || '--'}</td>
-            <td>${row.previousTraining || '--'}</td>
-            <td>${isNaN(avg) ? '--' : avg.toFixed(1)}</td>
+            <td colspan="6" class="text-center">لا توجد بيانات متاحة</td>
           </tr>
         `;
+        return;
+      }
+      
+      // Calcular rango para paginación
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+      const paginatedData = filteredData.slice(startIndex, endIndex);
+      
+      // Actualizar texto de entradas mostradas
+      document.getElementById('showingEntries').textContent = `عرض ${startIndex + 1} إلى ${endIndex} من ${filteredData.length} مشارك`;
+      
+      // Renderizar filas
+      paginatedData.forEach(row => {
+        const tr = document.createElement('tr');
+        
+        tr.innerHTML = `
+          <td>${row.organization || '--'}</td>
+          <td>${row.code || '--'}</td>
+          <td>${row.age || '--'}</td>
+          <td>
+            <span class="badge ${row.previousTraining === 'نعم' ? 'badge-success' : 'badge-danger'}">
+              ${row.previousTraining || '--'}
+            </span>
+          </td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="me-2">${row.averageScore || '--'}</div>
+              <div class="progress flex-grow-1" style="height: 6px;">
+                <div class="progress-bar" role="progressbar" style="width: ${(parseFloat(row.averageScore) / 5) * 100}%"></div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-info view-details" data-id="${row.id}">
+              <i class="bi bi-eye"></i>
+            </button>
+          </td>
+        `;
+        
+        tbody.appendChild(tr);
+      });
+      
+      // Agregar event listeners para botones de detalles
+      document.querySelectorAll('.view-details').forEach(button => {
+        button.addEventListener('click', () => {
+          const id = button.getAttribute('data-id');
+          showParticipantDetails(id);
+        });
       });
     }
 
-    async function fetchSurveyData() {
-      const res = await fetch("/api/survey-data");
-      allData = await res.json();
-
-      const orgSelect = document.getElementById("filterOrganization");
-      [...new Set(allData.map(r => r.organization))].forEach(org => {
-        const opt = document.createElement("option");
-        opt.value = org;
-        opt.textContent = org;
-        orgSelect.appendChild(opt);
+    // Renderizar vista de tarjetas
+    function renderCardView() {
+      const container = document.getElementById('participantsCards');
+      container.innerHTML = '';
+      
+      if (!filteredData.length) {
+        container.innerHTML = `
+          <div class="col-12">
+            <div class="alert alert-info text-center">لا توجد بيانات متاحة</div>
+          </div>
+        `;
+        return;
+      }
+      
+      // Calcular rango para paginación
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+      const paginatedData = filteredData.slice(startIndex, endIndex);
+      
+      // Actualizar texto de entradas mostradas
+      document.getElementById('showingEntriesCards').textContent = `عرض ${startIndex + 1} إلى ${endIndex} من ${filteredData.length} مشارك`;
+      
+      // Renderizar tarjetas
+      paginatedData.forEach(row => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4 mb-3';
+        
+        const domainsList = row.domains ? Object.entries(row.domains).map(([domain, score]) => {
+          return `
+            <div class="participant-score mb-2">
+              <div>
+                <div class="score-label">${domain}</div>
+                <div class="progress">
+                  <div class="progress-bar" role="progressbar" style="width: ${(score / 5) * 100}%"></div>
+                </div>
+              </div>
+              <div class="score-value">${score}</div>
+            </div>
+          `;
+        }).join('') : '';
+        
+        col.innerHTML = `
+          <div class="participant-card">
+            <div class="participant-header">
+              <h5 class="participant-name">${row.organization || '--'}</h5>
+              <button class="btn btn-sm btn-outline-info view-details" data-id="${row.id}">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            <div class="participant-details">
+              <div class="participant-detail">
+                <i class="bi bi-hash"></i> ${row.code || '--'}
+              </div>
+              <div class="participant-detail">
+                <i class="bi bi-person"></i> ${row.age || '--'}
+              </div>
+              <div class="participant-detail">
+                <i class="bi bi-mortarboard"></i> ${row.previousTraining || '--'}
+              </div>
+              <div class="participant-detail">
+                <i class="bi bi-star"></i> ${row.averageScore || '--'}
+              </div>
+            </div>
+            <div class="mt-3">
+              ${domainsList}
+            </div>
+          </div>
+        `;
+        
+        container.appendChild(col);
       });
-
-      renderDashboard(allData);
+      
+      // Agregar event listeners para botones de detalles
+      document.querySelectorAll('.view-details').forEach(button => {
+        button.addEventListener('click', () => {
+          const id = button.getAttribute('data-id');
+          showParticipantDetails(id);
+        });
+      });
     }
 
-    function exportTableToExcel(tableID) {
-      const wb = XLSX.utils.table_to_book(document.getElementById(tableID), {sheet:"بيانات"});
+    // Actualizar paginación
+    function updatePagination() {
+      const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+      
+      const updatePaginationElement = (elementId) => {
+        const paginationElement = document.getElementById(elementId);
+        paginationElement.innerHTML = '';
+        
+        // Botón anterior
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>`;
+        paginationElement.appendChild(prevLi);
+        
+        // Páginas
+        for (let i = 1; i <= totalPages; i++) {
+          const li = document.createElement('li');
+          li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+          li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+          paginationElement.appendChild(li);
+        }
+        
+        // Botón siguiente
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>`;
+        paginationElement.appendChild(nextLi);
+        
+        // Event listeners
+        paginationElement.querySelectorAll('.page-link').forEach((link, index) => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            if (index === 0 && currentPage > 1) {
+              // Anterior
+              currentPage--;
+            } else if (index === paginationElement.children.length - 1 && currentPage < totalPages) {
+              // Siguiente
+              currentPage++;
+            } else if (index > 0 && index < paginationElement.children.length - 1) {
+              // Página específica
+              currentPage = index;
+            }
+            
+            renderTableView();
+            renderCardView();
+            updatePagination();
+          });
+        });
+      };
+      
+      // Actualizar ambos elementos de paginación
+      updatePaginationElement('pagination');
+      updatePaginationElement('paginationCards');
+    }
+
+    // Mostrar detalles del participante
+    function showParticipantDetails(id) {
+      const participant = filteredData.find(p => p.id == id);
+      
+      if (!participant) {
+        showNotification('No se encontró el participante', 'danger');
+        return;
+      }
+      
+      // Actualizar modal
+      document.getElementById('modalOrganization').textContent = participant.organization || '--';
+      document.getElementById('modalCode').textContent = participant.code || '--';
+      document.getElementById('modalAge').textContent = participant.age || '--';
+      document.getElementById('modalTraining').textContent = participant.previousTraining || '--';
+      document.getElementById('modalAverage').textContent = participant.averageScore || '--';
+      document.getElementById('modalDate').textContent = participant.date ? participant.date.toLocaleDateString('ar-SA') : '--';
+      
+      // Dominios
+      const domainsContainer = document.getElementById('modalDomains');
+      domainsContainer.innerHTML = '';
+      
+      if (participant.domains) {
+        Object.entries(participant.domains).forEach(([domain, score]) => {
+          const domainElement = document.createElement('div');
+          domainElement.className = 'mb-3';
+          domainElement.innerHTML = `
+            <div class="d-flex justify-content-between mb-1">
+              <span>${domain}</span>
+              <span>${score}/5</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: ${(score / 5) * 100}%" aria-valuenow="${score}" aria-valuemin="0" aria-valuemax="5"></div>
+            </div>
+          `;
+          domainsContainer.appendChild(domainElement);
+        });
+      } else {
+        domainsContainer.innerHTML = '<div class="alert alert-info">لا توجد بيانات متاحة للمجالات</div>';
+      }
+      
+      // Mostrar modal
+      const modal = new bootstrap.Modal(document.getElementById('participantDetailsModal'));
+      modal.show();
+      
+      // Event listener para imprimir
+      document.getElementById('printParticipantDetails').addEventListener('click', () => {
+        printParticipantDetails(participant);
+      });
+    }
+
+    // Exportar tabla a Excel
+    function exportTableToExcel() {
+      const wb = XLSX.utils.book_new();
+      
+      // Crear datos para Excel
+      const data = [
+        ['اسم المنظمة', 'رمز', 'العمر', 'تلقى تدريب', 'متوسط التقييم']
+      ];
+      
+      filteredData.forEach(row => {
+        data.push([
+          row.organization || '',
+          row.code || '',
+          row.age || '',
+          row.previousTraining || '',
+          row.averageScore || ''
+        ]);
+      });
+      
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      XLSX.utils.book_append_sheet(wb, ws, 'المشاركون');
       XLSX.writeFile(wb, 'participants.xlsx');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchSurveyData();
-      ["filterOrganization", "filterCode", "filterAge", "filterTraining"].forEach(id => {
-        document.getElementById(id).addEventListener("change", applyFilters);
-        if (id === "filterCode") document.getElementById(id).addEventListener("input", applyFilters);
+    // Exportar tabla a PDF
+    function exportTableToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Título
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.text('تقرير المشاركين', doc.internal.pageSize.width / 2, 20, { align: 'center' });
+      
+      // Tabla
+      const tableColumn = ['متوسط التقييم', 'تلقى تدريب', 'العمر', 'رمز', 'اسم المنظمة'];
+      const tableRows = [];
+      
+      filteredData.forEach(row => {
+        const rowData = [
+          row.averageScore || '--',
+          row.previousTraining || '--',
+          row.age || '--',
+          row.code || '--',
+          row.organization || '--'
+        ];
+        tableRows.push(rowData);
       });
-    });
+      
+      doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 30,
+        styles: { font: 'Helvetica', halign: 'center' },
+        headStyles: { fillColor: [78, 115, 223] },
+        alternateRowStyles: { fillColor: [240, 240, 240] },
+        margin: { top: 30 }
+      });
+      
+      doc.save('participants.pdf');
+    }
+
+    // Exportar tabla a CSV
+    function exportTableToCSV() {
+      let csv = 'اسم المنظمة,رمز,العمر,تلقى تدريب,متوسط التقييم\n';
+      
+      filteredData.forEach(row => {
+        csv += `"${row.organization || ''}","${row.code || ''}","${row.age || ''}","${row.previousTraining || ''}","${row.averageScore || ''}"\n`;
+      });
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'participants.csv');
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Descargar gráfico como imagen
+    function downloadChartAsImage(chartId) {
+      const canvas = document.getElementById(chartId);
+      const link = document.createElement('a');
+      
+      link.download = `${chartId}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Imprimir gráfico
+    function printChart(chartId) {
+      const canvas = document.getElementById(chartId);
+      const dataUrl = canvas.toDataURL('image/png');
+      
+      const windowContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>طباعة الرسم البياني</title>
+          <style>
+            body { text-align: center; }
+            img { max-width: 100%; }
+          </style>
+        </head>
+        <body>
+          <h1>الرسم البياني</h1>
+          <img src="${dataUrl}">
+        </body>
+        </html>
+      `;
+      
+      const printWindow = window.open('', '', 'height=600,width=800');
+      printWindow.document.write(windowContent);
+      printWindow.document.close();
+      printWindow.focus();
+      
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    }
+
+    // Imprimir detalles del participante
+    function printParticipantDetails(participant) {
+      let domainsHtml = '';
+      
+      if (participant.domains) {
+        Object.entries(participant.domains).forEach(([domain, score]) => {
+          domainsHtml += `
+            <div style="margin-bottom: 10px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>${domain}</span>
+                <span>${score}/5</span>
+              </div>
+              <div style="background-color: #e9ecef; border-radius: 4px; height: 10px;">
+                <div style="background-color: #4e73df; width: ${(score / 5) * 100}%; height: 100%; border-radius: 4px;"></div>
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      const windowContent = `
+        <!DOCTYPE html>
+        <html dir="rtl">
+        <head>
+          <title>تفاصيل المشارك</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              padding-bottom: 10px;
+              border-bottom: 1px solid #ddd;
+            }
+            .details {
+              display: flex;
+              flex-wrap: wrap;
+              margin-bottom: 20px;
+            }
+            .detail-item {
+              width: 50%;
+              margin-bottom: 10px;
+            }
+            .domains-title {
+              margin-top: 20px;
+              margin-bottom: 10px;
+              font-weight: bold;
+            }
+            @media print {
+              body {
+                padding: 0;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>تفاصيل المشارك</h1>
+          </div>
+          <div class="details">
+            <div class="detail-item">
+              <strong>المنظمة:</strong> ${participant.organization || '--'}
+            </div>
+            <div class="detail-item">
+              <strong>الرمز:</strong> ${participant.code || '--'}
+            </div>
+            <div class="detail-item">
+              <strong>العمر:</strong> ${participant.age || '--'}
+            </div>
+            <div class="detail-item">
+              <strong>تلقى تدريب سابق:</strong> ${participant.previousTraining || '--'}
+            </div>
+            <div class="detail-item">
+              <strong>متوسط التقييم:</strong> ${participant.averageScore || '--'}
+            </div>
+            <div class="detail-item">
+              <strong>تاريخ التقييم:</strong> ${participant.date ? participant.date.toLocaleDateString('ar-SA') : '--'}
+            </div>
+          </div>
+          <div class="domains-title">تقييم المجالات</div>
+          <div class="domains">
+            ${domainsHtml || '<div>لا توجد بيانات متاحة للمجالات</div>'}
+          </div>
+        </body>
+        </html>
+      `;
+      
+      const printWindow = window.open('', '', 'height=600,width=800');
+      printWindow.document.write(windowContent);
+      printWindow.document.close();
+      printWindow.focus();
+      
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    }
+
+    // Mostrar notificación
+    function showNotification(message, type = 'info') {
+      const notificationContainer = document.getElementById('notification');
+      
+      const toast = document.createElement('div');
+      toast.className = `toast show`;
+      toast.setAttribute('role', 'alert');
+      toast.setAttribute('aria-live', 'assertive');
+      toast.setAttribute('aria-atomic', 'true');
+      
+      const iconClass = {
+        success: 'bi-check-circle',
+        danger: 'bi-exclamation-triangle',
+        warning: 'bi-exclamation-circle',
+        info: 'bi-info-circle'
+      };
+      
+      toast.innerHTML = `
+        <div class="toast-header">
+          <i class="bi ${iconClass[type]} me-2"></i>
+          <strong class="me-auto">إشعار</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          ${message}
+        </div>
+      `;
+      
+      notificationContainer.appendChild(toast);
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          notificationContainer.removeChild(toast);
+        }, 500);
+      }, 5000);
+      
+      // Close button
+      toast.querySelector('.btn-close').addEventListener('click', () => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          notificationContainer.removeChild(toast);
+        }, 500);
+      });
+    }
+
+    // Mostrar loader
+    function showLoader() {
+      document.getElementById('loader').style.display = 'flex';
+    }
+
+    // Ocultar loader
+    function hideLoader() {
+      document.getElementById('loader').style.display = 'none';
+    }
+
+    // Actualizar tema de gráficos
+    function updateChartsTheme() {
+      updateDomainsChart();
+      updateAgeDistributionChart();
+      updateScoreProgressChart();
+    }
+
+    // Obtener colores para gráficos según tema
+    function getChartColors() {
+      if (currentTheme === 'dark') {
+        return {
+          backgroundColors: [
+            'rgba(78, 115, 223, 0.5)',
+            'rgba(28, 200, 138, 0.5)',
+            'rgba(54, 185, 204, 0.5)',
+            'rgba(246, 194, 62, 0.5)',
+            'rgba(231, 74, 59, 0.5)'
+          ],
+          borderColors: [
+            'rgba(78, 115, 223, 1)',
+            'rgba(28, 200, 138, 1)',
+            'rgba(54, 185, 204, 1)',
+            'rgba(246, 194, 62, 1)',
+            'rgba(231, 74, 59, 1)'
+          ]
+        };
+      } else {
+        return {
+          backgroundColors: [
+            'rgba(78, 115, 223, 0.7)',
+            'rgba(28, 200, 138, 0.7)',
+            'rgba(54, 185, 204, 0.7)',
+            'rgba(246, 194, 62, 0.7)',
+            'rgba(231, 74, 59, 0.7)'
+          ],
+          borderColors: [
+            'rgba(78, 115, 223, 1)',
+            'rgba(28, 200, 138, 1)',
+            'rgba(54, 185, 204, 1)',
+            'rgba(246, 194, 62, 1)',
+            'rgba(231, 74, 59, 1)'
+          ]
+        };
+      }
+    }
+
+    // Obtener color de texto según tema
+    function getTextColor() {
+      return currentTheme === 'dark' ? '#f8f9fa' : '#5a5c69';
+    }
+
+    // Obtener color de borde según tema
+    function getBorderColor() {
+      return currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    }
   </script>
 </body>
 </html>
