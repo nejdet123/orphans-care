@@ -86,7 +86,6 @@
   <div class="main">
     <h2 class="mb-4">الإحصاءات العامة</h2>
 
-    <!-- الفلاتر -->
     <div class="row g-3 mb-4">
       <div class="col-md-3">
         <label for="filterOrganization" class="form-label">المنظمة</label>
@@ -115,7 +114,6 @@
       </div>
     </div>
 
-    <!-- الكروت -->
     <div class="row mb-4">
       <div class="col-md-4">
         <div class="card card-dark p-3">
@@ -137,12 +135,10 @@
       </div>
     </div>
 
-    <!-- الرسم البياني -->
     <div class="card card-dark p-4 mb-5">
       <canvas id="domainsChart"></canvas>
     </div>
 
-    <!-- جدول تفصيلي -->
     <div class="mb-5">
       <h4 class="mb-3">📋 بيانات المشاركين</h4>
       <button class="btn btn-sm btn-outline-info mb-3" onclick="exportTableToExcel('participantsTable')">تصدير الجدول إلى Excel</button>
@@ -185,21 +181,27 @@
     }
 
     function renderDashboard(data) {
-      document.getElementById("totalParticipants").textContent = data.length;
-      const orgs = [...new Set(data.map(item => item.organization))];
-      document.getElementById("totalOrganizations").textContent = orgs.length;
+      document.getElementById("totalParticipants").textContent = data.length || 0;
+      const orgs = [...new Set(data.map(item => item.organization))].filter(Boolean);
+      document.getElementById("totalOrganizations").textContent = orgs.length || 0;
 
       const trainedCount = data.filter(d => d.previousTraining === "نعم").length;
-      const trainingPercentage = ((trainedCount / data.length) * 100).toFixed(1);
-      document.getElementById("previousTrainingPercentage").textContent = isNaN(trainingPercentage) ? '--' : trainingPercentage + "%";
+      const trainingPercentage = data.length ? ((trainedCount / data.length) * 100).toFixed(1) : 0;
+      document.getElementById("previousTrainingPercentage").textContent = data.length ? trainingPercentage + "%" : "--";
 
       const ctx = document.getElementById("domainsChart").getContext('2d');
       if (window.myChart) window.myChart.destroy();
 
-      const domainLabels = Object.keys(data[0]?.domains || {});
+      if (!data.length || !data[0].domains) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        return;
+      }
+
+      const domainLabels = Object.keys(data[0].domains);
       const domainAverages = domainLabels.map(label => {
-        const sum = data.reduce((acc, item) => acc + (item.domains?.[label] || 0), 0);
-        return (sum / data.length).toFixed(1);
+        const validItems = data.filter(d => typeof d.domains?.[label] === 'number');
+        const sum = validItems.reduce((acc, item) => acc + item.domains[label], 0);
+        return validItems.length ? (sum / validItems.length).toFixed(1) : 0;
       });
 
       window.myChart = new Chart(ctx, {
@@ -208,7 +210,14 @@
           labels: domainLabels,
           datasets: [{ label: "متوسط التقييم", data: domainAverages }]
         },
-        options: { scales: { y: { beginAtZero: true, max: 5 } } }
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true, max: 5 } },
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ctx.raw || 0 } }
+          }
+        }
       });
 
       const tbody = document.querySelector("#participantsTable tbody");
@@ -217,10 +226,10 @@
         const avg = domainLabels.reduce((acc, l) => acc + (row.domains?.[l] || 0), 0) / domainLabels.length;
         tbody.innerHTML += `
           <tr>
-            <td>${row.organization}</td>
-            <td>${row.code || ''}</td>
-            <td>${row.age || ''}</td>
-            <td>${row.previousTraining || ''}</td>
+            <td>${row.organization || '--'}</td>
+            <td>${row.code || '--'}</td>
+            <td>${row.age || '--'}</td>
+            <td>${row.previousTraining || '--'}</td>
             <td>${isNaN(avg) ? '--' : avg.toFixed(1)}</td>
           </tr>
         `;
