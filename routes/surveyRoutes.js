@@ -5,18 +5,13 @@ const Survey = require('../models/Survey');
 /**
  * GET: استرجاع جميع الاستبيانات
  */
-const { protect, authorize } = require('../middleware/auth');
-
-router.get('/survey-data', protect, async (req, res) => {
+router.get('/survey-data', async (req, res) => {
   try {
     const surveys = await Survey.find();
- 
     return res.status(200).json({
       success: true,
       data: surveys
-    }
-});
-
+    });
   } catch (err) {
     console.error('❌ خطأ في استرجاع بيانات الاستبيان:', err);
     return res.status(500).json({
