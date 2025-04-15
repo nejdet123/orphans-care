@@ -1,24 +1,14 @@
-// models/SurveyTemplate.js
-
 const mongoose = require('mongoose');
 
 const SurveyTemplateSchema = new mongoose.Schema({
-  key: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  title: {
-    type: String,
-    required: true
-  },
+  key: String,
   structure: {
-    type: Object,
-    required: true
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
+    survey: {
+      title: String,
+      description: String,
+      instructions: [String],
+      sections: Array
+    }
   }
 });
 
