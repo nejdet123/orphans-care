@@ -15,6 +15,8 @@ const surveyRoutes = require('./routes/surveyRoutes');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const questionRoutes = require('./routes/questionRoutes');
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 
 // إنشاء التطبيق
 const app = express();
