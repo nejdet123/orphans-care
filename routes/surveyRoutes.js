@@ -1,54 +1,50 @@
 const express = require('express');
 const router = express.Router();
-const Survey = require('../models/Survey');
+const SurveyTemplate = require('../models/SurveyTemplate');
 const Response = require('../models/Response');
 
-// ✅ استرجاع بيانات الاستبيان (كاملة)
+// ✅ API: استرجاع جميع بيانات الاستبيان (من قالب)
 router.get('/survey-data', async (req, res) => {
   try {
-    const survey = await Survey.findOne();
-    res.json(survey || {});
+    const template = await SurveyTemplate.findOne({ key: "orphans-training-survey" });
+    if (!template) return res.status(404).json({ message: 'قالب الاستبيان غير موجود' });
+
+    res.json(template.structure);
   } catch (err) {
-    console.error('❌ خطأ في جلب بيانات الاستبيان:', err);
+    console.error('❌ خطأ في استرجاع بيانات الاستبيان:', err);
     res.status(500).json({ message: 'حدث خطأ أثناء جلب البيانات' });
   }
 });
 
-// ✅ حفظ استبيان جديد (إدخال يدوي أو أول مرة)
+// ✅ API: حفظ بيانات استبيان جديد (إعادة تحميل القالب)
 router.post('/survey-data', async (req, res) => {
   try {
-    const surveyData = new Survey(req.body);
-    await surveyData.save();
-    res.status(201).json({ success: true, message: 'تم حفظ بيانات الاستبيان بنجاح' });
+    const { structure } = req.body;
+    if (!structure) return res.status(400).json({ message: "البيانات غير مكتملة" });
+
+    const existing = await SurveyTemplate.findOne({ key: "orphans-training-survey" });
+
+    if (existing) {
+      existing.structure = structure;
+      existing.updatedAt = new Date();
+      await existing.save();
+    } else {
+      await SurveyTemplate.create({
+        key: "orphans-training-survey",
+        title: "استبيان تقييم احتياجات العاملين مع الأيتام",
+        structure,
+        updatedAt: new Date()
+      });
+    }
+
+    res.status(200).json({ message: "✅ تم حفظ الاستبيان بنجاح" });
   } catch (err) {
     console.error('❌ خطأ في حفظ بيانات الاستبيان:', err);
-    res.status(500).json({ success: false, message: 'حدث خطأ أثناء حفظ البيانات' });
+    res.status(500).json({ message: 'حدث خطأ أثناء حفظ البيانات' });
   }
 });
 
-// ✅ عرض الاستبيان للمستخدم (ديناميكي)
-router.get('/survey', async (req, res) => {
-  try {
-    const survey = await Survey.findOne();
-    res.render('survey', { survey });
-  } catch (err) {
-    console.error('❌ خطأ في عرض صفحة الاستبيان:', err);
-    res.status(500).send('فشل في عرض الاستبيان');
-  }
-});
-
-// ✅ عرض صفحة إدارة الأسئلة (ديناميكية حسب البنية الجديدة)
-router.get('/manage-questions', async (req, res) => {
-  try {
-    const survey = await Survey.findOne();
-    res.render('manage-questions', { survey });
-  } catch (err) {
-    console.error('❌ خطأ في عرض إدارة الأسئلة:', err);
-    res.status(500).send('فشل في عرض إدارة الأسئلة');
-  }
-});
-
-// ✅ حفظ إجابات الاستبيان
+// ✅ API: حفظ إجابات الاستبيان
 router.post('/submit-survey', async (req, res) => {
   try {
     const { answers } = req.body;
@@ -60,13 +56,28 @@ router.post('/submit-survey', async (req, res) => {
     await Response.create({ answers });
     res.redirect('/thank-you');
   } catch (err) {
-    console.error('❌ خطأ في حفظ الاستجابات:', err);
+    console.error('❌ خطأ في حفظ الإجابات:', err);
     res.status(500).send('❌ فشل في حفظ الاستبيان');
   }
 });
 
-// ✅ عرض لوحة التحكم (مستقبلًا تشمل الرسوم التحليلية)
-router.get('/dashboard-dark', (req, res) => {
+// ✅ عرض صفحة الاستبيان بشكل ديناميكي
+router.get('/survey', async (req, res) => {
+  try {
+    const template = await SurveyTemplate.findOne({ key: "orphans-training-survey" });
+
+    if (!template) return res.status(404).send("❌ لم يتم العثور على قالب الاستبيان");
+
+    const survey = template.structure;
+    res.render('survey', { survey });
+  } catch (err) {
+    console.error('❌ خطأ في عرض الاستبيان:', err);
+    res.status(500).send('فشل في عرض الاستبيان');
+  }
+});
+
+// ✅ عرض لوحة التحكم (الوضع الليلي)
+router.get('/dashboard-dark', async (req, res) => {
   res.render('dashboard-dark');
 });
 
