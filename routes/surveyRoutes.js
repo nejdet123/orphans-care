@@ -3,18 +3,18 @@ const router = express.Router();
 const Survey = require('../models/Survey');
 const Response = require('../models/Response');
 
-// ✅ استرجاع جميع بيانات الاستبيان
+// ✅ استرجاع بيانات الاستبيان (كاملة)
 router.get('/survey-data', async (req, res) => {
   try {
-    const surveys = await Survey.find();
-    res.json(surveys);
+    const survey = await Survey.findOne();
+    res.json(survey || {});
   } catch (err) {
-    console.error('❌ خطأ في استرجاع بيانات الاستبيان:', err);
+    console.error('❌ خطأ في جلب بيانات الاستبيان:', err);
     res.status(500).json({ message: 'حدث خطأ أثناء جلب البيانات' });
   }
 });
 
-// ✅ حفظ بيانات استبيان جديد
+// ✅ حفظ استبيان جديد (إدخال يدوي أو أول مرة)
 router.post('/survey-data', async (req, res) => {
   try {
     const surveyData = new Survey(req.body);
@@ -26,64 +26,25 @@ router.post('/survey-data', async (req, res) => {
   }
 });
 
-// ✅ API: جلب كل الأسئلة
-router.get('/api/questions', async (req, res) => {
+// ✅ عرض الاستبيان للمستخدم (ديناميكي)
+router.get('/survey', async (req, res) => {
   try {
     const survey = await Survey.findOne();
-    res.json(survey?.questions || []);
+    res.render('survey', { survey });
   } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
+    console.error('❌ خطأ في عرض صفحة الاستبيان:', err);
+    res.status(500).send('فشل في عرض الاستبيان');
   }
 });
 
-// ✅ API: إضافة سؤال جديد
-router.post('/api/questions', async (req, res) => {
+// ✅ عرض صفحة إدارة الأسئلة (ديناميكية حسب البنية الجديدة)
+router.get('/manage-questions', async (req, res) => {
   try {
-    const { question } = req.body;
     const survey = await Survey.findOne();
-    if (!survey) return res.status(404).send('Survey not found');
-    survey.questions.push(question);
-    await survey.save();
-    res.sendStatus(200);
+    res.render('manage-questions', { survey });
   } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
-  }
-});
-
-// ✅ API: حذف سؤال
-router.delete('/api/questions/:index', async (req, res) => {
-  try {
-    const index = parseInt(req.params.index);
-    const survey = await Survey.findOne();
-    if (!survey || index < 0 || index >= survey.questions.length) {
-      return res.status(400).send('Invalid index');
-    }
-    survey.questions.splice(index, 1);
-    await survey.save();
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
-  }
-});
-
-// ✅ API: تعديل سؤال
-router.put('/api/questions/:index', async (req, res) => {
-  try {
-    const index = parseInt(req.params.index);
-    const { newQuestion } = req.body;
-    const survey = await Survey.findOne();
-    if (!survey || index < 0 || index >= survey.questions.length) {
-      return res.status(400).send('Invalid index');
-    }
-    survey.questions[index] = newQuestion;
-    await survey.save();
-    res.sendStatus(200);
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
+    console.error('❌ خطأ في عرض إدارة الأسئلة:', err);
+    res.status(500).send('فشل في عرض إدارة الأسئلة');
   }
 });
 
@@ -92,32 +53,21 @@ router.post('/submit-survey', async (req, res) => {
   try {
     const { answers } = req.body;
 
-    if (!answers || !Array.isArray(answers)) {
+    if (!answers || typeof answers !== 'object') {
       return res.status(400).send('⚠️ لم يتم استلام الإجابات بشكل صحيح');
     }
 
     await Response.create({ answers });
     res.redirect('/thank-you');
   } catch (err) {
-    console.error('❌ خطأ في حفظ الإجابات:', err);
+    console.error('❌ خطأ في حفظ الاستجابات:', err);
     res.status(500).send('❌ فشل في حفظ الاستبيان');
   }
 });
 
-// ✅ عرض لوحة التحكم (الوضع الليلي)
-router.get('/dashboard-dark', async (req, res) => {
+// ✅ عرض لوحة التحكم (مستقبلًا تشمل الرسوم التحليلية)
+router.get('/dashboard-dark', (req, res) => {
   res.render('dashboard-dark');
-});
-
-// ✅ عرض صفحة الاستبيان بشكل ديناميكي
-router.get('/survey', async (req, res) => {
-  try {
-    const survey = await Survey.findOne();
-    res.render('survey', { survey });
-  } catch (err) {
-    console.error('❌ خطأ في عرض الاستبيان:', err);
-    res.status(500).send('فشل في عرض الاستبيان');
-  }
 });
 
 module.exports = router;
