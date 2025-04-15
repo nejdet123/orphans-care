@@ -1,35 +1,52 @@
-<%- include('../layout') %>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>إدارة الأسئلة</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <style>
+    body { direction: rtl; padding: 2rem; background-color: #f9f9f9; }
+    .form-inline { display: flex; gap: 10px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
 
-<div class="container mt-4">
-  <h2>📝 إدارة الأسئلة</h2>
+  <div class="container">
+    <h2 class="mb-4">📝 إدارة الأسئلة</h2>
 
-  <!-- إضافة سؤال جديد -->
-  <form action="/api/questions" method="POST" class="mb-4">
-    <div class="row g-2">
-      <div class="col-md-8">
-        <input name="question" class="form-control" placeholder="اكتب نص السؤال الجديد" required>
+    <!-- إضافة سؤال جديد -->
+    <form action="/api/questions" method="POST" class="mb-4">
+      <div class="row g-2">
+        <div class="col-md-8">
+          <input name="question" class="form-control" placeholder="اكتب نص السؤال الجديد" required>
+        </div>
+        <div class="col-md-4">
+          <button type="submit" class="btn btn-primary w-100">➕ إضافة سؤال</button>
+        </div>
       </div>
-      <div class="col-md-4">
-        <button type="submit" class="btn btn-primary w-100">➕ إضافة سؤال</button>
-      </div>
-    </div>
-  </form>
+    </form>
 
-  <hr>
+    <hr>
 
-  <!-- عرض وتعديل الأسئلة -->
-  <% if (questions && questions.length > 0) { %>
-    <% questions.forEach((q, i) => { %>
-      <form action="/api/questions/<%= i %>?_method=PUT" method="POST" class="mb-2 d-flex gap-2">
-        <input name="newQuestion" value="<%= q %>" class="form-control">
-        <button type="submit" class="btn btn-success">💾 حفظ</button>
-      </form>
-      <form action="/api/questions/<%= i %>?_method=DELETE" method="POST" class="d-inline">
-        <button type="submit" class="btn btn-danger">🗑️ حذف</button>
-      </form>
-      <hr>
-    <% }) %>
-  <% } else { %>
-    <p>🚫 لا توجد أسئلة مضافة بعد.</p>
-  <% } %>
-</div>
+    <!-- عرض وتعديل الأسئلة -->
+    <% if (questions && questions.length > 0) { %>
+      <% questions.forEach((q, i) => { %>
+        <div class="mb-3">
+          <form action="/api/questions/<%= i %>?_method=PUT" method="POST" class="form-inline mb-1">
+            <input name="newQuestion" value="<%= q %>" class="form-control w-75">
+            <button type="submit" class="btn btn-success">💾 حفظ</button>
+          </form>
+          <form action="/api/questions/<%= i %>?_method=DELETE" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger">🗑️ حذف</button>
+          </form>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>🚫 لا توجد أسئلة مضافة بعد.</p>
+    <% } %>
+
+  </div>
+
+</body>
+</html>
