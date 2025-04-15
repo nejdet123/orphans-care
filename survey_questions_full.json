@@ -1,0 +1,1517 @@
+// استبيان تقييم الاحتياجات التدريبية الشامل للعاملين مع الأيتام - الملف الكامل
+
+// مقدمة الاستبيان
+const surveyIntro = {
+  title: "استبيان تقييم الاحتياجات التدريبية الشامل للعاملين مع الأيتام",
+  description: "يهدف هذا الاستبيان إلى تحديد الاحتياجات التدريبية للعاملين في مجال رعاية الأيتام بطريقة علمية ودقيقة، لتطوير برامج تدريبية تلبي احتياجاتهم الفعلية وتسهم في تحسين جودة الخدمات المقدمة للأيتام.",
+  instructions: [
+    "يرجى الإجابة على جميع أسئلة الاستبيان بدقة وموضوعية.",
+    "تستغرق الإجابة على الاستبيان حوالي 30-45 دقيقة.",
+    "جميع البيانات ستعامل بسرية تامة ولن تستخدم إلا لأغراض تطوير البرامج التدريبية.",
+    "يتكون الاستبيان من خمسة أقسام رئيسية: معلومات المؤسسة، البيانات الشخصية والوظيفية، تقييم الاحتياجات التدريبية، التحديات والصعوبات، والاقتراحات والملاحظات."
+  ]
+};
+
+// القسم الأول: معلومات المؤسسة
+const section1 = {
+  id: "section1",
+  title: "القسم الأول: معلومات المؤسسة",
+  subsections: [
+    {
+      id: "section1_1",
+      title: "1.1 بيانات المؤسسة",
+      questions: [
+        {
+          id: "q1",
+          number: 1,
+          text: "الرمز التعريفي للمؤسسة",
+          type: "text",
+          required: false,
+          placeholder: "سيتم تزويدكم به من قبل فريق التدريب",
+          validation: null
+        },
+        {
+          id: "q2",
+          number: 2,
+          text: "اسم المؤسسة/الجمعية",
+          type: "text",
+          required: true,
+          placeholder: "أدخل اسم المؤسسة/الجمعية",
+          validation: null
+        },
+        {
+          id: "q3",
+          number: 3,
+          text: "الدولة",
+          type: "text",
+          required: true,
+          placeholder: "أدخل اسم الدولة",
+          validation: null
+        },
+        {
+          id: "q4",
+          number: 4,
+          text: "عدد العاملين في قسم رعاية الأيتام",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "less_than_5", text: "أقل من 5" },
+            { value: "5_10", text: "5-10" },
+            { value: "11_20", text: "11-20" },
+            { value: "21_50", text: "21-50" },
+            { value: "more_than_50", text: "أكثر من 50" }
+          ]
+        },
+        {
+          id: "q5",
+          number: 5,
+          text: "عدد الأيتام الذين ترعاهم المؤسسة",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "less_than_20", text: "أقل من 20" },
+            { value: "20_50", text: "20-50" },
+            { value: "51_100", text: "51-100" },
+            { value: "101_200", text: "101-200" },
+            { value: "more_than_200", text: "أكثر من 200" }
+          ]
+        },
+        {
+          id: "q6",
+          number: 6,
+          text: "الفئات العمرية للأيتام الذين ترعاهم المؤسسة",
+          type: "checkbox",
+          required: true,
+          options: [
+            { value: "infants", text: "الرضع (أقل من 3 سنوات)" },
+            { value: "early_childhood", text: "الطفولة المبكرة (3-6 سنوات)" },
+            { value: "middle_childhood", text: "الطفولة المتوسطة (7-12 سنة)" },
+            { value: "adolescence", text: "المراهقة (13-18 سنة)" },
+            { value: "youth", text: "الشباب (أكثر من 18 سنة)" }
+          ]
+        },
+        {
+          id: "q7",
+          number: 7,
+          text: "نوع الرعاية المقدمة للأيتام",
+          type: "checkbox",
+          required: true,
+          options: [
+            { value: "residential", text: "رعاية إيوائية (داخل المؤسسة)" },
+            { value: "day_care", text: "رعاية نهارية" },
+            { value: "foster_care", text: "رعاية أسرية بديلة" },
+            { value: "after_care", text: "رعاية لاحقة (بعد سن 18)" },
+            { value: "community_support", text: "برامج دعم مجتمعي" }
+          ],
+          other: {
+            enabled: true,
+            placeholder: "أخرى (يرجى التحديد)"
+          }
+        }
+      ]
+    },
+    {
+      id: "section1_2",
+      title: "1.2 البرامج التدريبية السابقة",
+      questions: [
+        {
+          id: "q8",
+          number: 8,
+          text: "هل سبق أن نفذت المؤسسة برامج تدريبية للعاملين في مجال رعاية الأيتام خلال السنتين الماضيتين؟",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "yes", text: "نعم" },
+            { value: "no", text: "لا" }
+          ]
+        },
+        {
+          id: "q9",
+          number: 9,
+          text: "إذا كانت الإجابة بنعم، ما هي أهم ثلاثة برامج تدريبية تم تنفيذها؟",
+          type: "multi_text",
+          required: false,
+          fields: [
+            { id: "program1", label: "البرنامج الأول", placeholder: "أدخل اسم البرنامج الأول" },
+            { id: "program2", label: "البرنامج الثاني", placeholder: "أدخل اسم البرنامج الثاني" },
+            { id: "program3", label: "البرنامج الثالث", placeholder: "أدخل اسم البرنامج الثالث" }
+          ],
+          conditional: {
+            dependsOn: "q8",
+            showWhen: "yes"
+          }
+        },
+        {
+          id: "q10",
+          number: 10,
+          text: "كيف تقيم فعالية البرامج التدريبية السابقة في تحسين أداء العاملين؟",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "very_effective", text: "فعالة جداً" },
+            { value: "effective", text: "فعالة" },
+            { value: "moderately_effective", text: "متوسطة الفعالية" },
+            { value: "slightly_effective", text: "قليلة الفعالية" },
+            { value: "not_effective", text: "غير فعالة" }
+          ],
+          conditional: {
+            dependsOn: "q8",
+            showWhen: "yes"
+          }
+        },
+        {
+          id: "q11",
+          number: 11,
+          text: "ما هي الطرق التي تستخدمها المؤسسة حالياً لتحديد الاحتياجات التدريبية للعاملين؟",
+          type: "checkbox",
+          required: true,
+          options: [
+            { value: "periodic_surveys", text: "استبيانات دورية" },
+            { value: "interviews", text: "مقابلات شخصية" },
+            { value: "annual_evaluation", text: "تقييم الأداء السنوي" },
+            { value: "supervisor_notes", text: "ملاحظات المشرفين" },
+            { value: "problem_analysis", text: "تحليل المشكلات والتحديات" },
+            { value: "no_methods", text: "لا توجد طرق محددة" }
+          ],
+          other: {
+            enabled: true,
+            placeholder: "أخرى (يرجى التحديد)"
+          }
+        }
+      ]
+    }
+  ]
+};
+
+// القسم الثاني: البيانات الشخصية والوظيفية
+const section2 = {
+  id: "section2",
+  title: "القسم الثاني: البيانات الشخصية والوظيفية",
+  subsections: [
+    {
+      id: "section2_1",
+      title: "2.1 البيانات الشخصية",
+      questions: [
+        {
+          id: "q12",
+          number: 12,
+          text: "الاسم (اختياري)",
+          type: "text",
+          required: false,
+          placeholder: "أدخل اسمك (اختياري)",
+          validation: null
+        },
+        {
+          id: "q13",
+          number: 13,
+          text: "الجنس",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "male", text: "ذكر" },
+            { value: "female", text: "أنثى" }
+          ]
+        },
+        {
+          id: "q14",
+          number: 14,
+          text: "العمر",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "less_than_25", text: "أقل من 25 سنة" },
+            { value: "25_35", text: "25-35 سنة" },
+            { value: "36_45", text: "36-45 سنة" },
+            { value: "46_55", text: "46-55 سنة" },
+            { value: "more_than_55", text: "أكثر من 55 سنة" }
+          ]
+        },
+        {
+          id: "q15",
+          number: 15,
+          text: "المؤهل العلمي",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "high_school", text: "ثانوية عامة أو أقل" },
+            { value: "diploma", text: "دبلوم" },
+            { value: "bachelor", text: "بكالوريوس" },
+            { value: "master", text: "ماجستير" },
+            { value: "phd", text: "دكتوراه" }
+          ]
+        },
+        {
+          id: "q16",
+          number: 16,
+          text: "التخصص العلمي",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "psychology", text: "علم نفس" },
+            { value: "social_work", text: "خدمة اجتماعية" },
+            { value: "education", text: "تربية" },
+            { value: "management", text: "إدارة" },
+            { value: "sharia", text: "شريعة" },
+            { value: "medical", text: "طب/تمريض" }
+          ],
+          other: {
+            enabled: true,
+            placeholder: "أخرى (يرجى التحديد)"
+          }
+        }
+      ]
+    },
+    {
+      id: "section2_2",
+      title: "2.2 البيانات الوظيفية",
+      questions: [
+        {
+          id: "q17",
+          number: 17,
+          text: "المسمى الوظيفي",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "manager", text: "مدير" },
+            { value: "supervisor", text: "مشرف" },
+            { value: "psychologist", text: "أخصائي نفسي" },
+            { value: "social_worker", text: "أخصائي اجتماعي" },
+            { value: "teacher", text: "معلم/مرشد تربوي" },
+            { value: "care_supervisor", text: "مشرف رعاية" },
+            { value: "health_specialist", text: "أخصائي صحي" },
+            { value: "admin", text: "موظف إداري" }
+          ],
+          other: {
+            enabled: true,
+            placeholder: "أخرى (يرجى التحديد)"
+          }
+        },
+        {
+          id: "q18",
+          number: 18,
+          text: "سنوات الخبرة في مجال رعاية الأيتام",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "less_than_1", text: "أقل من سنة" },
+            { value: "1_3", text: "1-3 سنوات" },
+            { value: "4_7", text: "4-7 سنوات" },
+            { value: "8_12", text: "8-12 سنة" },
+            { value: "more_than_12", text: "أكثر من 12 سنة" }
+          ]
+        },
+        {
+          id: "q19",
+          number: 19,
+          text: "الفئة العمرية للأيتام الذين تتعامل معهم",
+          type: "checkbox",
+          required: true,
+          options: [
+            { value: "infants", text: "الرضع (أقل من 3 سنوات)" },
+            { value: "early_childhood", text: "الطفولة المبكرة (3-6 سنوات)" },
+            { value: "middle_childhood", text: "الطفولة المتوسطة (7-12 سنة)" },
+            { value: "adolescence", text: "المراهقة (13-18 سنة)" },
+            { value: "youth", text: "الشباب (أكثر من 18 سنة)" }
+          ]
+        },
+        {
+          id: "q20",
+          number: 20,
+          text: "نوع الرعاية التي تقدمها للأيتام",
+          type: "checkbox",
+          required: true,
+          options: [
+            { value: "residential", text: "رعاية إيوائية (داخل المؤسسة)" },
+            { value: "day_care", text: "رعاية نهارية" },
+            { value: "foster_care", text: "رعاية أسرية بديلة" },
+            { value: "after_care", text: "رعاية لاحقة (بعد سن 18)" },
+            { value: "community_support", text: "برامج دعم مجتمعي" }
+          ],
+          other: {
+            enabled: true,
+            placeholder: "أخرى (يرجى التحديد)"
+          }
+        },
+        {
+          id: "q21",
+          number: 21,
+          text: "هل سبق أن حصلت على دورات تدريبية في مجال رعاية الأيتام؟",
+          type: "radio",
+          required: true,
+          options: [
+            { value: "yes", text: "نعم" },
+            { value: "no", text: "لا" }
+          ]
+        },
+        {
+          id: "q22",
+          number: 22,
+          text: "إذا كانت الإجابة بنعم، ما هي الدورات التدريبية التي حصلت عليها؟",
+          type: "multi_text",
+          required: false,
+          fields: [
+            { id: "course1", label: "الدورة الأولى", placeholder: "أدخل اسم الدورة الأولى" },
+            { id: "course2", label: "الدورة الثانية", placeholder: "أدخل اسم الدورة الثانية" },
+            { id: "course3", label: "الدورة الثالثة", placeholder: "أدخل اسم الدورة الثالثة" }
+          ],
+          conditional: {
+            dependsOn: "q21",
+            showWhen: "yes"
+          }
+        },
+        {
+          id: "q23",
+          number: 23,
+          text: "ما هي المهام الرئيسية التي تقوم بها في عملك مع الأيتام؟",
+          type: "multi_text",
+          required: true,
+          fields: [
+            { id: "task1", label: "المهمة الأولى", placeholder: "أدخل المهمة الأولى" },
+            { id: "task2", label: "المهمة الثانية", placeholder: "أدخل المهمة الثانية" },
+            { id: "task3", label: "المهمة الثالثة", placeholder: "أدخل المهمة الثالثة" }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// تعريف مقياس ليكرت المستخدم في جميع أسئلة تقييم الاحتياجات التدريبية
+const likertScale = [
+  { value: "1", text: "منخفضة جداً" },
+  { value: "2", text: "منخفضة" },
+  { value: "3", text: "متوسطة" },
+  { value: "4", text: "عالية" },
+  { value: "5", text: "عالية جداً" }
+];
+
+// القسم الثالث: تقييم الاحتياجات التدريبية
+const section3 = {
+  id: "section3",
+  title: "القسم الثالث: تقييم الاحتياجات التدريبية",
+  description: "يرجى تحديد درجة احتياجك للتدريب في كل مجال من المجالات التالية، وذلك باختيار الدرجة المناسبة وفق المقياس التالي: (1) منخفضة جداً، (2) منخفضة، (3) متوسطة، (4) عالية، (5) عالية جداً",
+  subsections: [
+    {
+      id: "section3_1",
+      title: "3.1 المجال النفسي والاجتماعي",
+      questions: [
+        {
+          id: "q3_1_1",
+          number: "3.1.1",
+          text: "مهارات التعامل مع الصدمات النفسية لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_2",
+          number: "3.1.2",
+          text: "أساليب بناء الثقة بالنفس وتقدير الذات لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_3",
+          number: "3.1.3",
+          text: "مهارات الإرشاد النفسي للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_4",
+          number: "3.1.4",
+          text: "استراتيجيات دمج الأيتام في المجتمع",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_5",
+          number: "3.1.5",
+          text: "مهارات التواصل الفعال مع الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_6",
+          number: "3.1.6",
+          text: "أساليب التعامل مع المشكلات السلوكية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_7",
+          number: "3.1.7",
+          text: "مهارات إدارة الغضب والانفعالات لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_8",
+          number: "3.1.8",
+          text: "تقنيات العلاج باللعب",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_9",
+          number: "3.1.9",
+          text: "مهارات تعزيز الذكاء العاطفي لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_10",
+          number: "3.1.10",
+          text: "أساليب التعامل مع الاكتئاب والقلق لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_11",
+          number: "3.1.11",
+          text: "مهارات بناء العلاقات الاجتماعية الإيجابية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_12",
+          number: "3.1.12",
+          text: "تقنيات تعديل السلوك",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_13",
+          number: "3.1.13",
+          text: "مهارات التعامل مع الأزمات النفسية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_14",
+          number: "3.1.14",
+          text: "أساليب تنمية المهارات الاجتماعية لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_15",
+          number: "3.1.15",
+          text: "مهارات التعامل مع مشاعر الفقد والحزن لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_16",
+          number: "3.1.16",
+          text: "مهارات التعامل مع التنمر بين الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_17",
+          number: "3.1.17",
+          text: "أساليب تعزيز الهوية الشخصية لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_1_18",
+          number: "3.1.18",
+          text: "مهارات التعامل مع الصدمات والخبرات السلبية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_2",
+      title: "3.2 المجال التربوي والتعليمي",
+      questions: [
+        {
+          id: "q3_2_1",
+          number: "3.2.1",
+          text: "أساليب التعليم الحديثة للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_2",
+          number: "3.2.2",
+          text: "استراتيجيات التعامل مع صعوبات التعلم",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_3",
+          number: "3.2.3",
+          text: "مهارات اكتشاف وتنمية المواهب لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_4",
+          number: "3.2.4",
+          text: "أساليب التحفيز وتعزيز الدافعية للتعلم",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_5",
+          number: "3.2.5",
+          text: "مهارات التوجيه المهني للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_6",
+          number: "3.2.6",
+          text: "تقنيات التعلم النشط والتفاعلي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_7",
+          number: "3.2.7",
+          text: "أساليب تنمية مهارات التفكير الإبداعي والناقد",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_8",
+          number: "3.2.8",
+          text: "مهارات تعليم القراءة والكتابة للأطفال",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_9",
+          number: "3.2.9",
+          text: "استراتيجيات التعامل مع التأخر الدراسي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_10",
+          number: "3.2.10",
+          text: "مهارات تصميم الأنشطة التعليمية المناسبة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_11",
+          number: "3.2.11",
+          text: "أساليب تقييم التحصيل الدراسي للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_2_12",
+          number: "3.2.12",
+          text: "مهارات تعزيز الانضباط الذاتي والمسؤولية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_3",
+      title: "3.3 المجال الصحي والطبي",
+      questions: [
+        {
+          id: "q3_3_1",
+          number: "3.3.1",
+          text: "أساسيات الإسعافات الأولية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_2",
+          number: "3.3.2",
+          text: "مهارات الرعاية الصحية الأساسية للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_3",
+          number: "3.3.3",
+          text: "أساليب التغذية السليمة للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_4",
+          number: "3.3.4",
+          text: "مهارات التعامل مع الأمراض الشائعة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_5",
+          number: "3.3.5",
+          text: "أساليب تعزيز النظافة الشخصية لدى الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_6",
+          number: "3.3.6",
+          text: "مهارات الكشف المبكر عن الإعاقات والاضطرابات",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_7",
+          number: "3.3.7",
+          text: "أساليب التعامل مع الإعاقات الجسدية والحسية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_8",
+          number: "3.3.8",
+          text: "مهارات التثقيف الصحي للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_9",
+          number: "3.3.9",
+          text: "أساليب الوقاية من الأمراض المعدية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_3_10",
+          number: "3.3.10",
+          text: "مهارات التعامل مع الحالات الطارئة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_4",
+      title: "3.4 مجال الإدارة والقيادة",
+      questions: [
+        {
+          id: "q3_4_1",
+          number: "3.4.1",
+          text: "مهارات إدارة دور الرعاية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_2",
+          number: "3.4.2",
+          text: "أساليب القيادة الفعالة في مؤسسات رعاية الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_3",
+          number: "3.4.3",
+          text: "مهارات إدارة الموارد البشرية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_4",
+          number: "3.4.4",
+          text: "أساليب التخطيط الاستراتيجي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_5",
+          number: "3.4.5",
+          text: "مهارات إدارة الأزمات والمخاطر",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_6",
+          number: "3.4.6",
+          text: "أساليب تقييم البرامج والخدمات",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_7",
+          number: "3.4.7",
+          text: "مهارات إدارة الجودة الشاملة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_8",
+          number: "3.4.8",
+          text: "أساليب إدارة التغيير والتطوير المؤسسي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_9",
+          number: "3.4.9",
+          text: "مهارات إعداد التقارير والتوثيق",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_4_10",
+          number: "3.4.10",
+          text: "أساليب تطوير السياسات واللوائح",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_5",
+      title: "3.5 مجال التنمية الشخصية والمهنية",
+      questions: [
+        {
+          id: "q3_5_1",
+          number: "3.5.1",
+          text: "مهارات إدارة الضغوط والاحتراق الوظيفي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_5_2",
+          number: "3.5.2",
+          text: "أساليب تطوير الذات والتعلم المستمر",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_5_3",
+          number: "3.5.3",
+          text: "مهارات التفكير الإبداعي وحل المشكلات",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_5_4",
+          number: "3.5.4",
+          text: "أساليب إدارة الوقت والأولويات",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_5_5",
+          number: "3.5.5",
+          text: "مهارات العمل ضمن فريق",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_5_6",
+          number: "3.5.6",
+          text: "أساليب التواصل الفعال والذكاء العاطفي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_5_7",
+          number: "3.5.7",
+          text: "مهارات التفاوض وإدارة النزاعات",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_5_8",
+          number: "3.5.8",
+          text: "أساليب اتخاذ القرارات وحل المشكلات",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_6",
+      title: "3.6 مجال الحماية وحقوق الطفل",
+      questions: [
+        {
+          id: "q3_6_1",
+          number: "3.6.1",
+          text: "مهارات حماية الأيتام من الإساءة والإهمال",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_6_2",
+          number: "3.6.2",
+          text: "أساليب التعرف على علامات الإساءة والإهمال",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_6_3",
+          number: "3.6.3",
+          text: "مهارات التعامل مع حالات الإساءة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_6_4",
+          number: "3.6.4",
+          text: "أساليب تعزيز الأمان والحماية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_6_5",
+          number: "3.6.5",
+          text: "مهارات تطبيق سياسات حماية الطفل",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_6_6",
+          number: "3.6.6",
+          text: "أساليب تعزيز حقوق الطفل",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_6_7",
+          number: "3.6.7",
+          text: "مهارات التوعية بحقوق الطفل",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_6_8",
+          number: "3.6.8",
+          text: "أساليب المناصرة لحقوق الأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_7",
+      title: "3.7 مجال التكنولوجيا والمهارات الرقمية",
+      questions: [
+        {
+          id: "q3_7_1",
+          number: "3.7.1",
+          text: "مهارات استخدام التكنولوجيا في التعليم",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_7_2",
+          number: "3.7.2",
+          text: "أساليب توظيف التطبيقات الذكية في الرعاية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_7_3",
+          number: "3.7.3",
+          text: "مهارات حماية الأيتام من مخاطر الإنترنت",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_7_4",
+          number: "3.7.4",
+          text: "أساليب تعليم المهارات الرقمية للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_7_5",
+          number: "3.7.5",
+          text: "مهارات استخدام برامج إدارة البيانات",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_7_6",
+          number: "3.7.6",
+          text: "أساليب توظيف وسائل التواصل الاجتماعي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_8",
+      title: "3.8 مجال التأهيل والدمج المجتمعي",
+      questions: [
+        {
+          id: "q3_8_1",
+          number: "3.8.1",
+          text: "مهارات تأهيل الأيتام للاستقلالية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_8_2",
+          number: "3.8.2",
+          text: "أساليب تعزيز الاندماج المجتمعي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_8_3",
+          number: "3.8.3",
+          text: "مهارات التأهيل المهني للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_8_4",
+          number: "3.8.4",
+          text: "أساليب تنمية المهارات الحياتية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_8_5",
+          number: "3.8.5",
+          text: "مهارات إعداد برامج الرعاية اللاحقة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_8_6",
+          number: "3.8.6",
+          text: "أساليب بناء شبكات الدعم المجتمعي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_8_7",
+          number: "3.8.7",
+          text: "مهارات تعزيز المشاركة المجتمعية للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_9",
+      title: "3.9 مجال الرعاية الأسرية البديلة",
+      questions: [
+        {
+          id: "q3_9_1",
+          number: "3.9.1",
+          text: "مهارات تقييم الأسر البديلة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_9_2",
+          number: "3.9.2",
+          text: "أساليب إعداد وتأهيل الأسر البديلة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_9_3",
+          number: "3.9.3",
+          text: "مهارات متابعة ودعم الأسر البديلة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_9_4",
+          number: "3.9.4",
+          text: "أساليب تهيئة الطفل للانتقال للأسرة البديلة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_9_5",
+          number: "3.9.5",
+          text: "مهارات التعامل مع تحديات الرعاية الأسرية البديلة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_9_6",
+          number: "3.9.6",
+          text: "أساليب تقييم جودة الرعاية الأسرية البديلة",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_10",
+      title: "3.10 مجال الدعم النفسي والروحي",
+      questions: [
+        {
+          id: "q3_10_1",
+          number: "3.10.1",
+          text: "مهارات تعزيز الجوانب الروحية والأخلاقية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_10_2",
+          number: "3.10.2",
+          text: "أساليب غرس القيم الإيجابية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_10_3",
+          number: "3.10.3",
+          text: "مهارات تنمية الذكاء الروحي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_10_4",
+          number: "3.10.4",
+          text: "أساليب تعزيز الصحة النفسية الإيجابية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_10_5",
+          number: "3.10.5",
+          text: "مهارات بناء المرونة النفسية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_10_6",
+          number: "3.10.6",
+          text: "أساليب تنمية التسامح والتعاطف",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_11",
+      title: "3.11 مجال التخطيط وتصميم البرامج",
+      questions: [
+        {
+          id: "q3_11_1",
+          number: "3.11.1",
+          text: "مهارات تصميم البرامج التربوية للأيتام",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_11_2",
+          number: "3.11.2",
+          text: "أساليب تخطيط الأنشطة الترفيهية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_11_3",
+          number: "3.11.3",
+          text: "مهارات إعداد البرامج العلاجية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_11_4",
+          number: "3.11.4",
+          text: "أساليب تقييم فعالية البرامج",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_11_5",
+          number: "3.11.5",
+          text: "مهارات تصميم برامج تنمية المهارات",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_11_6",
+          number: "3.11.6",
+          text: "أساليب إدارة المشاريع التنموية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_12",
+      title: "3.12 مجال التطوع وإدارة المتطوعين",
+      questions: [
+        {
+          id: "q3_12_1",
+          number: "3.12.1",
+          text: "مهارات استقطاب وتأهيل المتطوعين",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_12_2",
+          number: "3.12.2",
+          text: "أساليب إدارة برامج التطوع",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_12_3",
+          number: "3.12.3",
+          text: "مهارات تصميم فرص التطوع",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_12_4",
+          number: "3.12.4",
+          text: "أساليب تحفيز وتكريم المتطوعين",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_12_5",
+          number: "3.12.5",
+          text: "مهارات قياس أثر العمل التطوعي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_13",
+      title: "3.13 مجال تنمية الموارد المالية والاستدامة",
+      questions: [
+        {
+          id: "q3_13_1",
+          number: "3.13.1",
+          text: "مهارات تنمية الموارد المالية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_13_2",
+          number: "3.13.2",
+          text: "أساليب كتابة مقترحات المشاريع",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_13_3",
+          number: "3.13.3",
+          text: "مهارات إدارة الميزانية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_13_4",
+          number: "3.13.4",
+          text: "أساليب تطوير مشاريع الاستدامة المالية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_13_5",
+          number: "3.13.5",
+          text: "مهارات التسويق الاجتماعي",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        },
+        {
+          id: "q3_13_6",
+          number: "3.13.6",
+          text: "أساليب بناء الشراكات الاستراتيجية",
+          type: "likert",
+          required: true,
+          scale: likertScale
+        }
+      ]
+    },
+    {
+      id: "section3_14",
+      title: "3.14 مجالات أخرى",
+      questions: [
+        {
+          id: "q24",
+          number: 24,
+          text: "هل هناك مجالات تدريبية أخرى ترى أنها مهمة ولم يتم ذكرها؟",
+          type: "multi_text",
+          required: false,
+          fields: [
+            { id: "field1", label: "المجال الأول", placeholder: "أدخل المجال الأول" },
+            { id: "field2", label: "المجال الثاني", placeholder: "أدخل المجال الثاني" },
+            { id: "field3", label: "المجال الثالث", placeholder: "أدخل المجال الثالث" }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// القسم الرابع: التحديات والصعوبات
+const section4 = {
+  id: "section4",
+  title: "القسم الرابع: التحديات والصعوبات",
+  questions: [
+    {
+      id: "q25",
+      number: 25,
+      text: "ما هي أهم التحديات التي تواجهك في عملك مع الأيتام؟",
+      description: "يرجى ترتيبها حسب الأهمية من 1-5، حيث 1 هو الأكثر أهمية",
+      type: "ranking",
+      required: true,
+      options: [
+        { value: "lack_of_skills", text: "نقص المهارات والمعارف المتخصصة" },
+        { value: "weak_institutional_support", text: "ضعف الدعم المؤسسي" },
+        { value: "lack_of_financial_resources", text: "قلة الموارد المالية" },
+        { value: "complex_cases", text: "صعوبة التعامل مع الحالات المعقدة" },
+        { value: "work_pressure", text: "ضغوط العمل والاحتراق الوظيفي" },
+        { value: "communication_challenges", text: "تحديات التواصل مع الأيتام" },
+        { value: "lack_of_training", text: "قلة البرامج التدريبية المتخصصة" },
+        { value: "weak_coordination", text: "ضعف التنسيق بين الجهات المعنية" }
+      ],
+      other: {
+        enabled: true,
+        placeholder: "أخرى (يرجى التحديد)"
+      },
+      maxRank: 5
+    },
+    {
+      id: "q26",
+      number: 26,
+      text: "ما هي أهم الصعوبات التي تواجهك في الحصول على التدريب المناسب؟",
+      type: "checkbox",
+      required: true,
+      options: [
+        { value: "lack_of_specialized_programs", text: "عدم توفر برامج تدريبية متخصصة" },
+        { value: "high_cost", text: "ارتفاع تكلفة البرامج التدريبية" },
+        { value: "distance", text: "بعد مواقع التدريب عن مكان العمل" },
+        { value: "unsuitable_timing", text: "عدم ملاءمة أوقات التدريب" },
+        { value: "lack_of_incentives", text: "عدم وجود حوافز للتدريب" },
+        { value: "lack_of_management_support", text: "عدم دعم الإدارة للتدريب" },
+        { value: "poor_quality", text: "ضعف جودة البرامج التدريبية المتاحة" }
+      ],
+      other: {
+        enabled: true,
+        placeholder: "أخرى (يرجى التحديد)"
+      }
+    }
+  ]
+};
+
+// القسم الخامس: الاقتراحات والملاحظات
+const section5 = {
+  id: "section5",
+  title: "القسم الخامس: الاقتراحات والملاحظات",
+  questions: [
+    {
+      id: "q27",
+      number: 27,
+      text: "ما هي اقتراحاتك لتحسين البرامج التدريبية للعاملين في مجال رعاية الأيتام؟",
+      type: "textarea",
+      required: false,
+      placeholder: "أدخل اقتراحاتك هنا...",
+      rows: 5
+    },
+    {
+      id: "q28",
+      number: 28,
+      text: "ما هي أفضل الأوقات المناسبة لك للمشاركة في البرامج التدريبية؟",
+      type: "radio",
+      required: true,
+      options: [
+        { value: "work_days", text: "خلال أيام العمل الرسمية" },
+        { value: "evenings", text: "في المساء بعد أوقات العمل" },
+        { value: "weekends", text: "في عطلة نهاية الأسبوع" },
+        { value: "annual_leave", text: "خلال الإجازات السنوية" },
+        { value: "online_anytime", text: "التدريب عن بعد (أونلاين) في أي وقت" }
+      ],
+      other: {
+        enabled: true,
+        placeholder: "أخرى (يرجى التحديد)"
+      }
+    },
+    {
+      id: "q29",
+      number: 29,
+      text: "ما هي المدة المفضلة لديك للبرامج التدريبية؟",
+      type: "radio",
+      required: true,
+      options: [
+        { value: "short", text: "برامج قصيرة (يوم واحد)" },
+        { value: "medium", text: "برامج متوسطة (2-3 أيام)" },
+        { value: "long", text: "برامج طويلة (أسبوع)" },
+        { value: "extended", text: "برامج ممتدة (عدة أسابيع بمعدل يوم أو يومين أسبوعياً)" }
+      ],
+      other: {
+        enabled: true,
+        placeholder: "أخرى (يرجى التحديد)"
+      }
+    },
+    {
+      id: "q30",
+      number: 30,
+      text: "ما هي طرق التدريب المفضلة لديك؟",
+      type: "checkbox",
+      required: true,
+      options: [
+        { value: "lectures", text: "محاضرات نظرية" },
+        { value: "workshops", text: "ورش عمل تطبيقية" },
+        { value: "case_studies", text: "دراسة حالات" },
+        { value: "field_training", text: "تدريب عملي ميداني" },
+        { value: "online_training", text: "تدريب إلكتروني (أونلاين)" },
+        { value: "blended_learning", text: "تدريب مدمج (نظري وعملي)" },
+        { value: "self_learning", text: "التعلم الذاتي (حقائب تدريبية)" }
+      ],
+      other: {
+        enabled: true,
+        placeholder: "أخرى (يرجى التحديد)"
+      }
+    },
+    {
+      id: "q31",
+      number: 31,
+      text: "هل لديك أي ملاحظات أو اقتراحات إضافية ترغب في مشاركتها؟",
+      type: "textarea",
+      required: false,
+      placeholder: "أدخل ملاحظاتك واقتراحاتك هنا...",
+      rows: 5
+    }
+  ]
+};
+
+// معلومات الاتصال والشكر
+const surveyFooter = {
+  id: "surveyFooter",
+  title: "شكراً لتعاونكم",
+  content: "نشكركم على وقتكم وجهدكم في الإجابة على هذا الاستبيان. ستساهم إجاباتكم في تطوير برامج تدريبية متخصصة تلبي احتياجاتكم الفعلية وتسهم في تحسين جودة الخدمات المقدمة للأيتام.",
+  contactInfo: {
+    email: {
+      label: "البريد الإلكتروني",
+      placeholder: "أدخل البريد الإلكتروني"
+    },
+    phone: {
+      label: "رقم الهاتف",
+      placeholder: "أدخل رقم الهاتف"
+    }
+  }
+};
+
+// تجميع كل أجزاء الاستبيان في كائن واحد
+const completeSurvey = {
+  surveyIntro,
+  sections: [
+    section1,
+    section2,
+    section3,
+    section4,
+    section5
+  ],
+  surveyFooter
+};
