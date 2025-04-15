@@ -23,8 +23,8 @@
 
     <hr>
 
-    <% if (typeof questions !== 'undefined' && Array.isArray(questions)) { %>
-      <% if (questions.length > 0) { %>
+    <% try { %>
+      <% if (typeof questions !== 'undefined' && Array.isArray(questions) && questions.length > 0) { %>
         <% questions.forEach((q, i) => { %>
           <form action="/api/questions/<%= i %>?_method=PUT" method="POST" class="mb-2 d-flex gap-2">
             <input name="newQuestion" value="<%= q %>" class="form-control" />
@@ -35,10 +35,10 @@
           </form>
         <% }) %>
       <% } else { %>
-        <p>🚫 لا توجد أسئلة حتى الآن.</p>
+        <p class="text-danger">⚠️ لا توجد أسئلة حالياً.</p>
       <% } %>
-    <% } else { %>
-      <p class="text-danger">⚠️ لم يتم تحميل الأسئلة بشكل صحيح</p>
+    <% } catch(e) { %>
+      <p class="text-danger">❌ لم يتم تحميل الأسئلة بشكل صحيح</p>
     <% } %>
 
   </div>
