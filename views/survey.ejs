@@ -1,610 +1,22 @@
-<section class="survey-page">
-    <div class="container">
-        <h1 class="text-center my-4">استبيان تقييم الاحتياجات التدريبية</h1>
-        <p class="text-center mb-5">للكوادر العاملة مع الأيتام في المنظمات الإنسانية</p>
-        
-        <div class="survey-container">
-            <div class="survey-intro">
-                <h3>تعليمات الاستبيان:</h3>
-                <ul>
-                    <li>يرجى الإجابة على جميع الأسئلة بدقة وموضوعية.</li>
-                    <li>تستغرق الإجابة على الاستبيان حوالي 30-40 دقيقة.</li>
-                    <li>تقييم المهارات يكون من 1 إلى 5 (1: منخفضة جداً، 5: عالية جداً).</li>
-                    <li>جميع البيانات ستعامل بسرية تامة ولن تستخدم إلا لأغراض تطوير البرامج التدريبية.</li>
-                    <li>يتكون الاستبيان من ثلاثة أقسام رئيسية: البيانات الشخصية والوظيفية، تقييم الاحتياجات التدريبية، والاقتراحات والملاحظات.</li>
-                </ul>
-            </div>
-            
-            <form action="/survey" method="POST">
-                <!-- القسم الأول: البيانات الشخصية والوظيفية -->
-                <div class="survey-section">
-                    <h3 class="survey-section-title">القسم الأول: البيانات الشخصية والوظيفية</h3>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="fullName" class="form-label">الاسم الكامل (اختياري)</label>
-                            <input type="text" class="form-control" id="fullName" name="fullName">
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="organizationCode" class="form-label">كود المنظمة</label>
-                            <input type="text" class="form-control" id="organizationCode" name="organizationCode" required>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">الجنس</label>
-                            <div class="radio-group">
-                                <div class="radio-item">
-                                    <input type="radio" id="male" name="gender" value="ذكر" required>
-                                    <label for="male">ذكر</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" id="female" name="gender" value="أنثى">
-                                    <label for="female">أنثى</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="age" class="form-label">العمر</label>
-                            <select class="form-select" id="age" name="age" required>
-                                <option value="" selected disabled>اختر الفئة العمرية</option>
-                                <option value="أقل من 25">أقل من 25</option>
-                                <option value="25-35">25-35</option>
-                                <option value="36-45">36-45</option>
-                                <option value="46-55">46-55</option>
-                                <option value="أكثر من 55">أكثر من 55</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="education" class="form-label">المؤهل العلمي</label>
-                            <select class="form-select" id="education" name="education" required>
-                                <option value="" selected disabled>اختر المؤهل العلمي</option>
-                                <option value="ثانوية عامة">ثانوية عامة</option>
-                                <option value="دبلوم">دبلوم</option>
-                                <option value="بكالوريوس">بكالوريوس</option>
-                                <option value="ماجستير">ماجستير</option>
-                                <option value="دكتوراه">دكتوراه</option>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="specialization" class="form-label">التخصص العلمي</label>
-                            <select class="form-select" id="specialization" name="specialization" required>
-                                <option value="" selected disabled>اختر التخصص العلمي</option>
-                                <option value="علم نفس">علم نفس</option>
-                                <option value="خدمة اجتماعية">خدمة اجتماعية</option>
-                                <option value="تربية">تربية</option>
-                                <option value="طب">طب</option>
-                                <option value="تمريض">تمريض</option>
-                                <option value="إدارة">إدارة</option>
-                                <option value="شريعة">شريعة</option>
-                                <option value="أخرى">أخرى</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="organization" class="form-label">اسم المؤسسة/الجمعية</label>
-                            <input type="text" class="form-control" id="organization" name="organization" required>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="country" class="form-label">الدولة</label>
-                            <select class="form-select" id="country" name="country" required>
-                                <option value="" selected disabled>اختر الدولة</option>
-                                <option value="سوريا">سوريا</option>
-                                <option value="تركيا">تركيا</option>
-                                <option value="لبنان">لبنان</option>
-                                <option value="الأردن">الأردن</option>
-                                <option value="العراق">العراق</option>
-                                <option value="مصر">مصر</option>
-                                <option value="أخرى">أخرى</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="jobTitle" class="form-label">المسمى الوظيفي</label>
-                            <select class="form-select" id="jobTitle" name="jobTitle" required>
-                                <option value="" selected disabled>اختر المسمى الوظيفي</option>
-                                <option value="مدير">مدير</option>
-                                <option value="مشرف">مشرف</option>
-                                <option value="أخصائي نفسي">أخصائي نفسي</option>
-                                <option value="أخصائي اجتماعي">أخصائي اجتماعي</option>
-                                <option value="معلم">معلم</option>
-                                <option value="مرشد">مرشد</option>
-                                <option value="مقدم رعاية">مقدم رعاية</option>
-                                <option value="أخرى">أخرى</option>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="experience" class="form-label">سنوات الخبرة في مجال رعاية الأيتام</label>
-                            <select class="form-select" id="experience" name="experience" required>
-                                <option value="" selected disabled>اختر سنوات الخبرة</option>
-                                <option value="أقل من سنة">أقل من سنة</option>
-                                <option value="1-3 سنوات">1-3 سنوات</option>
-                                <option value="4-7 سنوات">4-7 سنوات</option>
-                                <option value="8-10 سنوات">8-10 سنوات</option>
-                                <option value="أكثر من 10 سنوات">أكثر من 10 سنوات</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label class="form-label">الفئة العمرية للأيتام الذين تتعامل معهم (يمكن اختيار أكثر من إجابة)</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="ageGroup1" name="ageGroups" value="الرضع (أقل من 3 سنوات)">
-                                    <label for="ageGroup1">الرضع (أقل من 3 سنوات)</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="ageGroup2" name="ageGroups" value="الطفولة المبكرة (3-6 سنوات)">
-                                    <label for="ageGroup2">الطفولة المبكرة (3-6 سنوات)</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="ageGroup3" name="ageGroups" value="الطفولة المتوسطة (7-12 سنة)">
-                                    <label for="ageGroup3">الطفولة المتوسطة (7-12 سنة)</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="ageGroup4" name="ageGroups" value="المراهقة (13-18 سنة)">
-                                    <label for="ageGroup4">المراهقة (13-18 سنة)</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="ageGroup5" name="ageGroups" value="الشباب (أكثر من 18 سنة)">
-                                    <label for="ageGroup5">الشباب (أكثر من 18 سنة)</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label class="form-label">نوع الرعاية المقدمة للأيتام (يمكن اختيار أكثر من إجابة)</label>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="careType1" name="careTypes" value="رعاية إيوائية (داخل المؤسسة)">
-                                    <label for="careType1">رعاية إيوائية (داخل المؤسسة)</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="careType2" name="careTypes" value="رعاية نهارية">
-                                    <label for="careType2">رعاية نهارية</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="careType3" name="careTypes" value="رعاية أسرية بديلة">
-                                    <label for="careType3">رعاية أسرية بديلة</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="careType4" name="careTypes" value="رعاية لاحقة (بعد سن 18)">
-                                    <label for="careType4">رعاية لاحقة (بعد سن 18)</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="careType5" name="careTypes" value="برامج دعم مجتمعي">
-                                    <label for="careType5">برامج دعم مجتمعي</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="careType6" name="careTypes" value="أخرى">
-                                    <label for="careType6">أخرى</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-12 mb-3">
-                            <label class="form-label">هل سبق أن حصلت على دورات تدريبية في مجال رعاية الأيتام؟</label>
-                            <div class="radio-group">
-                                <div class="radio-item">
-                                    <input type="radio" id="previousTrainingYes" name="previousTraining" value="نعم" required>
-                                    <label for="previousTrainingYes">نعم</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" id="previousTrainingNo" name="previousTraining" value="لا">
-                                    <label for="previousTrainingNo">لا</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- القسم الثاني: تقييم الاحتياجات التدريبية -->
-                <div class="survey-section">
-                    <h3 class="survey-section-title">القسم الثاني: تقييم الاحتياجات التدريبية</h3>
-                    <p class="mb-4">يرجى تحديد درجة احتياجك للتدريب في كل مجال من المجالات التالية، وذلك باختيار الدرجة المناسبة وفق المقياس التالي:</p>
-                    <p class="mb-4">(1) منخفضة جداً، (2) منخفضة، (3) متوسطة، (4) عالية، (5) عالية جداً</p>
-                    
-                    <!-- المجال الأول: المجال النفسي والاجتماعي -->
-                    <div class="mb-5">
-                        <h4 class="survey-section-title">المجال الأول: المجال النفسي والاجتماعي</h4>
-                        <p class="mb-3">يرجى تقييم مستوى احتياجك للتدريب في المهارات التالية:</p>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>المهارة/الموضوع</th>
-                                        <th>منخفض جداً</th>
-                                        <th>منخفض</th>
-                                        <th>متوسط</th>
-                                        <th>عالي</th>
-                                        <th>عالي جداً</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>مهارات التعامل مع الصدمات النفسية لدى الأيتام</td>
-                                        <td><input type="radio" name="psychologicalTrauma" value="1" required></td>
-                                        <td><input type="radio" name="psychologicalTrauma" value="2"></td>
-                                        <td><input type="radio" name="psychologicalTrauma" value="3"></td>
-                                        <td><input type="radio" name="psychologicalTrauma" value="4"></td>
-                                        <td><input type="radio" name="psychologicalTrauma" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>أساليب بناء الثقة بالنفس وتقدير الذات لدى الأيتام</td>
-                                        <td><input type="radio" name="selfConfidence" value="1" required></td>
-                                        <td><input type="radio" name="selfConfidence" value="2"></td>
-                                        <td><input type="radio" name="selfConfidence" value="3"></td>
-                                        <td><input type="radio" name="selfConfidence" value="4"></td>
-                                        <td><input type="radio" name="selfConfidence" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات الإرشاد النفسي للأيتام</td>
-                                        <td><input type="radio" name="psychologicalCounseling" value="1" required></td>
-                                        <td><input type="radio" name="psychologicalCounseling" value="2"></td>
-                                        <td><input type="radio" name="psychologicalCounseling" value="3"></td>
-                                        <td><input type="radio" name="psychologicalCounseling" value="4"></td>
-                                        <td><input type="radio" name="psychologicalCounseling" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>استراتيجيات دمج الأيتام في المجتمع</td>
-                                        <td><input type="radio" name="socialIntegration" value="1" required></td>
-                                        <td><input type="radio" name="socialIntegration" value="2"></td>
-                                        <td><input type="radio" name="socialIntegration" value="3"></td>
-                                        <td><input type="radio" name="socialIntegration" value="4"></td>
-                                        <td><input type="radio" name="socialIntegration" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات التواصل الفعال مع الأيتام</td>
-                                        <td><input type="radio" name="effectiveCommunication" value="1" required></td>
-                                        <td><input type="radio" name="effectiveCommunication" value="2"></td>
-                                        <td><input type="radio" name="effectiveCommunication" value="3"></td>
-                                        <td><input type="radio" name="effectiveCommunication" value="4"></td>
-                                        <td><input type="radio" name="effectiveCommunication" value="5"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- المجال الثاني: المجال التربوي والتعليمي -->
-                    <div class="mb-5">
-                        <h4 class="survey-section-title">المجال الثاني: المجال التربوي والتعليمي</h4>
-                        <p class="mb-3">يرجى تقييم مستوى احتياجك للتدريب في المهارات التالية:</p>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>المهارة/الموضوع</th>
-                                        <th>منخفض جداً</th>
-                                        <th>منخفض</th>
-                                        <th>متوسط</th>
-                                        <th>عالي</th>
-                                        <th>عالي جداً</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>أساليب التعليم الحديثة للأيتام</td>
-                                        <td><input type="radio" name="modernTeaching" value="1" required></td>
-                                        <td><input type="radio" name="modernTeaching" value="2"></td>
-                                        <td><input type="radio" name="modernTeaching" value="3"></td>
-                                        <td><input type="radio" name="modernTeaching" value="4"></td>
-                                        <td><input type="radio" name="modernTeaching" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>استراتيجيات التعامل مع صعوبات التعلم</td>
-                                        <td><input type="radio" name="learningDifficulties" value="1" required></td>
-                                        <td><input type="radio" name="learningDifficulties" value="2"></td>
-                                        <td><input type="radio" name="learningDifficulties" value="3"></td>
-                                        <td><input type="radio" name="learningDifficulties" value="4"></td>
-                                        <td><input type="radio" name="learningDifficulties" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات اكتشاف وتنمية المواهب لدى الأيتام</td>
-                                        <td><input type="radio" name="talentDevelopment" value="1" required></td>
-                                        <td><input type="radio" name="talentDevelopment" value="2"></td>
-                                        <td><input type="radio" name="talentDevelopment" value="3"></td>
-                                        <td><input type="radio" name="talentDevelopment" value="4"></td>
-                                        <td><input type="radio" name="talentDevelopment" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>أساليب التحفيز وتعزيز الدافعية للتعلم</td>
-                                        <td><input type="radio" name="motivationTechniques" value="1" required></td>
-                                        <td><input type="radio" name="motivationTechniques" value="2"></td>
-                                        <td><input type="radio" name="motivationTechniques" value="3"></td>
-                                        <td><input type="radio" name="motivationTechniques" value="4"></td>
-                                        <td><input type="radio" name="motivationTechniques" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات التوجيه المهني للأيتام</td>
-                                        <td><input type="radio" name="careerGuidance" value="1" required></td>
-                                        <td><input type="radio" name="careerGuidance" value="2"></td>
-                                        <td><input type="radio" name="careerGuidance" value="3"></td>
-                                        <td><input type="radio" name="careerGuidance" value="4"></td>
-                                        <td><input type="radio" name="careerGuidance" value="5"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- المجال الثالث: المجال الصحي والطبي -->
-                    <div class="mb-5">
-                        <h4 class="survey-section-title">المجال الثالث: المجال الصحي والطبي</h4>
-                        <p class="mb-3">يرجى تقييم مستوى احتياجك للتدريب في المهارات التالية:</p>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>المهارة/الموضوع</th>
-                                        <th>منخفض جداً</th>
-                                        <th>منخفض</th>
-                                        <th>متوسط</th>
-                                        <th>عالي</th>
-                                        <th>عالي جداً</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>أساسيات الإسعافات الأولية</td>
-                                        <td><input type="radio" name="firstAid" value="1" required></td>
-                                        <td><input type="radio" name="firstAid" value="2"></td>
-                                        <td><input type="radio" name="firstAid" value="3"></td>
-                                        <td><input type="radio" name="firstAid" value="4"></td>
-                                        <td><input type="radio" name="firstAid" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات الرعاية الصحية الأساسية للأيتام</td>
-                                        <td><input type="radio" name="healthCare" value="1" required></td>
-                                        <td><input type="radio" name="healthCare" value="2"></td>
-                                        <td><input type="radio" name="healthCare" value="3"></td>
-                                        <td><input type="radio" name="healthCare" value="4"></td>
-                                        <td><input type="radio" name="healthCare" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>أساليب التغذية السليمة للأيتام</td>
-                                        <td><input type="radio" name="nutrition" value="1" required></td>
-                                        <td><input type="radio" name="nutrition" value="2"></td>
-                                        <td><input type="radio" name="nutrition" value="3"></td>
-                                        <td><input type="radio" name="nutrition" value="4"></td>
-                                        <td><input type="radio" name="nutrition" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات التعامل مع الأمراض الشائعة</td>
-                                        <td><input type="radio" name="commonDiseases" value="1" required></td>
-                                        <td><input type="radio" name="commonDiseases" value="2"></td>
-                                        <td><input type="radio" name="commonDiseases" value="3"></td>
-                                        <td><input type="radio" name="commonDiseases" value="4"></td>
-                                        <td><input type="radio" name="commonDiseases" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>أساليب تعزيز النظافة الشخصية لدى الأيتام</td>
-                                        <td><input type="radio" name="personalHygiene" value="1" required></td>
-                                        <td><input type="radio" name="personalHygiene" value="2"></td>
-                                        <td><input type="radio" name="personalHygiene" value="3"></td>
-                                        <td><input type="radio" name="personalHygiene" value="4"></td>
-                                        <td><input type="radio" name="personalHygiene" value="5"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- المجال الرابع: المجال الديني والروحي -->
-                    <div class="mb-5">
-                        <h4 class="survey-section-title">المجال الرابع: المجال الديني والروحي</h4>
-                        <p class="mb-3">يرجى تقييم مستوى احتياجك للتدريب في المهارات التالية:</p>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>المهارة/الموضوع</th>
-                                        <th>منخفض جداً</th>
-                                        <th>منخفض</th>
-                                        <th>متوسط</th>
-                                        <th>عالي</th>
-                                        <th>عالي جداً</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>أساليب غرس القيم الدينية لدى الأيتام</td>
-                                        <td><input type="radio" name="religiousValues" value="1" required></td>
-                                        <td><input type="radio" name="religiousValues" value="2"></td>
-                                        <td><input type="radio" name="religiousValues" value="3"></td>
-                                        <td><input type="radio" name="religiousValues" value="4"></td>
-                                        <td><input type="radio" name="religiousValues" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات تعليم العبادات بطريقة محببة</td>
-                                        <td><input type="radio" name="teachingWorship" value="1" required></td>
-                                        <td><input type="radio" name="teachingWorship" value="2"></td>
-                                        <td><input type="radio" name="teachingWorship" value="3"></td>
-                                        <td><input type="radio" name="teachingWorship" value="4"></td>
-                                        <td><input type="radio" name="teachingWorship" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>أساليب تنمية الوازع الديني</td>
-                                        <td><input type="radio" name="spiritualAwareness" value="1" required></td>
-                                        <td><input type="radio" name="spiritualAwareness" value="2"></td>
-                                        <td><input type="radio" name="spiritualAwareness" value="3"></td>
-                                        <td><input type="radio" name="spiritualAwareness" value="4"></td>
-                                        <td><input type="radio" name="spiritualAwareness" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات ربط الأحكام الشرعية بالحياة اليومية</td>
-                                        <td><input type="radio" name="religiousRules" value="1" required></td>
-                                        <td><input type="radio" name="religiousRules" value="2"></td>
-                                        <td><input type="radio" name="religiousRules" value="3"></td>
-                                        <td><input type="radio" name="religiousRules" value="4"></td>
-                                        <td><input type="radio" name="religiousRules" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>أساليب تعزيز الهوية الدينية</td>
-                                        <td><input type="radio" name="religiousIdentity" value="1" required></td>
-                                        <td><input type="radio" name="religiousIdentity" value="2"></td>
-                                        <td><input type="radio" name="religiousIdentity" value="3"></td>
-                                        <td><input type="radio" name="religiousIdentity" value="4"></td>
-                                        <td><input type="radio" name="religiousIdentity" value="5"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <!-- المجال الخامس: المجال الترفيهي والرياضي -->
-                    <div class="mb-5">
-                        <h4 class="survey-section-title">المجال الخامس: المجال الترفيهي والرياضي</h4>
-                        <p class="mb-3">يرجى تقييم مستوى احتياجك للتدريب في المهارات التالية:</p>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>المهارة/الموضوع</th>
-                                        <th>منخفض جداً</th>
-                                        <th>منخفض</th>
-                                        <th>متوسط</th>
-                                        <th>عالي</th>
-                                        <th>عالي جداً</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>مهارات تصميم الأنشطة الترفيهية</td>
-                                        <td><input type="radio" name="recreationalActivities" value="1" required></td>
-                                        <td><input type="radio" name="recreationalActivities" value="2"></td>
-                                        <td><input type="radio" name="recreationalActivities" value="3"></td>
-                                        <td><input type="radio" name="recreationalActivities" value="4"></td>
-                                        <td><input type="radio" name="recreationalActivities" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>أساليب تنظيم الرحلات والمعسكرات</td>
-                                        <td><input type="radio" name="tripsOrganization" value="1" required></td>
-                                        <td><input type="radio" name="tripsOrganization" value="2"></td>
-                                        <td><input type="radio" name="tripsOrganization" value="3"></td>
-                                        <td><input type="radio" name="tripsOrganization" value="4"></td>
-                                        <td><input type="radio" name="tripsOrganization" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات تنظيم المسابقات والفعاليات</td>
-                                        <td><input type="radio" name="eventsOrganization" value="1" required></td>
-                                        <td><input type="radio" name="eventsOrganization" value="2"></td>
-                                        <td><input type="radio" name="eventsOrganization" value="3"></td>
-                                        <td><input type="radio" name="eventsOrganization" value="4"></td>
-                                        <td><input type="radio" name="eventsOrganization" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>أساليب استثمار أوقات الفراغ</td>
-                                        <td><input type="radio" name="leisureTime" value="1" required></td>
-                                        <td><input type="radio" name="leisureTime" value="2"></td>
-                                        <td><input type="radio" name="leisureTime" value="3"></td>
-                                        <td><input type="radio" name="leisureTime" value="4"></td>
-                                        <td><input type="radio" name="leisureTime" value="5"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>مهارات تدريب الألعاب الرياضية</td>
-                                        <td><input type="radio" name="sportsTraining" value="1" required></td>
-                                        <td><input type="radio" name="sportsTraining" value="2"></td>
-                                        <td><input type="radio" name="sportsTraining" value="3"></td>
-                                        <td><input type="radio" name="sportsTraining" value="4"></td>
-                                        <td><input type="radio" name="sportsTraining" value="5"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- القسم الثالث: الاقتراحات والملاحظات -->
-                <div class="survey-section">
-                    <h3 class="survey-section-title">القسم الثالث: الاقتراحات والملاحظات</h3>
-                    
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <label for="otherTrainingAreas" class="form-label">ما هي المجالات التدريبية الأخرى التي ترى أنها مهمة لتطوير مهاراتك في رعاية الأيتام؟</label>
-                            <textarea class="form-control" id="otherTrainingAreas" name="otherTrainingAreas" rows="5"></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <label for="suggestions" class="form-label">ما هي اقتراحاتك لتطوير برامج التدريب المقدمة للعاملين في مجال رعاية الأيتام؟</label>
-                            <textarea class="form-control" id="suggestions" name="suggestions" rows="5"></textarea>
-                        </div>
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn-submit">إرسال الاستبيان</button>
-            </form>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const surveyForm = document.getElementById('surveyForm');
-  if (!surveyForm) return;
+<h1 class="text-center my-4">استبيان تقييم الاحتياجات التدريبية</h1>
 
-  surveyForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const formData = new FormData(surveyForm);
-    const formDataObj = {};
-
-    formData.forEach((value, key) => {
-      if (key.endsWith('[]')) {
-        const actualKey = key.slice(0, -2);
-        if (!formDataObj[actualKey]) {
-          formDataObj[actualKey] = [];
-        }
-        formDataObj[actualKey].push(value);
-      } else {
-        formDataObj[key] = value;
-      }
-    });
-
-    try {
-      const response = await fetch('/api/survey-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formDataObj)
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        window.location.href = '/thank-you';
-      } else {
-        alert('حدث خطأ أثناء إرسال الاستبيان: ' + (result.message || 'يرجى المحاولة لاحقًا.'));
-      }
-    } catch (error) {
-      console.error('خطأ في إرسال الاستبيان:', error);
-      alert('حدث خطأ أثناء إرسال الاستبيان. يرجى المحاولة مرة أخرى.');
-    }
-  });
-});
-</script>
-        </div>
-    </div>
-</section>
+<% if (questions && questions.length > 0) { %>
+  <form action="/submit-survey" method="POST">
+    <% questions.forEach((q, index) => { %>
+      <div class="mb-4">
+        <label class="form-label"><%= q %></label>
+        <select name="answers[]" class="form-select" required>
+          <option value="">اختر التقييم</option>
+          <option value="1">1 - ضعيف جدًا</option>
+          <option value="2">2 - ضعيف</option>
+          <option value="3">3 - متوسط</option>
+          <option value="4">4 - جيد</option>
+          <option value="5">5 - ممتاز</option>
+        </select>
+      </div>
+    <% }) %>
+    <button type="submit" class="btn btn-primary">إرسال الاستبيان</button>
+  </form>
+<% } else { %>
+  <p class="text-danger text-center">🚫 لا توجد أسئلة متاحة حاليًا.</p>
+<% } %>
