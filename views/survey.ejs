@@ -20,3 +20,17 @@
 <% } else { %>
   <p class="text-danger text-center">🚫 لا توجد أسئلة متاحة حاليًا.</p>
 <% } %>
+<form action="/submit-survey" method="POST">
+  <% questions.forEach((q, i) => { %>
+    <label><%= q %></label>
+    <select name="answers[]" required>
+      <option value="">اختر التقييم</option>
+      <option value="1">1 - ضعيف جدًا</option>
+      <option value="2">2 - ضعيف</option>
+      <option value="3">3 - متوسط</option>
+      <option value="4">4 - جيد</option>
+      <option value="5">5 - ممتاز</option>
+    </select>
+  <% }) %>
+  <button type="submit">إرسال الاستبيان</button>
+</form>
