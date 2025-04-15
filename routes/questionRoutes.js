@@ -51,5 +51,9 @@ router.delete('/:index', async (req, res) => {
     res.status(500).json({ message: 'فشل في الحذف' });
   }
 });
+router.get('/admin/questions', async (req, res) => {
+  const survey = await Survey.findOne();
+  res.render('admin/questions', { questions: survey?.questions || [] });
+});
 
 module.exports = router;
