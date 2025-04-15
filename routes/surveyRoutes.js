@@ -4,14 +4,9 @@ const Survey = require('../models/Survey');
 const Response = require('../models/Response'); // أضف هذا في الأعلى مع الاستيرادات الأخرى
 
 // ✅ استرجاع جميع بيانات الاستبيان
-router.get('/survey-data', async (req, res) => {
-    try {
-        const surveys = await Survey.find();
-        res.json(surveys);
-    } catch (err) {
-        console.error('❌ خطأ في استرجاع بيانات الاستبيان:', err);
-        res.status(500).json({ message: 'حدث خطأ أثناء جلب البيانات' });
-    }
+router.get('/api/questions', async (req, res) => {
+  const survey = await Survey.findOne();
+  res.json(survey.questions);
 });
 
 // ✅ حفظ بيانات الاستبيان الجديدة
