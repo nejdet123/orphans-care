@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title><%= survey?.surveyIntro?.title || 'استبيان تقييم الاحتياجات' %></title>
+  <title><%= surveyIntro?.title || 'استبيان تقييم الاحتياجات' %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <style>
@@ -15,11 +15,11 @@
 <body>
 
 <div class="container">
-  <h1 class="mb-4 text-primary"><%= survey.surveyIntro.title %></h1>
-  <p class="mb-5 lead"><%= survey.surveyIntro.description %></p>
+  <h1 class="mb-4 text-primary"><%= surveyIntro.title %></h1>
+  <p class="mb-5 lead"><%= surveyIntro.description %></p>
 
   <form action="/submit-survey" method="POST">
-    <% survey.sections.forEach(section => { %>
+    <% sections.forEach(section => { %>
       <div class="section mb-5">
         <h2 class="section-title h4"><%= section.title %></h2>
 
