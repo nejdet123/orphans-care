@@ -8,11 +8,11 @@ router.get('/admin/questions', async (req, res) => {
     const survey = await Survey.findOne();
     const questions = survey?.questions || [];
 
-    console.log('✅ الأسئلة:', questions); // 🔍 تطبعها بالسيرفر
+    // ✅ نطبع للتأكد
+    console.log("📦 الأسئلة التي تم إرسالها إلى الصفحة:", questions);
 
     res.render('admin/questions', {
-      title: 'إدارة الأسئلة',
-      questions,
+      questions: questions, // تأكد من تمريرها
       layout: false
     });
   } catch (err) {
@@ -20,6 +20,7 @@ router.get('/admin/questions', async (req, res) => {
     res.status(500).send("فشل في عرض الصفحة");
   }
 });
+
 
 
 // ✅ جلب كل الأسئلة (API)
