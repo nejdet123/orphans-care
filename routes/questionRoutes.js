@@ -2,17 +2,31 @@ const express = require('express');
 const router = express.Router();
 const Survey = require('../models/Survey');
 
-// ✅ صفحة إدارة الأسئلة (واجهة)
+// ✅ إنشاء استبيان جديد إن لم يكن موجوداً (تشغيل لمرة واحدة فقط)
+router.get('/admin/init-survey', async (req, res) => {
+  try {
+    const existing = await Survey.findOne();
+    if (existing) {
+      return res.send('✅ الاستبيان موجود مسبقاً');
+    }
+    await Survey.create({ questions: [] });
+    res.send('✅ تم إنشاء استبيان جديد بنجاح');
+  } catch (err) {
+    console.error('❌ خطأ في إنشاء الاستبيان:', err);
+    res.status(500).send('❌ فشل في الإنشاء: ' + err.message);
+  }
+});
+
+// ✅ صفحة إدارة الأسئلة
 router.get('/admin/questions', async (req, res) => {
   try {
     const survey = await Survey.findOne();
     const questions = survey?.questions || [];
 
-    // ✅ نطبع للتأكد
-    console.log("📦 الأسئلة التي تم إرسالها إلى الصفحة:", questions);
+    console.log("📦 الأسئلة:", questions); // ✅ للتأكد في الكونسول
 
     res.render('admin/questions', {
-      questions: questions, // تأكد من تمريرها
+      questions,
       layout: false
     });
   } catch (err) {
@@ -21,19 +35,17 @@ router.get('/admin/questions', async (req, res) => {
   }
 });
 
-
-
-// ✅ جلب كل الأسئلة (API)
+// ✅ API: جلب الأسئلة
 router.get('/', async (req, res) => {
   try {
     const survey = await Survey.findOne();
-    res.json(survey.questions || []);
+    res.json(survey?.questions || []);
   } catch (err) {
     res.status(500).json({ message: 'فشل في جلب الأسئلة' });
   }
 });
 
-// ✅ إضافة سؤال
+// ✅ API: إضافة سؤال
 router.post('/', async (req, res) => {
   try {
     const { question } = req.body;
@@ -46,7 +58,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ✅ تعديل سؤال
+// ✅ API: تعديل سؤال
 router.put('/:index', async (req, res) => {
   try {
     const { newQuestion } = req.body;
@@ -60,7 +72,7 @@ router.put('/:index', async (req, res) => {
   }
 });
 
-// ✅ حذف سؤال
+// ✅ API: حذف سؤال
 router.delete('/:index', async (req, res) => {
   try {
     const { index } = req.params;
