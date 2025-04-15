@@ -23,7 +23,9 @@ const methodOverride = require('method-override');
 const { isLoggedIn, protect } = require('./middleware/auth');
 
 // استيراد النماذج
-const Survey = require('./models/Survey');
+
+const Survey = require('./models/SurveyTemplate'); // ⚠️ لازم تنشئ هذا الموديل
+
 
 // استيراد المسارات
 const surveyRoutes = require('./routes/surveyRoutes');
