@@ -15,90 +15,97 @@
 <body>
 
 <div class="container">
-  <h1 class="mb-4 text-primary"><%= surveyIntro.title %></h1>
-  <p class="mb-5 lead"><%= surveyIntro.description %></p>
+  <% if (surveyIntro) { %>
+    <h1 class="mb-4 text-primary"><%= surveyIntro.title %></h1>
+    <p class="mb-5 lead"><%= surveyIntro.description %></p>
+  <% } else { %>
+    <div class="alert alert-danger">⚠️ لا توجد معلومات عن الاستبيان</div>
+  <% } %>
 
-  <form action="/submit-survey" method="POST">
-    <% sections.forEach(section => { %>
-      <div class="section mb-5">
-        <h2 class="section-title h4"><%= section.title %></h2>
+  <% if (sections && sections.length) { %>
+    <form action="/submit-survey" method="POST">
+      <% sections.forEach(section => { %>
+        <div class="section mb-5">
+          <h2 class="section-title h4"><%= section.title %></h2>
 
-        <% section.subsections.forEach(sub => { %>
-          <div class="mb-4">
-            <h5 class="mb-3"><%= sub.title %></h5>
+          <% section.subsections.forEach(sub => { %>
+            <div class="mb-4">
+              <h5 class="mb-3"><%= sub.title %></h5>
 
-            <% sub.questions.forEach(q => { %>
-              <div class="question">
-                <label class="form-label fw-semibold"><%= q.number %>. <%= q.text %>
-                  <% if (q.required) { %><span class="text-danger">*</span><% } %>
-                </label>
+              <% sub.questions.forEach(q => { %>
+                <div class="question">
+                  <label class="form-label fw-semibold"><%= q.number %>. <%= q.text %>
+                    <% if (q.required) { %><span class="text-danger">*</span><% } %>
+                  </label>
 
-                <% if (q.type === 'text') { %>
-                  <input type="text" class="form-control" name="<%= q.id %>" placeholder="<%= q.placeholder || '' %>" <%= q.required ? 'required' : '' %> />
+                  <% if (q.type === 'text') { %>
+                    <input type="text" class="form-control" name="<%= q.id %>" placeholder="<%= q.placeholder || '' %>" <%= q.required ? 'required' : '' %> />
 
-                <% } else if (q.type === 'radio') { %>
-                  <% q.options.forEach(opt => { %>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="<%= q.id %>" value="<%= opt.value %>" <%= q.required ? 'required' : '' %>>
-                      <label class="form-check-label"><%= opt.text %></label>
-                    </div>
-                  <% }) %>
-
-                <% } else if (q.type === 'checkbox') { %>
-                  <% q.options.forEach(opt => { %>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="<%= q.id %>[]"
-                             value="<%= opt.value %>">
-                      <label class="form-check-label"><%= opt.text %></label>
-                    </div>
-                  <% }) %>
-                  <% if (q.other?.enabled) { %>
-                    <input type="text" class="form-control mt-2" name="<%= q.id %>_other" placeholder="<%= q.other.placeholder %>">
-                  <% } %>
-
-                <% } else if (q.type === 'textarea') { %>
-                  <textarea class="form-control" name="<%= q.id %>" rows="<%= q.rows || 4 %>" placeholder="<%= q.placeholder || '' %>"></textarea>
-
-                <% } else if (q.type === 'multi_text') { %>
-                  <% q.fields.forEach(field => { %>
-                    <input type="text" class="form-control mb-2" name="<%= field.id %>" placeholder="<%= field.placeholder %>">
-                  <% }) %>
-
-                <% } else if (q.type === 'ranking') { %>
-                  <% q.options.forEach(opt => { %>
-                    <div class="mb-2">
-                      <label><%= opt.text %></label>
-                      <select class="form-select" name="<%= q.id %>_<%= opt.value %>">
-                        <% for (let i = 1; i <= q.maxRank || 5; i++) { %>
-                          <option value="<%= i %>"><%= i %></option>
-                        <% } %>
-                      </select>
-                    </div>
-                  <% }) %>
-                  <% if (q.other?.enabled) { %>
-                    <input type="text" class="form-control mt-2" name="<%= q.id %>_other" placeholder="<%= q.other.placeholder %>">
-                  <% } %>
-
-                <% } else if (q.type === 'likert') { %>
-                  <div class="d-flex gap-2 flex-wrap">
-                    <% q.scale.forEach(scaleOpt => { %>
+                  <% } else if (q.type === 'radio') { %>
+                    <% q.options.forEach(opt => { %>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="<%= q.id %>" value="<%= scaleOpt.value %>" <%= q.required ? 'required' : '' %>>
-                        <label class="form-check-label"><%= scaleOpt.text %></label>
+                        <input class="form-check-input" type="radio" name="<%= q.id %>" value="<%= opt.value %>" <%= q.required ? 'required' : '' %>>
+                        <label class="form-check-label"><%= opt.text %></label>
                       </div>
                     <% }) %>
-                  </div>
 
-                <% } %>
-              </div>
-            <% }) %>
-          </div>
-        <% }) %>
-      </div>
-    <% }) %>
+                  <% } else if (q.type === 'checkbox') { %>
+                    <% q.options.forEach(opt => { %>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="<%= q.id %>[]"
+                               value="<%= opt.value %>">
+                        <label class="form-check-label"><%= opt.text %></label>
+                      </div>
+                    <% }) %>
+                    <% if (q.other?.enabled) { %>
+                      <input type="text" class="form-control mt-2" name="<%= q.id %>_other" placeholder="<%= q.other.placeholder %>">
+                    <% } %>
 
-    <button type="submit" class="btn btn-success btn-lg px-5">إرسال الاستبيان</button>
-  </form>
+                  <% } else if (q.type === 'textarea') { %>
+                    <textarea class="form-control" name="<%= q.id %>" rows="<%= q.rows || 4 %>" placeholder="<%= q.placeholder || '' %>"></textarea>
+
+                  <% } else if (q.type === 'multi_text') { %>
+                    <% q.fields.forEach(field => { %>
+                      <input type="text" class="form-control mb-2" name="<%= field.id %>" placeholder="<%= field.placeholder %>">
+                    <% }) %>
+
+                  <% } else if (q.type === 'ranking') { %>
+                    <% q.options.forEach(opt => { %>
+                      <div class="mb-2">
+                        <label><%= opt.text %></label>
+                        <select class="form-select" name="<%= q.id %>_<%= opt.value %>">
+                          <% for (let i = 1; i <= (q.maxRank || 5); i++) { %>
+                            <option value="<%= i %>"><%= i %></option>
+                          <% } %>
+                        </select>
+                      </div>
+                    <% }) %>
+                    <% if (q.other?.enabled) { %>
+                      <input type="text" class="form-control mt-2" name="<%= q.id %>_other" placeholder="<%= q.other.placeholder %>">
+                    <% } %>
+
+                  <% } else if (q.type === 'likert') { %>
+                    <div class="d-flex gap-2 flex-wrap">
+                      <% q.scale.forEach(scaleOpt => { %>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="<%= q.id %>" value="<%= scaleOpt.value %>" <%= q.required ? 'required' : '' %>>
+                          <label class="form-check-label"><%= scaleOpt.text %></label>
+                        </div>
+                      <% }) %>
+                    </div>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
+          <% }) %>
+        </div>
+      <% }) %>
+
+      <button type="submit" class="btn btn-success btn-lg px-5">إرسال الاستبيان</button>
+    </form>
+  <% } else { %>
+    <div class="alert alert-warning">⚠️ لا توجد أقسام أو أسئلة في هذا الاستبيان حالياً.</div>
+  <% } %>
 </div>
 
 </body>
