@@ -2521,5 +2521,57 @@
       return currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
     }
   </script>
+<script>
+  // تحميل نتائج الاستبيان
+  async function loadSurveyData() {
+    try {
+      const res = await fetch('/api/survey-results');
+      const json = await res.json();
+      if (!json.success || !json.data) {
+        console.warn("❌ لم يتم تحميل النتائج بنجاح");
+        return;
+      }
+
+      const data = json.data;
+      document.getElementById('totalParticipants').innerText = data.length;
+
+      // حساب عدد المنظمات
+      const uniqueOrgs = new Set();
+      let trained = 0, totalScore = 0, totalDomains = 0;
+
+      data.forEach(d => {
+        const answers = d.answers;
+        if (answers['q2']) uniqueOrgs.add(answers['q2']);
+        if (answers['q21'] === 'yes') trained++;
+
+        // احتساب متوسط التقييم
+        Object.keys(answers).forEach(k => {
+          if (k.startsWith('q3_')) {
+            totalScore += parseInt(answers[k]) || 0;
+            totalDomains++;
+          }
+        });
+      });
+
+      // عرض عدد المنظمات
+      document.getElementById('totalOrganizations').innerText = uniqueOrgs.size;
+
+      // نسبة تلقوا تدريب
+      const trainedPercent = ((trained / data.length) * 100).toFixed(1);
+      document.getElementById('previousTrainingPercentage').innerText = `${trainedPercent}%`;
+
+      // متوسط التقييم
+      const avgScore = (totalScore / totalDomains).toFixed(1);
+      document.getElementById('averageScore').innerText = isNaN(avgScore) ? "0.0" : avgScore;
+
+    } catch (err) {
+      console.error("❌ خطأ في تحميل البيانات:", err);
+    }
+  }
+
+  // تحميل عند فتح الصفحة
+  document.addEventListener('DOMContentLoaded', loadSurveyData);
+</script>
+
 </body>
 </html>
