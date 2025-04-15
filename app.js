@@ -1,6 +1,18 @@
 // استيراد الحزم والمسارات
 const express = require('express');
 const mongoose = require('mongoose');
+mongoose.connect(
+  'mongodb+srv://admin_orphans:Mon243253efdf@orphans-care.0i5s7pm.mongodb.net/orphans_care?retryWrites=true&w=majority&appName=orphans-care',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+).then(() => {
+  console.log('✅ تم الاتصال بقاعدة البيانات MongoDB Atlas بنجاح');
+}).catch((err) => {
+  console.error('❌ فشل الاتصال بقاعدة البيانات:', err);
+});
+
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
