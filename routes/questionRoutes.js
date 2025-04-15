@@ -2,12 +2,15 @@ const express = require('express');
 const router = express.Router();
 const Survey = require('../models/Survey');
 
-// ✅ صفحة إدارة الأسئلة
+// ✅ صفحة إدارة الأسئلة (واجهة)
 router.get('/admin/questions', async (req, res) => {
   try {
     const survey = await Survey.findOne();
     const questions = survey?.questions || [];
-    res.render('admin/questions', { questions });
+    res.render('admin/questions', {
+      questions,
+      layout: false // ✅ عرض الصفحة بدون layout لحل مشكلة "questions is not defined"
+    });
   } catch (err) {
     console.error('❌ فشل في عرض واجهة الأسئلة:', err);
     res.status(500).send("فشل في عرض الصفحة");
@@ -31,7 +34,7 @@ router.post('/', async (req, res) => {
     const survey = await Survey.findOne();
     survey.questions.push(question);
     await survey.save();
-    res.sendStatus(201);
+    res.redirect('/admin/questions');
   } catch (err) {
     res.status(500).json({ message: 'فشل في الإضافة' });
   }
@@ -45,7 +48,7 @@ router.put('/:index', async (req, res) => {
     const survey = await Survey.findOne();
     survey.questions[index] = newQuestion;
     await survey.save();
-    res.sendStatus(200);
+    res.redirect('/admin/questions');
   } catch (err) {
     res.status(500).json({ message: 'فشل في التعديل' });
   }
@@ -58,7 +61,7 @@ router.delete('/:index', async (req, res) => {
     const survey = await Survey.findOne();
     survey.questions.splice(index, 1);
     await survey.save();
-    res.sendStatus(200);
+    res.redirect('/admin/questions');
   } catch (err) {
     res.status(500).json({ message: 'فشل في الحذف' });
   }
