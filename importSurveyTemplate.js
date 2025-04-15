@@ -1,8 +1,8 @@
-// كود استيراد الاستبيان من ملف JSON إلى MongoDB
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
 
+// ✅ سكيمًا مبسط لهيكل الاستبيان
 const surveyTemplateSchema = new mongoose.Schema({
   key: { type: String, required: true, unique: true },
   title: String,
@@ -12,9 +12,10 @@ const surveyTemplateSchema = new mongoose.Schema({
 
 const SurveyTemplate = mongoose.model('SurveyTemplate', surveyTemplateSchema);
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/orphans_care', {
+// ✅ الاتصال بقاعدة البيانات Atlas
+mongoose.connect('mongodb+srv://admin_orphans:<db_password>@orphans-care.0i5s7pm.mongodb.net/orphans_care?retryWrites=true&w=majority&appName=orphans-care', {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 }).then(() => {
   console.log('✅ تم الاتصال بقاعدة البيانات');
   importTemplate();
@@ -22,6 +23,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/orphans_c
   console.error('❌ فشل الاتصال:', err);
 });
 
+// ✅ إدخال أو تحديث الاستبيان
 async function importTemplate() {
   try {
     const filePath = path.join(__dirname, 'survey_questions_full.json');
