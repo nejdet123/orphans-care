@@ -23,9 +23,7 @@ const methodOverride = require('method-override');
 const { isLoggedIn, protect } = require('./middleware/auth');
 
 // استيراد النماذج
-
-const Survey = require('./models/SurveyTemplate'); // ⚠️ لازم تنشئ هذا الموديل
-
+const SurveyTemplate = require('./models/SurveyTemplate');
 
 // استيراد المسارات
 const surveyRoutes = require('./routes/surveyRoutes');
@@ -88,12 +86,12 @@ app.get('/', (req, res) => res.render('index', { title: 'الصفحة الرئي
 // ✅ عرض صفحة الاستبيان ديناميكياً من قاعدة البيانات
 app.get('/survey', async (req, res) => {
   try {
-    const survey = await Survey.findOne();
+    const survey = await SurveyTemplate.findOne();
     if (!survey) return res.send('⚠️ لا يوجد استبيان متاح حالياً.');
     res.render('survey', {
       title: 'الاستبيان',
       active: 'survey',
-      survey
+      survey: survey.structure
     });
   } catch (err) {
     console.error("❌ خطأ في تحميل الاستبيان:", err);
