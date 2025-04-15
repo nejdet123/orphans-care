@@ -1106,55 +1106,51 @@
   </div>
 
 <script>
-  // تحميل نتائج الاستبيان
-  async function loadSurveyData() {
+  async function loadSurveySummary() {
     try {
       const res = await fetch('/api/survey-results');
       const json = await res.json();
-      if (!json.success || !json.data) {
-        console.warn("❌ لم يتم تحميل النتائج بنجاح");
+
+      if (!json.success) {
+        console.warn("❌ فشل في تحميل البيانات");
         return;
       }
 
-      const data = json.data;
-      document.getElementById('totalParticipants').innerText = data.length;
+      const results = json.data;
+      document.getElementById('totalParticipants').innerText = results.length;
 
-      // حساب عدد المنظمات
-      const uniqueOrgs = new Set();
-      let trained = 0, totalScore = 0, totalDomains = 0;
+      const organizations = new Set();
+      let trained = 0;
+      let scoreSum = 0, scoreCount = 0;
 
-      data.forEach(d => {
-        const answers = d.answers;
-        if (answers['q2']) uniqueOrgs.add(answers['q2']);
-        if (answers['q21'] === 'yes') trained++;
+      results.forEach(entry => {
+        const a = entry.answers || {};
+        if (a['q2']) organizations.add(a['q2']);
+        if (a['q21'] === 'yes') trained++;
 
-        // احتساب متوسط التقييم
-        Object.keys(answers).forEach(k => {
-          if (k.startsWith('q3_')) {
-            totalScore += parseInt(answers[k]) || 0;
-            totalDomains++;
+        for (const key in a) {
+          if (key.startsWith('q3_')) {
+            const value = parseInt(a[key]);
+            if (!isNaN(value)) {
+              scoreSum += value;
+              scoreCount++;
+            }
           }
-        });
+        }
       });
 
-      // عرض عدد المنظمات
-      document.getElementById('totalOrganizations').innerText = uniqueOrgs.size;
-
-      // نسبة تلقوا تدريب
-      const trainedPercent = ((trained / data.length) * 100).toFixed(1);
+      document.getElementById('totalOrganizations').innerText = organizations.size;
+      const trainedPercent = ((trained / results.length) * 100).toFixed(1);
       document.getElementById('previousTrainingPercentage').innerText = `${trainedPercent}%`;
-
-      // متوسط التقييم
-      const avgScore = (totalScore / totalDomains).toFixed(1);
-      document.getElementById('averageScore').innerText = isNaN(avgScore) ? "0.0" : avgScore;
+      const avg = scoreCount ? (scoreSum / scoreCount).toFixed(1) : '0.0';
+      document.getElementById('averageScore').innerText = avg;
 
     } catch (err) {
-      console.error("❌ خطأ في تحميل البيانات:", err);
+      console.error("❌ خطأ أثناء تحميل البيانات:", err);
     }
   }
 
-  // تحميل عند فتح الصفحة
-  document.addEventListener('DOMContentLoaded', loadSurveyData);
+  document.addEventListener('DOMContentLoaded', loadSurveySummary);
 </script>
 
 </body>
