@@ -13,7 +13,7 @@ const surveyTemplateSchema = new mongoose.Schema({
 const SurveyTemplate = mongoose.model('SurveyTemplate', surveyTemplateSchema);
 
 // ✅ الاتصال بقاعدة البيانات Atlas
-mongoose.connect('mongodb+srv://admin_orphans:<Mon243253efdf>@orphans-care.0i5s7pm.mongodb.net/orphans_care?retryWrites=true&w=majority&appName=orphans-care', {
+mongoose.connect('mongodb+srv://admin_orphans:Mon243253efdf@orphans-care.0i5s7pm.mongodb.net/orphans_care?retryWrites=true&w=majority&appName=orphans-care', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
