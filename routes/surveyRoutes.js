@@ -109,4 +109,15 @@ router.get('/dashboard-dark', async (req, res) => {
   res.render('dashboard-dark');
 });
 
+// ✅ عرض صفحة الاستبيان بشكل ديناميكي
+router.get('/survey', async (req, res) => {
+  try {
+    const survey = await Survey.findOne();
+    res.render('survey', { survey });
+  } catch (err) {
+    console.error('❌ خطأ في عرض الاستبيان:', err);
+    res.status(500).send('فشل في عرض الاستبيان');
+  }
+});
+
 module.exports = router;
