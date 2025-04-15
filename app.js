@@ -16,12 +16,12 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const questionRoutes = require('./routes/questionRoutes');
 const methodOverride = require('method-override');
-app.use(methodOverride('_method'));
+
 
 // إنشاء التطبيق
 const app = express();
 app.set('trust proxy', 1);
-
+app.use(methodOverride('_method'));
 // إعداد القالب
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
