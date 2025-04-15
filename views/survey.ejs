@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title><%= surveyIntro?.title || 'استبيان تقييم الاحتياجات' %></title>
+  <title><%= survey?.survey?.title || 'استبيان تقييم الاحتياجات' %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <style>
@@ -15,21 +15,21 @@
 <body>
 
   <div class="container">
-    <h1 class="text-center mb-4"><%= surveyIntro.title %></h1>
-    <p class="text-center text-muted"><%= surveyIntro.description %></p>
+    <% if (survey?.survey) { %>
+      <h1 class="text-center mb-4"><%= survey.survey.title %></h1>
+      <p class="text-center text-muted"><%= survey.survey.description %></p>
 
-    <div class="mb-4">
-      <h4 class="text-primary">تعليمات:</h4>
-      <ul>
-        <% surveyIntro.instructions.forEach(instr => { %>
-          <li><%= instr %></li>
-        <% }) %>
-      </ul>
-    </div>
-
-    <div class="alert alert-info">
-      <strong>🚧 ملاحظة:</strong> هذه الصفحة لعرض الاستبيان فقط حاليًا. الأسئلة والحقول قيد التطوير لاحقًا.
-    </div>
+      <div class="mb-4">
+        <h4 class="text-primary">تعليمات:</h4>
+        <ul>
+          <% survey.survey.instructions?.forEach(instr => { %>
+            <li><%= instr %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } else { %>
+      <div class="alert alert-warning text-center">⚠️ لم يتم العثور على الاستبيان.</div>
+    <% } %>
   </div>
 
 </body>
