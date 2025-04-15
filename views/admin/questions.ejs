@@ -23,10 +23,11 @@
       <form action="/api/questions/<%= i %>?_method=PUT" method="POST" class="mb-2 d-flex gap-2">
         <input name="newQuestion" value="<%= q %>" class="form-control">
         <button type="submit" class="btn btn-success">💾 حفظ</button>
-        <form action="/api/questions/<%= i %>?_method=DELETE" method="POST">
-          <button type="submit" class="btn btn-danger">🗑️</button>
-        </form>
       </form>
+      <form action="/api/questions/<%= i %>?_method=DELETE" method="POST" class="d-inline">
+        <button type="submit" class="btn btn-danger">🗑️ حذف</button>
+      </form>
+      <hr>
     <% }) %>
   <% } else { %>
     <p>🚫 لا توجد أسئلة مضافة بعد.</p>
