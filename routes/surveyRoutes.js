@@ -7,9 +7,11 @@ const Response = require('../models/Response');
 router.get('/survey-data', async (req, res) => {
   try {
     const template = await SurveyTemplate.findOne({ key: "orphans-training-survey" });
-    if (!template) return res.status(404).json({ message: 'قالب الاستبيان غير موجود' });
+    if (!template || !template.structure?.survey) {
+      return res.status(404).json({ message: 'قالب الاستبيان غير موجود أو غير مكتمل' });
+    }
 
-    res.json(template.structure);
+    res.json(template.structure.survey);
   } catch (err) {
     console.error('❌ خطأ في استرجاع بيانات الاستبيان:', err);
     res.status(500).json({ message: 'حدث خطأ أثناء جلب البيانات' });
@@ -66,8 +68,8 @@ router.get('/survey', async (req, res) => {
   try {
     const template = await SurveyTemplate.findOne({ key: "orphans-training-survey" });
 
-    if (!template || !template.structure || !template.structure.survey) {
-      return res.status(404).send("❌ لم يتم العثور على قالب الاستبيان");
+    if (!template || !template.structure?.survey) {
+      return res.status(404).send("❌ لم يتم العثور على بيانات الاستبيان.");
     }
 
     const survey = template.structure.survey;
