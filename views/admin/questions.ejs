@@ -23,19 +23,24 @@
 
     <hr>
 
-    <% if (questions && questions.length > 0) { %>
-      <% questions.forEach((q, i) => { %>
-        <form action="/api/questions/<%= i %>?_method=PUT" method="POST" class="mb-2 d-flex gap-2">
-          <input name="newQuestion" value="<%= q %>" class="form-control" />
-          <button type="submit" class="btn btn-success">💾 حفظ</button>
-        </form>
-        <form action="/api/questions/<%= i %>?_method=DELETE" method="POST" class="mb-3">
-          <button type="submit" class="btn btn-danger">🗑️ حذف</button>
-        </form>
-      <% }) %>
+    <% if (typeof questions !== 'undefined' && Array.isArray(questions)) { %>
+      <% if (questions.length > 0) { %>
+        <% questions.forEach((q, i) => { %>
+          <form action="/api/questions/<%= i %>?_method=PUT" method="POST" class="mb-2 d-flex gap-2">
+            <input name="newQuestion" value="<%= q %>" class="form-control" />
+            <button type="submit" class="btn btn-success">💾 حفظ</button>
+          </form>
+          <form action="/api/questions/<%= i %>?_method=DELETE" method="POST" class="mb-3">
+            <button type="submit" class="btn btn-danger">🗑️ حذف</button>
+          </form>
+        <% }) %>
+      <% } else { %>
+        <p>🚫 لا توجد أسئلة حتى الآن.</p>
+      <% } %>
     <% } else { %>
-      <p class="text-danger">⚠️ لا توجد أسئلة أو لم يتم تحميلها بشكل صحيح</p>
+      <p class="text-danger">⚠️ لم يتم تحميل الأسئلة بشكل صحيح</p>
     <% } %>
+
   </div>
 </body>
 </html>
