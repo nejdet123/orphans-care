@@ -7,15 +7,20 @@ router.get('/admin/questions', async (req, res) => {
   try {
     const survey = await Survey.findOne();
     const questions = survey?.questions || [];
+
+    console.log('✅ الأسئلة:', questions); // 🔍 تطبعها بالسيرفر
+
     res.render('admin/questions', {
+      title: 'إدارة الأسئلة',
       questions,
-      layout: false // ✅ عرض الصفحة بدون layout لحل مشكلة "questions is not defined"
+      layout: false
     });
   } catch (err) {
     console.error('❌ فشل في عرض واجهة الأسئلة:', err);
     res.status(500).send("فشل في عرض الصفحة");
   }
 });
+
 
 // ✅ جلب كل الأسئلة (API)
 router.get('/', async (req, res) => {
