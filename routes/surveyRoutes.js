@@ -16,7 +16,7 @@ router.get('/survey-data', async (req, res) => {
   }
 });
 
-// ✅ API: حفظ بيانات استبيان جديد (إعادة تحميل القالب)
+// ✅ API: حفظ أو تحديث قالب الاستبيان
 router.post('/survey-data', async (req, res) => {
   try {
     const { structure } = req.body;
@@ -69,7 +69,16 @@ router.get('/survey', async (req, res) => {
     if (!template) return res.status(404).send("❌ لم يتم العثور على قالب الاستبيان");
 
     const survey = template.structure;
-    res.render('survey', { survey });
+
+    // تمرير المعلومات إلى View
+    res.render('survey', {
+      surveyIntro: {
+        title: survey.title,
+        description: survey.description,
+        instructions: survey.instructions
+      },
+      sections: survey.sections
+    });
   } catch (err) {
     console.error('❌ خطأ في عرض الاستبيان:', err);
     res.status(500).send('فشل في عرض الاستبيان');
