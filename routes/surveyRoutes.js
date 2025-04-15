@@ -37,7 +37,7 @@ router.post('/submit-survey', async (req, res) => {
   }
 });
 
-// ✅ صفحة الشكر بعد الإرسال
+// ✅ صفحة الشكر بعد إرسال الاستبيان
 router.get('/thank-you', (req, res) => {
   res.send(`
     <div style="text-align:center; margin-top:100px;">
@@ -46,6 +46,17 @@ router.get('/thank-you', (req, res) => {
       <a href="/" style="color: blue;">العودة إلى الصفحة الرئيسية</a>
     </div>
   `);
+});
+
+// ✅ API: عرض كل الإجابات لتحليلها في لوحة التحكم
+router.get('/api/survey-results', async (req, res) => {
+  try {
+    const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
+    res.json({ success: true, data: results });
+  } catch (err) {
+    console.error("❌ خطأ في تحميل النتائج:", err);
+    res.status(500).json({ success: false, message: "فشل في تحميل النتائج" });
+  }
 });
 
 module.exports = router;
