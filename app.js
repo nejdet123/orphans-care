@@ -65,6 +65,7 @@ app.use('/api', surveyRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api/questions', questionRoutes);
+app.use('/', questionRoutes); // لإظهار صفحة إدارة الأسئلة
 
 // مسارات صفحات المصادقة
 app.get('/auth/login', (req, res) => {
