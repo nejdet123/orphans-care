@@ -83,14 +83,15 @@ app.use('/api/questions', questionRoutes);   // ✅ API لإدارة الأسئ�
 // الصفحات العامة
 app.get('/', (req, res) => res.render('index', { title: 'الصفحة الرئيسية', active: 'home' }));
 
+// ✅ عرض صفحة الاستبيان ديناميكياً من قاعدة البيانات
 app.get('/survey', async (req, res) => {
   try {
     const survey = await Survey.findOne();
-    const questions = survey?.questions || [];
+    if (!survey) return res.send('⚠️ لا يوجد استبيان متاح حالياً.');
     res.render('survey', {
       title: 'الاستبيان',
       active: 'survey',
-      questions
+      survey
     });
   } catch (err) {
     console.error("❌ خطأ في تحميل الاستبيان:", err);
@@ -131,11 +132,6 @@ app.get('/auth/logout', (req, res) => {
   res.clearCookie('token');
   res.redirect('/');
 });
-
-// الاتصال بقاعدة البيانات
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/orphans_care')
-  .then(() => console.log('✅ تم الاتصال بقاعدة البيانات'))
-  .catch(err => console.error('❌ فشل الاتصال بقاعدة البيانات:', err));
 
 // معالجة الأخطاء العامة
 app.use((err, req, res, next) => {
