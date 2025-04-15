@@ -8,8 +8,8 @@
   <style>
     body { background: #f8f9fa; padding: 2rem; font-family: 'Tahoma', sans-serif; }
     .section-title { color: #0d6efd; margin-top: 2rem; }
-    .question { margin-bottom: 1.5rem; }
     .form-check { margin-bottom: 0.5rem; }
+    .card-header { font-weight: bold; }
   </style>
 </head>
 <body>
@@ -27,8 +27,50 @@
           <% }) %>
         </ul>
       </div>
+
+      <% if (survey.survey.sections?.length > 0) { %>
+        <form method="POST" action="/submit-survey">
+          <% survey.survey.sections.forEach((section, secIndex) => { %>
+            <div class="card my-4">
+              <div class="card-header bg-primary text-white">
+                <%= section.title %>
+              </div>
+              <div class="card-body">
+                <% section.questions?.forEach((q, qIndex) => { %>
+                  <div class="mb-3">
+                    <label class="form-label"><%= q.label %></label>
+
+                    <% if (q.type === 'text') { %>
+                      <input type="text" name="q_<%= secIndex %>_<%= qIndex %>" class="form-control" />
+                    <% } else if (q.type === 'textarea') { %>
+                      <textarea name="q_<%= secIndex %>_<%= qIndex %>" class="form-control" rows="3"></textarea>
+                    <% } else if (q.type === 'radio' && q.options) { %>
+                      <% q.options.forEach((opt, optIndex) => { %>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="q_<%= secIndex %>_<%= qIndex %>" value="<%= opt %>" id="radio_<%= secIndex %>_<%= qIndex %>_<%= optIndex %>">
+                          <label class="form-check-label" for="radio_<%= secIndex %>_<%= qIndex %>_<%= optIndex %>"><%= opt %></label>
+                        </div>
+                      <% }) %>
+                    <% } else { %>
+                      <input type="text" name="q_<%= secIndex %>_<%= qIndex %>" class="form-control" />
+                    <% } %>
+
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% }) %>
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-success px-5">إرسال</button>
+          </div>
+        </form>
+      <% } else { %>
+        <div class="alert alert-warning text-center">⚠️ لا توجد أقسام أو أسئلة متاحة في هذا الاستبيان.</div>
+      <% } %>
+
     <% } else { %>
-      <div class="alert alert-warning text-center">⚠️ لم يتم العثور على الاستبيان.</div>
+      <div class="alert alert-danger text-center">⚠️ لم يتم العثور على بيانات الاستبيان.</div>
     <% } %>
   </div>
 
