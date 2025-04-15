@@ -16,6 +16,7 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const questionRoutes = require('./routes/questionRoutes');
 const methodOverride = require('method-override');
+const Survey = require('./models/Survey'); // إذا لم يكن مضافًا في الأعلى
 
 
 // إنشاء التطبيق
@@ -85,7 +86,20 @@ app.get('/auth/logout', (req, res) => {
 
 // الصفحات العامة
 app.get('/', (req, res) => res.render('index', { title: 'الصفحة الرئيسية', active: 'home' }));
-app.get('/survey', (req, res) => res.render('survey', { title: 'الاستبيان', active: 'survey' }));
+app.get('/survey', async (req, res) => {
+  try {
+    const survey = await Survey.findOne();
+    const questions = survey?.questions || [];
+    res.render('survey', {
+      title: 'الاستبيان',
+      active: 'survey',
+      questions
+    });
+  } catch (err) {
+    console.error("❌ خطأ في تحميل الاستبيان:", err);
+    res.status(500).send("فشل في تحميل الاستبيان");
+  }
+});
 app.get('/research', (req, res) => res.render('research', { title: 'البحث', active: 'research' }));
 app.get('/methodology', (req, res) => res.render('methodology', { title: 'منهجية التحليل', active: 'methodology' }));
 app.get('/model', (req, res) => res.render('model', { title: 'النموذج التدريبي', active: 'model' }));
