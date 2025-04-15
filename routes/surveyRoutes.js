@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Survey = require('../models/Survey');
+const Response = require('../models/Response'); // أضف هذا في الأعلى مع الاستيرادات الأخرى
 
 // ✅ استرجاع جميع بيانات الاستبيان
 router.get('/survey-data', async (req, res) => {
@@ -81,3 +82,22 @@ router.get('/dashboard-dark', async (req, res) => {
 
 
 module.exports = router;
+
+// ✅ استقبال بيانات الإجابات من الاستبيان
+router.post('/submit-survey', async (req, res) => {
+  try {
+    const { answers } = req.body;
+
+    if (!answers || !Array.isArray(answers)) {
+      return res.status(400).send('⚠️ لم يتم استلام الإجابات بشكل صحيح');
+    }
+
+    await Response.create({ answers });
+
+    res.redirect('/thank-you'); // أو صفحة مخصصة بعد الإرسال
+  } catch (err) {
+    console.error('❌ خطأ في حفظ الإجابات:', err);
+    res.status(500).send('❌ فشل في حفظ الاستبيان');
+  }
+});
+
