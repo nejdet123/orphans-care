@@ -1,21 +1,51 @@
 // routes/surveyRoutes.js
+
 const express = require('express');
 const router = express.Router();
-const SurveyTemplate = require('../models/SurveyTemplate'); // تأكد من وجود هذا الموديل
+const SurveyTemplate = require('../models/SurveyTemplate');
+const SurveyResponse = require('../models/SurveyResponse');
 
-// عرض الاستبيان ديناميكياً
+// ✅ عرض الاستبيان ديناميكياً
 router.get('/survey', async (req, res) => {
   try {
     const template = await SurveyTemplate.findOne({ key: "orphans-training-survey" });
     if (!template) return res.status(404).send("الاستبيان غير موجود");
 
     res.render('survey', {
-      surveyIntro: template.structure?.survey || {}
+      survey: template.structure || {}
     });
   } catch (err) {
     console.error("❌ خطأ في تحميل الاستبيان:", err);
     res.status(500).send("خطأ في تحميل الاستبيان");
   }
+});
+
+// ✅ حفظ بيانات الاستبيان بعد الإرسال
+router.post('/submit-survey', async (req, res) => {
+  try {
+    const response = new SurveyResponse({
+      surveyKey: "orphans-training-survey",
+      answers: req.body,
+      submittedAt: new Date()
+    });
+
+    await response.save();
+    res.redirect('/thank-you');
+  } catch (err) {
+    console.error("❌ خطأ في حفظ الإجابات:", err);
+    res.status(500).send("حدث خطأ أثناء حفظ البيانات");
+  }
+});
+
+// ✅ صفحة الشكر بعد الإرسال
+router.get('/thank-you', (req, res) => {
+  res.send(`
+    <div style="text-align:center; margin-top:100px;">
+      <h2>شكرًا لمشاركتك في الاستبيان ❤️</h2>
+      <p>تم استلام بياناتك بنجاح.</p>
+      <a href="/" style="color: blue;">العودة إلى الصفحة الرئيسية</a>
+    </div>
+  `);
 });
 
 module.exports = router;
