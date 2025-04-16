@@ -16,6 +16,7 @@
 <div class="container">
   <h1 class="text-center mb-4"><%= surveyIntro?.title %></h1>
   <p class="text-center text-muted mb-5"><%= surveyIntro?.description %></p>
+
   <form id="surveyForm">
     <% if (surveyIntro?.instructions?.length) { %>
       <div class="alert alert-info">
@@ -45,7 +46,7 @@
             <% } else if (q.type === 'checkbox') { %>
               <% q.options.forEach(opt => { %>
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="<%= q.id %>" value="<%= opt.value %>">
+                  <input class="form-check-input" type="checkbox" name="<%= q.id %>[]" value="<%= opt.value %>">
                   <label class="form-check-label"><%= opt.text %></label>
                 </div>
               <% }) %>
@@ -57,8 +58,8 @@
       </div>
     <% }); %>
 
-    <div class="text-center">
-      <button type="submit" class="btn btn-primary">إرسال الاستبيان</button>
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-primary" id="submitBtn">إرسال الاستبيان</button>
     </div>
   </form>
 </div>
@@ -70,18 +71,24 @@
     const formData = new FormData(form);
     const answers = {};
 
+    // ✅ جمع البيانات بما في ذلك checkboxes المكررة
     for (const [key, value] of formData.entries()) {
-      if (answers[key]) {
-        // إذا كانت إجابة متعددة مثل checkbox
-        if (Array.isArray(answers[key])) {
-          answers[key].push(value);
-        } else {
-          answers[key] = [answers[key], value];
-        }
+      if (key.endsWith("[]")) {
+        const cleanKey = key.replace("[]", "");
+        if (!answers[cleanKey]) answers[cleanKey] = [];
+        answers[cleanKey].push(value);
       } else {
-        answers[key] = value;
+        if (!answers[key]) {
+          answers[key] = value;
+        } else {
+          answers[key] = Array.isArray(answers[key]) ? [...answers[key], value] : [answers[key], value];
+        }
       }
     }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'جاري الإرسال...';
 
     try {
       const res = await fetch('/api/survey/submit-survey', {
@@ -95,10 +102,14 @@
         window.location.href = '/thank-you';
       } else {
         alert('فشل في إرسال البيانات: ' + result.message);
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'إرسال الاستبيان';
       }
     } catch (err) {
       alert('حدث خطأ أثناء إرسال البيانات');
       console.error(err);
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'إرسال الاستبيان';
     }
   });
 </script>
