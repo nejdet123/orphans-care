@@ -12,7 +12,7 @@ router.get('/survey', async (req, res) => {
     if (!template) return res.status(404).send("الاستبيان غير موجود");
 
     res.render('survey', {
-      survey: template.structure || {}
+      surveyIntro: template.structure?.survey || {}
     });
   } catch (err) {
     console.error("❌ خطأ في تحميل الاستبيان:", err);
@@ -20,7 +20,7 @@ router.get('/survey', async (req, res) => {
   }
 });
 
-// ✅ حفظ بيانات الاستبيان بعد الإرسال
+// ✅ حفظ بيانات الاستبيان بعد الإرسال (استجابة JSON)
 router.post('/submit-survey', async (req, res) => {
   try {
     const response = new SurveyResponse({
@@ -30,14 +30,14 @@ router.post('/submit-survey', async (req, res) => {
     });
 
     await response.save();
-    res.redirect('/thank-you');
+    res.json({ success: true, message: "تم حفظ البيانات بنجاح" }); // ✅ استجابة JSON
   } catch (err) {
     console.error("❌ خطأ في حفظ الإجابات:", err);
-    res.status(500).send("حدث خطأ أثناء حفظ البيانات");
+    res.status(500).json({ success: false, message: "حدث خطأ أثناء حفظ البيانات" });
   }
 });
 
-// ✅ صفحة الشكر بعد إرسال الاستبيان
+// ✅ صفحة الشكر بعد الإرسال
 router.get('/thank-you', (req, res) => {
   res.send(`
     <div style="text-align:center; margin-top:100px;">
