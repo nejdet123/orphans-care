@@ -27,6 +27,7 @@ const SurveyTemplate = require('./models/SurveyTemplate');
 
 // استيراد المسارات
 const surveyRoutes = require('./routes/surveyRoutes');
+const SurveyResponse = require('../models/SurveyResponse');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const questionRoutes = require('./routes/questionRoutes');
