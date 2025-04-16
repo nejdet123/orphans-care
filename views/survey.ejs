@@ -2,163 +2,105 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title><%= survey?.survey?.title || 'استبيان تقييم الاحتياجات' %></title>
+  <title><%= surveyIntro?.title || 'استبيان تقييم الاحتياجات' %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <style>
-    body { background: #f8f9fa; padding: 2rem; font-family: 'Tahoma', sans-serif; }
-    .form-check { margin-bottom: 0.5rem; }
-    .card-header { font-weight: bold; }
+    body { background: #f8f9fa; padding: 2rem; }
     .section-title { color: #0d6efd; margin-top: 2rem; }
-    .hidden { display: none; }
+    .question { margin-bottom: 1.5rem; }
+    .form-check { margin-bottom: 0.5rem; }
   </style>
 </head>
 <body>
-
 <div class="container">
-  <% if (survey?.survey) { %>
-    <h1 class="text-center mb-4"><%= survey.survey.title %></h1>
-    <p class="text-center text-muted"><%= survey.survey.description %></p>
-
-    <div class="mb-4">
-      <h4 class="text-primary">تعليمات:</h4>
-      <ul>
-        <% survey.survey.instructions?.forEach(instr => { %>
-          <li><%= instr %></li>
-        <% }) %>
-      </ul>
-    </div>
-
-    <form method="POST" action="/submit-survey">
-      <% survey.survey.sections.forEach((section, secIndex) => { %>
-        <div class="card my-4">
-          <div class="card-header bg-primary text-white">
-            <%= section.title %>
-          </div>
-          <div class="card-body">
-
-            <% if (section.description) { %>
-              <p class="text-muted"><%= section.description %></p>
-            <% } %>
-
-            <% let allQuestions = section.questions || section.subsections?.flatMap(s => s.questions); %>
-
-            <% allQuestions?.forEach((q, qIndex) => { %>
-              <div class="mb-3 question" id="question_<%= q.id %>"
-                   <% if (q.conditional) { %>
-                     data-depends="<%= q.conditional.depends_on %>"
-                     data-value="<%= q.conditional.show_when %>"
-                     class="hidden"
-                   <% } %>
-              >
-                <label class="form-label fw-bold"><%= q.number ? q.number + '. ' : '' %><%= q.text %></label>
-
-                <% if (q.description) { %><p class="text-muted"><%= q.description %></p><% } %>
-
-                <% if (q.type === 'text') { %>
-                  <input type="text" class="form-control" name="<%= q.id %>" placeholder="<%= q.placeholder || '' %>">
-                <% } else if (q.type === 'textarea') { %>
-                  <textarea class="form-control" name="<%= q.id %>" rows="<%= q.rows || 4 %>" placeholder="<%= q.placeholder || '' %>"></textarea>
-                <% } else if (q.type === 'radio') { %>
-                  <% q.options.forEach((opt, optIndex) => { %>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="<%= q.id %>" value="<%= opt.value %>" id="<%= q.id %>_<%= optIndex %>">
-                      <label class="form-check-label" for="<%= q.id %>_<%= optIndex %>"><%= opt.text %></label>
-                    </div>
-                  <% }) %>
-                  <% if (q.has_other) { %>
-                    <input type="text" name="<%= q.id %>_other" class="form-control mt-2" placeholder="<%= q.other_placeholder || 'أخرى' %>">
-                  <% } %>
-                <% } else if (q.type === 'checkbox') { %>
-                  <% q.options.forEach((opt, optIndex) => { %>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="<%= q.id %>[]" value="<%= opt.value %>" id="<%= q.id %>_<%= optIndex %>">
-                      <label class="form-check-label" for="<%= q.id %>_<%= optIndex %>"><%= opt.text %></label>
-                    </div>
-                  <% }) %>
-                  <% if (q.has_other) { %>
-                    <input type="text" name="<%= q.id %>_other" class="form-control mt-2" placeholder="<%= q.other_placeholder || 'أخرى' %>">
-                  <% } %>
-                <% } else if (q.type === 'multi_text') { %>
-                  <% q.fields.forEach((field, fIndex) => { %>
-                    <div class="mb-2">
-                      <label class="form-label"><%= field.label %></label>
-                      <input type="text" name="<%= q.id + '_' + field.id %>" class="form-control" placeholder="<%= field.placeholder || '' %>">
-                    </div>
-                  <% }) %>
-                <% } else if (q.type === 'likert') { %>
-                  <% q.scale.forEach((opt, optIndex) => { %>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="<%= q.id %>" value="<%= opt.value %>" id="<%= q.id %>_<%= optIndex %>">
-                      <label class="form-check-label" for="<%= q.id %>_<%= optIndex %>"><%= opt.text %></label>
-                    </div>
-                  <% }) %>
-                <% } else if (q.type === 'ranking') { %>
-                  <% q.options.forEach((opt, optIndex) => { %>
-                    <div class="mb-2">
-                      <label><%= opt.text %></label>
-                      <input type="number" name="<%= q.id + '_' + opt.value %>" class="form-control" min="1" max="<%= q.max_rank || q.options.length %>">
-                    </div>
-                  <% }) %>
-                  <% if (q.has_other) { %>
-                    <input type="text" name="<%= q.id %>_other" class="form-control mt-2" placeholder="<%= q.other_placeholder || 'أخرى' %>">
-                  <% } %>
-                <% } %>
-
-              </div>
-            <% }) %>
-          </div>
-        </div>
-      <% }) %>
-
-      <div class="text-center my-4">
-        <button type="submit" class="btn btn-success px-5">إرسال</button>
-      </div>
-    </form>
-
-    <% if (survey.survey.footer) { %>
-      <div class="mt-5 p-4 bg-light border rounded">
-        <h4 class="text-center mb-3"><%= survey.survey.footer.title %></h4>
-        <p class="text-center text-muted"><%= survey.survey.footer.content %></p>
-        <div class="row justify-content-center">
-          <% if (survey.survey.footer.contact_info?.email) { %>
-            <div class="col-md-4">
-              <label><%= survey.survey.footer.contact_info.email.label %></label>
-              <input type="email" name="contact_email" class="form-control" placeholder="<%= survey.survey.footer.contact_info.email.placeholder %>">
-            </div>
-          <% } %>
-          <% if (survey.survey.footer.contact_info?.phone) { %>
-            <div class="col-md-4">
-              <label><%= survey.survey.footer.contact_info.phone.label %></label>
-              <input type="text" name="contact_phone" class="form-control" placeholder="<%= survey.survey.footer.contact_info.phone.placeholder %>">
-            </div>
-          <% } %>
-        </div>
+  <h1 class="text-center mb-4"><%= surveyIntro?.title %></h1>
+  <p class="text-center text-muted mb-5"><%= surveyIntro?.description %></p>
+  <form id="surveyForm">
+    <% if (surveyIntro?.instructions?.length) { %>
+      <div class="alert alert-info">
+        <ul>
+          <% surveyIntro.instructions.forEach(i => { %>
+            <li><%= i %></li>
+          <% }); %>
+        </ul>
       </div>
     <% } %>
 
-  <% } else { %>
-    <div class="alert alert-danger text-center">⚠️ لم يتم العثور على بيانات الاستبيان.</div>
-  <% } %>
+    <% surveyIntro?.sections?.forEach(section => { %>
+      <div class="section">
+        <h4 class="section-title"><%= section.title %></h4>
+        <% section.questions?.forEach(q => { %>
+          <div class="question">
+            <label class="form-label"><%= q.number + '. ' + q.text %></label>
+            <% if (q.type === 'text') { %>
+              <input type="text" name="<%= q.id %>" class="form-control" placeholder="<%= q.placeholder || '' %>">
+            <% } else if (q.type === 'radio') { %>
+              <% q.options.forEach(opt => { %>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="<%= q.id %>" value="<%= opt.value %>">
+                  <label class="form-check-label"><%= opt.text %></label>
+                </div>
+              <% }) %>
+            <% } else if (q.type === 'checkbox') { %>
+              <% q.options.forEach(opt => { %>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="<%= q.id %>" value="<%= opt.value %>">
+                  <label class="form-check-label"><%= opt.text %></label>
+                </div>
+              <% }) %>
+            <% } else if (q.type === 'textarea') { %>
+              <textarea name="<%= q.id %>" class="form-control" rows="<%= q.rows || 4 %>" placeholder="<%= q.placeholder || '' %>"></textarea>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    <% }); %>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary">إرسال الاستبيان</button>
+    </div>
+  </form>
 </div>
 
 <script>
-  // تفعيل عرض الأسئلة الشرطية بناءً على الإجابة
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(input => {
-      input.addEventListener('change', () => {
-        const questions = document.querySelectorAll('.question[data-depends]');
-        questions.forEach(q => {
-          const dependsOn = q.getAttribute('data-depends');
-          const showWhen = q.getAttribute('data-value');
-          const source = document.querySelectorAll(`[name="${dependsOn}"]:checked`);
-          const match = Array.from(source).some(i => i.value === showWhen);
-          q.style.display = match ? 'block' : 'none';
-        });
+  document.getElementById('surveyForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const answers = {};
+
+    for (const [key, value] of formData.entries()) {
+      if (answers[key]) {
+        // إذا كانت إجابة متعددة مثل checkbox
+        if (Array.isArray(answers[key])) {
+          answers[key].push(value);
+        } else {
+          answers[key] = [answers[key], value];
+        }
+      } else {
+        answers[key] = value;
+      }
+    }
+
+    try {
+      const res = await fetch('/api/survey/submit-survey', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers)
       });
-    });
+
+      const result = await res.json();
+      if (result.success) {
+        window.location.href = '/thank-you';
+      } else {
+        alert('فشل في إرسال البيانات: ' + result.message);
+      }
+    } catch (err) {
+      alert('حدث خطأ أثناء إرسال البيانات');
+      console.error(err);
+    }
   });
 </script>
-
 </body>
 </html>
