@@ -4,7 +4,16 @@ const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const { USER_ROLES } = require('../models/User');
 const SurveyTemplate = require('../models/SurveyTemplate');
-
+router.get('/api/survey-template', async (req, res) => {
+  try {
+    const template = await SurveyTemplate.findOne({ key: 'orphans-training-survey' });
+    if (!template) return res.status(404).json({ success: false, message: 'القالب غير موجود' });
+    res.json({ success: true, data: template });
+  } catch (err) {
+    console.error('❌ خطأ في تحميل القالب:', err);
+    res.status(500).json({ success: false, message: 'خطأ في الخادم' });
+  }
+});
 // 🔒 كل المسارات التالية تتطلب تسجيل الدخول
 router.use(protect);
 
