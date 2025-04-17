@@ -68,6 +68,15 @@ router.get('/survey-data', async (req, res) => {
     res.status(500).json({ success: false, message: "فشل في تحميل البيانات" });
   }
 });
+router.get('/survey-data', async (req, res) => {
+  try {
+    const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
+    res.json({ success: true, data: results });
+  } catch (err) {
+    console.error("❌ خطأ في تحميل البيانات:", err);
+    res.status(500).json({ success: false, message: "فشل في تحميل البيانات" });
+  }
+});
 
 
 module.exports = router;
