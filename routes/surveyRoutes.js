@@ -18,7 +18,7 @@ router.get('/survey', async (req, res) => {
   }
 });
 
-// ✅ حفظ بيانات الاستبيان بعد الإرسال (استجابة JSON)
+// ✅ حفظ بيانات الاستبيان بعد الإرسال
 router.post('/submit-survey', async (req, res) => {
   try {
     const response = new SurveyResponse({
@@ -30,12 +30,12 @@ router.post('/submit-survey', async (req, res) => {
     await response.save();
     res.json({ success: true, message: "تم حفظ البيانات بنجاح" });
   } catch (err) {
-    console.error("❌ خطأ في حفظ الإجابات:", err);
-    res.status(500).json({ success: false, message: "حدث خطأ أثناء حفظ البيانات" });
+    console.error("❌ خطأ في حفظ البيانات:", err);
+    res.status(500).json({ success: false, message: "حدث خطأ أثناء الحفظ" });
   }
 });
 
-// ✅ صفحة الشكر بعد الإرسال
+// ✅ صفحة شكر بعد الإرسال
 router.get('/thank-you', (req, res) => {
   res.send(`
     <div style="text-align:center; margin-top:100px;">
@@ -46,7 +46,25 @@ router.get('/thank-you', (req, res) => {
   `);
 });
 
-// ✅ API: عرض كل الإجابات (نسخة قديمة - غير مستخدمة حاليًا)
+// ✅ API: استرجاع البيانات بشكل مسطّح للداشبورد
+router.get('/survey-data', async (req, res) => {
+  try {
+    const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
+
+    const flattened = results.map(doc => ({
+      ...doc.answers,                    // ✅ تفريغ الإجابات
+      _id: doc._id,
+      submittedAt: doc.submittedAt || doc.createdAt
+    }));
+
+    res.json({ success: true, data: flattened });
+  } catch (err) {
+    console.error("❌ خطأ في تحميل البيانات:", err);
+    res.status(500).json({ success: false, message: "فشل في تحميل البيانات" });
+  }
+});
+
+// ✅ API قديم (غير مستخدم حاليًا)
 router.get('/api/survey-results', async (req, res) => {
   try {
     const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
@@ -54,17 +72,6 @@ router.get('/api/survey-results', async (req, res) => {
   } catch (err) {
     console.error("❌ خطأ في تحميل النتائج:", err);
     res.status(500).json({ success: false, message: "فشل في تحميل النتائج" });
-  }
-});
-
-// ✅ API: عرض كل بيانات المشاركين للوحة التحكم (المستخدم حاليًا)
-router.get('/survey-data', async (req, res) => {
-  try {
-    const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
-    res.json({ success: true, data: results });
-  } catch (err) {
-    console.error("❌ خطأ في تحميل بيانات الاستبيان:", err);
-    res.status(500).json({ success: false, message: "فشل في تحميل البيانات" });
   }
 });
 
