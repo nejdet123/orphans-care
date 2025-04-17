@@ -31,7 +31,7 @@
 let surveyData = [];
 
 async function loadSurvey() {
-  const res = await fetch('/admin/survey-template');
+const res = await fetch('/api/survey-template');
   const result = await res.json();
   console.log('📦 رد السيرفر كامل:', result);
   console.log('🧠 البيانات:', result?.data?.structure?.survey?.sections);
