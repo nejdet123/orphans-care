@@ -44,11 +44,7 @@ async function handleSurveySubmit(event) {
         
         const result = await response.json();
         
-        if (result.success) {
-            // عرض رسالة النجاح
-            showSuccessMessage();
-            // إعادة تعيين النموذج
-            event.target.reset();
+        if (result.success) { window.location.href = "/thank-you";
         } else {
             // عرض رسالة الخطأ
             showErrorMessage(result.message);
