@@ -71,6 +71,16 @@ router.get('/survey-editor', (req, res) => {
     user: req.user
   });
 });
+router.get('/api/survey-template', async (req, res) => {
+  try {
+    const template = await SurveyTemplate.findOne({ key: 'orphans-training-survey' });
+    if (!template) return res.status(404).json({ success: false, message: 'القالب غير موجود' });
+    res.json({ success: true, data: template });
+  } catch (err) {
+    console.error('❌ خطأ في تحميل القالب:', err);
+    res.status(500).json({ success: false, message: 'خطأ في الخادم' });
+  }
+});
 
 router.get('/survey-template', async (req, res) => {
   try {
