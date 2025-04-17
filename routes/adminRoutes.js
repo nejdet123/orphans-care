@@ -64,13 +64,14 @@ router.get('/surveys/:id', (req, res) => {
 });
 
 // 🆕 واجهة إدارة الاستبيان الجديدة
-router.get('/admin/survey-editor', (req, res) => {
+router.get('/survey-editor', (req, res) => {
   res.render('survey-editor', {
     title: 'إدارة الاستبيان',
     active: 'survey-editor',
     user: req.user
   });
 });
+
 
 // 🔄 API: جلب قالب الاستبيان
 router.get('/api/survey-template', async (req, res) => {
