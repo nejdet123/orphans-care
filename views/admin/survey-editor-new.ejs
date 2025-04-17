@@ -1,57 +1,122 @@
+<!-- File: /views/admin/survey-editor-new.ejs -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>إدارة الاستبيان الجديدة</title>
+  <title>إدارة الاستبيان</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <style>
-    body { background: #f1f3f5; padding: 2rem; font-family: 'Segoe UI', sans-serif; }
-    .section-box { background: #fff; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
-    .section-title { font-weight: bold; margin-bottom: 1rem; color: #0d6efd; }
-    .question-box { background: #f8f9fa; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid #dee2e6; }
+    body { background: #f8f9fa; padding: 2rem; font-family: 'Segoe UI', sans-serif; }
+    .section-box { background: #fff; padding: 1.5rem; margin-bottom: 2rem; border-radius: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+    .question-box { background: #f1f3f5; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; border: 1px solid #ccc; }
+    .question-actions button { margin-left: 0.5rem; }
+    .subsection-title { font-weight: bold; color: #0d6efd; margin: 1rem 0 0.5rem; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2 class="text-center mb-4 text-primary">🔥 هذه النسخة الجديدة - survey-editor ✅</h2>
-    <div id="sectionsContainer">
-      <div class="text-center text-muted">...جارٍ تحميل الأسئلة</div>
-    </div>
+<div class="container">
+  <h2 class="text-center mb-5">إدارة الاستبيان - تعديل الأسئلة</h2>
+
+  <div id="sectionsContainer"></div>
+
+  <div class="text-center">
+    <button class="btn btn-outline-primary" onclick="addSection()">➕ إضافة قسم</button>
+    <button class="btn btn-success mx-3" onclick="saveSurvey()">💾 حفظ التعديلات</button>
   </div>
+</div>
 
-  <script>
-    async function loadSurvey() {
-      try {
-        const res = await fetch('/admin/api/survey-template');
-        const result = await res.json();
-        console.log("📦 الرد الكامل:", result);
-        const sections = result?.data?.structure?.survey?.sections || [];
+<script>
+let surveyData = [];
 
-        const container = document.getElementById("sectionsContainer");
-        container.innerHTML = '';
+async function loadSurvey() {
+  try {
+    const res = await fetch('/admin/api/survey-template');
+    const result = await res.json();
+    console.log('📦 كامل البيانات:', result);
+    surveyData = result?.data?.structure?.survey?.sections || [];
+    renderSections();
+  } catch (err) {
+    console.error('❌ خطأ في تحميل الاستبيان:', err);
+  }
+}
 
-        sections.forEach((section, sIndex) => {
-          const sec = document.createElement("div");
-          sec.className = "section-box";
-          sec.innerHTML = `<h4 class='section-title'>${section.title}</h4>`;
+function renderSections() {
+  const container = document.getElementById('sectionsContainer');
+  container.innerHTML = '';
 
-          section.questions?.forEach((q, qIndex) => {
-            const qBox = document.createElement("div");
-            qBox.className = "question-box";
-            qBox.innerHTML = `<b>${q.text}</b><br><small class='text-muted'>نوع: ${q.type}</small>`;
-            sec.appendChild(qBox);
-          });
+  surveyData.forEach((section, sIndex) => {
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'section-box';
+    sectionDiv.innerHTML = `
+      <div class="mb-3 d-flex justify-content-between align-items-center">
+        <input class="form-control w-75" value="${section.title}" onchange="surveyData[${sIndex}].title = this.value">
+        <button class="btn btn-sm btn-danger" onclick="deleteSection(${sIndex})">🗑 حذف القسم</button>
+      </div>
+      <div id="section-${sIndex}-questions"></div>
+      <button class="btn btn-sm btn-outline-secondary mt-2" onclick="addQuestion(${sIndex})">➕ إضافة سؤال</button>
+    `;
+    container.appendChild(sectionDiv);
 
-          container.appendChild(sec);
-        });
-      } catch (err) {
-        console.error("❌ فشل في تحميل الأسئلة:", err);
-        document.getElementById("sectionsContainer").innerHTML = '<div class="alert alert-danger">فشل في تحميل الأسئلة</div>';
-      }
-    }
+    const qContainer = sectionDiv.querySelector(`#section-${sIndex}-questions`);
+    const questions = section.questions || section?.subsections?.flatMap(ss => ss.questions) || [];
 
-    loadSurvey();
-  </script>
+    questions.forEach((q, qIndex) => {
+      const qBox = document.createElement('div');
+      qBox.className = 'question-box';
+      qBox.innerHTML = `
+        <label class="form-label">${q.number || ''}</label>
+        <input class="form-control form-control-sm mb-2" placeholder="نص السؤال" value="${q.text || ''}" onchange="surveyData[${sIndex}].questions[${qIndex}].text = this.value">
+        <select class="form-select form-select-sm mb-2" onchange="surveyData[${sIndex}].questions[${qIndex}].type = this.value">
+          <option value="text" ${q.type === 'text' ? 'selected' : ''}>نص</option>
+          <option value="radio" ${q.type === 'radio' ? 'selected' : ''}>اختيار</option>
+          <option value="checkbox" ${q.type === 'checkbox' ? 'selected' : ''}>خيارات متعددة</option>
+          <option value="textarea" ${q.type === 'textarea' ? 'selected' : ''}>فقرة</option>
+          <option value="multi_text" ${q.type === 'multi_text' ? 'selected' : ''}>عدة خانات</option>
+          <option value="likert" ${q.type === 'likert' ? 'selected' : ''}>مقياس (1-5)</option>
+          <option value="ranking" ${q.type === 'ranking' ? 'selected' : ''}>ترتيب</option>
+        </select>
+        <input class="form-control form-control-sm mb-2" placeholder="معرف السؤال (id)" value="${q.id || ''}" onchange="surveyData[${sIndex}].questions[${qIndex}].id = this.value">
+        <button class="btn btn-sm btn-danger" onclick="deleteQuestion(${sIndex}, ${qIndex})">🗑 حذف السؤال</button>
+      `;
+      qContainer.appendChild(qBox);
+    });
+  });
+}
+
+function addSection() {
+  surveyData.push({ title: 'قسم جديد', questions: [] });
+  renderSections();
+}
+
+function deleteSection(index) {
+  if (confirm('هل تريد حذف هذا القسم؟')) {
+    surveyData.splice(index, 1);
+    renderSections();
+  }
+}
+
+function addQuestion(sectionIndex) {
+  surveyData[sectionIndex].questions.push({ text: '', type: 'text', id: '' });
+  renderSections();
+}
+
+function deleteQuestion(sIndex, qIndex) {
+  surveyData[sIndex].questions.splice(qIndex, 1);
+  renderSections();
+}
+
+async function saveSurvey() {
+  const res = await fetch('/admin/survey-template', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sections: surveyData })
+  });
+  const result = await res.json();
+  alert(result.success ? '✅ تم الحفظ بنجاح' : '❌ فشل في الحفظ');
+}
+
+loadSurvey();
+</script>
 </body>
 </html>
