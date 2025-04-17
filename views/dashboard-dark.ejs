@@ -14,9 +14,11 @@
   </style>
 </head>
 <body>
+  <!-- هيدر -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
       <a class="navbar-brand" href="#">📊 منصة تقييم الاحتياجات</a>
+      <button class="btn btn-outline-secondary" onclick="exportToExcel()">تصدير Excel</button>
     </div>
   </nav>
 
@@ -59,6 +61,11 @@
       <canvas id="domainsChart" height="100"></canvas>
     </div>
   </div>
+
+  <!-- فوتر -->
+  <footer class="bg-white text-center py-3 shadow-sm">
+    <small>© 2025 منصة تقييم الاحتياجات - جميع الحقوق محفوظة</small>
+  </footer>
 
   <script src="/js/dashboard-dark.js"></script>
 </body>
