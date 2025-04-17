@@ -31,7 +31,7 @@
 let surveyData = [];
 
 async function loadSurvey() {
-  const res = await fetch('/api/survey-template');
+  const res = await fetch('/admin/survey-template');
   const result = await res.json();
   if (result.success) {
     surveyData = result.data.structure.survey.sections || [];
@@ -103,7 +103,7 @@ function deleteQuestion(sIndex, qIndex) {
 }
 
 async function saveSurvey() {
-  const res = await fetch('/api/survey-template', {
+  const res = await fetch('/admin/survey-template', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sections: surveyData })
