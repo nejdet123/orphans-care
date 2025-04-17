@@ -17,11 +17,10 @@ router.get('/', (req, res) => {
 });
 
 // 🧩 إدارة الاستبيانات
-router.get('/surveys', (req, res) => {
-  res.render('admin/surveys', {
-    title: 'إدارة الاستبيانات',
-    active: 'surveys',
-    user: req.user
+
+router.get('/admin/survey-editor', (req, res) => {
+  res.render('survey-editor', {
+    title: 'إدارة الاستبيان'
   });
 });
 
