@@ -17,7 +17,6 @@
 <body>
 <div class="container">
   <h2 class="text-center mb-5">إدارة الاستبيان - تعديل الأقسام والأسئلة</h2>
-<h2 class="text-center mb-5 text-danger">🔥 هذه النسخة الحقيقية من survey-editor</h2>
 
   <div id="sectionsContainer">
     <!-- يتم إدراج الأقسام والأسئلة هنا ديناميكياً -->
@@ -33,7 +32,7 @@
 let surveyData = [];
 
 async function loadSurvey() {
-  const res = await fetch('/admin/survey-template');
+const res = await fetch('/admin/api/survey-template');
   const result = await res.json();
   console.log('📦 رد السيرفر كامل:', result);
   console.log('🧠 البيانات:', result?.data?.structure?.survey?.sections);
