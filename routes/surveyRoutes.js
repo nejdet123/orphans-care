@@ -58,5 +58,16 @@ router.get('/api/survey-results', async (req, res) => {
     res.status(500).json({ success: false, message: "فشل في تحميل النتائج" });
   }
 });
+// ✅ API: جلب كل بيانات المشاركين (من نموذج SurveyResponse)
+router.get('/survey-data', async (req, res) => {
+  try {
+    const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
+    res.json({ success: true, data: results });
+  } catch (err) {
+    console.error("❌ خطأ في تحميل بيانات الاستبيان:", err);
+    res.status(500).json({ success: false, message: "فشل في تحميل البيانات" });
+  }
+});
+
 
 module.exports = router;
