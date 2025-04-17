@@ -16,10 +16,10 @@
 </head>
 <body>
 <div class="container">
-  <h2 class="text-center mb-5">إدارة الاستبيان - تعديل الأقسام والأسئلة</h2>
+  <h2 class="text-center mb-5">🔥 هذه النسخة الحقيقية من survey-editor</h2>
 
   <div id="sectionsContainer">
-    <!-- يتم إدراج الأقسام والأسئلة هنا ديناميكياً -->
+    <!-- سيتم إدراج الأقسام هنا -->
   </div>
 
   <div class="text-center">
@@ -32,16 +32,32 @@
 let surveyData = [];
 
 async function loadSurvey() {
-const res = await fetch('/admin/survey-template');
-const res = await fetch('/admin/api/survey-template');
+  try {
+    const res = await fetch('/admin/api/survey-template');
+    const result = await res.json();
 
-  const result = await res.json();
-  console.log('📦 رد السيرفر كامل:', result);
-  console.log('🧠 البيانات:', result?.data?.structure?.survey?.sections);
+    console.log('📦 الرد الكامل من السيرفر:', result);
 
-  if (result.success) {
-    surveyData = result?.data?.structure?.survey?.sections || [];
+    if (!result.success) {
+      console.warn('❌ الرد لا يحتوي على success=true');
+      return;
+    }
+
+    const structure = result?.data?.structure;
+    const survey = structure?.survey;
+    const sections = survey?.sections;
+
+    if (!Array.isArray(sections)) {
+      console.warn('❌ لم يتم العثور على الأقسام داخل البيانات!');
+      return;
+    }
+
+    console.log('✅ تم العثور على الأقسام:', sections);
+    surveyData = sections;
     renderSections();
+
+  } catch (err) {
+    console.error('❌ فشل في تحميل البيانات:', err);
   }
 }
 
@@ -63,18 +79,18 @@ function renderSections() {
     container.appendChild(sec);
 
     const qContainer = sec.querySelector(`#section-${sIndex}-questions`);
-    section.questions?.forEach((q, qIndex) => {
+    (section.questions || []).forEach((q, qIndex) => {
       const qBox = document.createElement('div');
       qBox.className = 'question-box';
       qBox.innerHTML = `
-        <input class="form-control form-control-sm mb-2" placeholder="نص السؤال" value="${q.text}" onchange="surveyData[${sIndex}].questions[${qIndex}].text = this.value">
+        <input class="form-control form-control-sm mb-2" placeholder="نص السؤال" value="${q.text || ''}" onchange="surveyData[${sIndex}].questions[${qIndex}].text = this.value">
         <select class="form-select form-select-sm mb-2" onchange="surveyData[${sIndex}].questions[${qIndex}].type = this.value">
           <option value="text" ${q.type === 'text' ? 'selected' : ''}>نص</option>
           <option value="radio" ${q.type === 'radio' ? 'selected' : ''}>اختيار واحد</option>
           <option value="checkbox" ${q.type === 'checkbox' ? 'selected' : ''}>اختيارات متعددة</option>
           <option value="textarea" ${q.type === 'textarea' ? 'selected' : ''}>نص طويل</option>
         </select>
-        <input class="form-control form-control-sm mb-2" placeholder="معرف السؤال (id)" value="${q.id}" onchange="surveyData[${sIndex}].questions[${qIndex}].id = this.value">
+        <input class="form-control form-control-sm mb-2" placeholder="معرف السؤال (id)" value="${q.id || ''}" onchange="surveyData[${sIndex}].questions[${qIndex}].id = this.value">
         <button class="btn btn-sm btn-danger" onclick="deleteQuestion(${sIndex}, ${qIndex})">🗑 حذف السؤال</button>
       `;
       qContainer.appendChild(qBox);
