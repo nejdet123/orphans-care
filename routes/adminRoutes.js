@@ -1,13 +1,14 @@
+
 const express = require('express');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
 const { USER_ROLES } = require('../models/User');
 const SurveyTemplate = require('../models/SurveyTemplate');
 
-// 🔒 مسارات لوحة التحكم (تتطلب تسجيل الدخول)
+// 🔒 كل المسارات التالية تتطلب تسجيل الدخول
 router.use(protect);
 
-// 🏠 الصفحة الرئيسية للوحة التحكم
+// 🏠 لوحة التحكم الرئيسية
 router.get('/', (req, res) => {
   res.render('admin/dashboard', {
     title: 'لوحة التحكم',
@@ -16,15 +17,7 @@ router.get('/', (req, res) => {
   });
 });
 
-// 🧩 إدارة الاستبيانات
-
-router.get('/admin/survey-editor', (req, res) => {
-  res.render('survey-editor', {
-    title: 'إدارة الاستبيان'
-  });
-});
-
-// 📝 إدارة الأسئلة (القديمة)
+// 📝 إدارة الأسئلة (قديمة)
 router.get('/questions', (req, res) => {
   res.render('admin/questions', {
     title: 'إدارة الأسئلة',
@@ -33,7 +26,7 @@ router.get('/questions', (req, res) => {
   });
 });
 
-// 👥 إدارة المستخدمين (فقط للمشرفين)
+// 👥 إدارة المستخدمين (للمشرفين فقط)
 router.get('/users', authorize(USER_ROLES.ADMIN), (req, res) => {
   res.render('admin/users', {
     title: 'إدارة المستخدمين',
@@ -42,7 +35,7 @@ router.get('/users', authorize(USER_ROLES.ADMIN), (req, res) => {
   });
 });
 
-// 🏢 إدارة المنظمات (فقط للمشرفين)
+// 🏢 إدارة المنظمات (للمشرفين فقط)
 router.get('/organizations', authorize(USER_ROLES.ADMIN), (req, res) => {
   res.render('admin/organizations', {
     title: 'إدارة المنظمات',
@@ -71,11 +64,15 @@ router.get('/surveys/:id', (req, res) => {
 });
 
 // 🆕 واجهة إدارة الاستبيان الجديدة
-router.get('/survey-editor', (req, res) => {
-  res.render('survey-editor');
+router.get('/admin/survey-editor', (req, res) => {
+  res.render('survey-editor', {
+    title: 'إدارة الاستبيان',
+    active: 'survey-editor',
+    user: req.user
+  });
 });
 
-// 🔄 API: جلب بيانات الاستبيان
+// 🔄 API: جلب قالب الاستبيان
 router.get('/api/survey-template', async (req, res) => {
   try {
     const template = await SurveyTemplate.findOne({ key: "orphans-training-survey" });
@@ -86,7 +83,7 @@ router.get('/api/survey-template', async (req, res) => {
   }
 });
 
-// 💾 API: حفظ التعديلات على الاستبيان
+// 💾 API: حفظ تعديلات الاستبيان
 router.post('/api/survey-template', async (req, res) => {
   try {
     const updated = await SurveyTemplate.findOneAndUpdate(
