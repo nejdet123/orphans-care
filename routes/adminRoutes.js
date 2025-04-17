@@ -72,20 +72,16 @@ router.get('/survey-editor', (req, res) => {
   });
 });
 
-
-// 🔄 API: جلب قالب الاستبيان
-router.get('/api/survey-template', async (req, res) => {
+router.get('/survey-template', async (req, res) => {
   try {
     const template = await SurveyTemplate.findOne({ key: "orphans-training-survey" });
     res.json({ success: true, data: template });
   } catch (err) {
-    console.error("❌ خطأ في جلب القالب:", err);
-    res.status(500).json({ success: false, message: "فشل في جلب القالب" });
+    res.status(500).json({ success: false, message: 'فشل في تحميل القالب' });
   }
 });
 
-// 💾 API: حفظ تعديلات الاستبيان
-router.post('/api/survey-template', async (req, res) => {
+router.post('/survey-template', async (req, res) => {
   try {
     const updated = await SurveyTemplate.findOneAndUpdate(
       { key: "orphans-training-survey" },
@@ -94,8 +90,7 @@ router.post('/api/survey-template', async (req, res) => {
     );
     res.json({ success: true, data: updated });
   } catch (err) {
-    console.error("❌ فشل في حفظ التعديلات:", err);
-    res.status(500).json({ success: false, message: "فشل في الحفظ" });
+    res.status(500).json({ success: false, message: 'فشل في الحفظ' });
   }
 });
 
