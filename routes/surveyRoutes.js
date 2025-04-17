@@ -1,5 +1,3 @@
-// routes/surveyRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const SurveyTemplate = require('../models/SurveyTemplate');
@@ -30,7 +28,7 @@ router.post('/submit-survey', async (req, res) => {
     });
 
     await response.save();
-    res.json({ success: true, message: "تم حفظ البيانات بنجاح" }); // ✅ استجابة JSON
+    res.json({ success: true, message: "تم حفظ البيانات بنجاح" });
   } catch (err) {
     console.error("❌ خطأ في حفظ الإجابات:", err);
     res.status(500).json({ success: false, message: "حدث خطأ أثناء حفظ البيانات" });
@@ -48,7 +46,7 @@ router.get('/thank-you', (req, res) => {
   `);
 });
 
-// ✅ API: عرض كل الإجابات لتحليلها في لوحة التحكم
+// ✅ API: عرض كل الإجابات (نسخة قديمة - غير مستخدمة حاليًا)
 router.get('/api/survey-results', async (req, res) => {
   try {
     const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
@@ -58,7 +56,8 @@ router.get('/api/survey-results', async (req, res) => {
     res.status(500).json({ success: false, message: "فشل في تحميل النتائج" });
   }
 });
-// ✅ API: جلب كل بيانات المشاركين (من نموذج SurveyResponse)
+
+// ✅ API: عرض كل بيانات المشاركين للوحة التحكم (المستخدم حاليًا)
 router.get('/survey-data', async (req, res) => {
   try {
     const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
@@ -68,15 +67,5 @@ router.get('/survey-data', async (req, res) => {
     res.status(500).json({ success: false, message: "فشل في تحميل البيانات" });
   }
 });
-router.get('/survey-data', async (req, res) => {
-  try {
-    const results = await SurveyResponse.find({ surveyKey: "orphans-training-survey" });
-    res.json({ success: true, data: results });
-  } catch (err) {
-    console.error("❌ خطأ في تحميل البيانات:", err);
-    res.status(500).json({ success: false, message: "فشل في تحميل البيانات" });
-  }
-});
-
 
 module.exports = router;
