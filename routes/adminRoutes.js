@@ -65,7 +65,7 @@ router.get('/surveys/:id', (req, res) => {
 
 // 🆕 واجهة إدارة الاستبيان الجديدة
 router.get('/survey-editor', (req, res) => {
-  res.render('survey-editor', {
+  res.render('admin/survey-editor', {
     title: 'إدارة الاستبيان',
     active: 'survey-editor',
     user: req.user
