@@ -4,14 +4,20 @@
   <meta charset="UTF-8">
   <title>لوحة التحكم | تقييم الاحتياجات</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
+
 <body class="bg-dark text-white">
   <div class="container py-5">
-    <h1 class="text-center mb-4">لوحة التحكم - نتائج الاستبيان</h1>
-    <div class="row text-center">
-      <div class="col-md-3 mb-3">
+    <h1 class="text-center mb-5">لوحة التحكم - نتائج استبيان العاملين مع الأيتام</h1>
+
+    <!-- بطاقات الإحصائيات -->
+    <div class="row text-center mb-4">
+      <div class="col-md-3">
         <div class="card bg-secondary text-white">
           <div class="card-body">
             <h5 class="card-title">عدد المشاركين</h5>
@@ -19,7 +25,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
+      <div class="col-md-3">
         <div class="card bg-info text-white">
           <div class="card-body">
             <h5 class="card-title">عدد المؤسسات</h5>
@@ -27,7 +33,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
+      <div class="col-md-3">
         <div class="card bg-success text-white">
           <div class="card-body">
             <h5 class="card-title">نسبة تلقوا تدريب</h5>
@@ -35,63 +41,55 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
+      <div class="col-md-3">
         <div class="card bg-warning text-dark">
           <div class="card-body">
-            <h5 class="card-title">متوسط التقييم</h5>
-            <p class="card-text display-6" id="averageScore">0.0</p>
+            <h5 class="card-title">خيارات التصدير</h5>
+            <button class="btn btn-light mt-2" onclick="exportToExcel()">تصدير إلى Excel</button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- الفلاتر -->
+    <div class="row mb-5">
+      <div class="col-md-3 mb-3">
+        <label class="form-label">المؤسسة</label>
+        <select id="filterOrganization" class="form-select"></select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">رمز المؤسسة</label>
+        <input type="text" id="filterCode" class="form-control" placeholder="رمز أو جزء منه">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">الفئة العمرية</label>
+        <select id="filterAge" class="form-select">
+          <option value="">الكل</option>
+          <option value="أقل من 18">أقل من 18</option>
+          <option value="18-25">18-25</option>
+          <option value="26-35">26-35</option>
+          <option value="36-45">36-45</option>
+          <option value="أكثر من 45">أكثر من 45</option>
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label class="form-label">سبق له تدريب</label>
+        <select id="filterTraining" class="form-select">
+          <option value="">الكل</option>
+          <option value="نعم">نعم</option>
+          <option value="لا">لا</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- الرسم البياني -->
+    <div class="bg-white rounded p-4 mb-5">
+      <h4 class="text-dark text-center mb-4">تحليل المجالات</h4>
+      <canvas id="domainsChart" height="100"></canvas>
+    </div>
   </div>
 
-  <script>
-    async function loadSurveySummary() {
-      try {
-        const res = await fetch('/api/survey-results');
-        const json = await res.json();
-
-        if (!json.success) {
-          console.warn("\u274C فشل في تحميل البيانات");
-          return;
-        }
-
-        const results = json.data;
-        document.getElementById('totalParticipants').innerText = results.length;
-
-        const organizations = new Set();
-        let trained = 0;
-        let scoreSum = 0, scoreCount = 0;
-
-        results.forEach(entry => {
-          const a = entry.answers || {};
-          if (a['q2']) organizations.add(a['q2']);
-          if (a['q21'] === 'yes') trained++;
-
-          for (const key in a) {
-            if (key.startsWith('q3_')) {
-              const value = parseInt(a[key]);
-              if (!isNaN(value)) {
-                scoreSum += value;
-                scoreCount++;
-              }
-            }
-          }
-        });
-
-        document.getElementById('totalOrganizations').innerText = organizations.size;
-        const trainedPercent = ((trained / results.length) * 100).toFixed(1);
-        document.getElementById('previousTrainingPercentage').innerText = `${trainedPercent}%`;
-        const avg = scoreCount ? (scoreSum / scoreCount).toFixed(1) : '0.0';
-        document.getElementById('averageScore').innerText = avg;
-
-      } catch (err) {
-        console.error("\u274C خطأ أثناء تحميل البيانات:", err);
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', loadSurveySummary);
-  </script>
+  <!-- سكربت التحليل -->
+  <script src="/js/dashboard-dark.js"></script>
 </body>
 </html>
