@@ -3,7 +3,7 @@ let allSurveys = [];
 
 window.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await fetch("/api/survey-data");
+    const res = await fetch("/api/survey/survey-data");
     const response = await res.json();
     const data = response.data; // ✅ تصحيح هنا
     allSurveys = data;
