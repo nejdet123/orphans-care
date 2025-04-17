@@ -34,7 +34,7 @@ async function handleSurveySubmit(event) {
     
     try {
         // إرسال البيانات إلى الخادم
-        const response = await fetch('/api/submit-survey', {
+        const response = await fetch('/api/survey/submit-survey', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
